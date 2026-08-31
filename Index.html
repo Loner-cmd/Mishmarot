@@ -627,6 +627,11 @@
             box-shadow: 0 4px 15px rgba(0, 136, 255, 0.3);
         }
 
+        .btn-save-modal:active {
+            opacity: 0.9;
+            transform: scale(0.98);
+        }
+
         .empty-state {
             text-align: center;
             padding: 40px 20px;
@@ -641,13 +646,6 @@
             height: 48px;
             margin-bottom: 12px;
             opacity: 0.3;
-        }
-
-        .rail-track-line {
-            height: 4px;
-            background: repeating-linear-gradient(90deg, #1e293b, #1e293b 8px, #334155 8px, #334155 16px);
-            margin: 8px 0;
-            border-radius: 2px;
         }
     </style>
 </head>
@@ -735,12 +733,12 @@
             <button class="btn-close" onclick="closeModal()">&times;</button>
         </div>
 
-        <form id="shiftForm" onsubmit="saveShiftForm(event)">
+        <div id="shiftForm">
             <input type="hidden" id="editShiftId">
 
             <div class="form-group">
                 <label class="form-label">תאריך</label>
-                <input type="date" id="fieldDate" class="form-control" required>
+                <input type="date" id="fieldDate" class="form-control">
             </div>
 
             <div class="form-row">
@@ -767,11 +765,11 @@
                 <div class="form-row">
                     <div class="form-group">
                         <label class="form-label">נל״ת התחלה (שעות)</label>
-                        <input type="number" step="0.25" min="0" max="12" id="fieldNaltStart" class="form-control" placeholder="לדוגמה: 1">
+                        <input type="text" inputmode="decimal" id="fieldNaltStart" class="form-control" placeholder="לדוגמה: 1 או 2.5">
                     </div>
                     <div class="form-group">
                         <label class="form-label">נל״ת סיום (שעות)</label>
-                        <input type="number" step="0.25" min="0" max="12" id="fieldNaltEnd" class="form-control" placeholder="לדוגמה: 1">
+                        <input type="text" inputmode="decimal" id="fieldNaltEnd" class="form-control" placeholder="לדוגמה: 1 או 2.5">
                     </div>
                 </div>
             </div>
@@ -796,8 +794,8 @@
                 </div>
             </div>
 
-            <button type="submit" class="btn-save-modal">שמור משמרת</button>
-        </form>
+            <button type="button" class="btn-save-modal" onclick="saveShiftDirect()">שמור משמרת</button>
+        </div>
     </div>
 </div>
 
@@ -1069,7 +1067,6 @@
     function openShiftModal(shiftId) {
         const modal = document.getElementById('shiftModal');
         const title = document.getElementById('modalTitle');
-        const form = document.getElementById('shiftForm');
 
         if (shiftId) {
             const shift = shifts.find(s => s.id === shiftId);
@@ -1085,9 +1082,14 @@
             document.getElementById('fieldPremEnd').value = shift.premEndTime || '';
         } else {
             title.textContent = 'הוספת משמרת ידנית';
-            form.reset();
             document.getElementById('editShiftId').value = '';
             document.getElementById('fieldDate').value = new Date().toISOString().split('T')[0];
+            document.getElementById('fieldStartTime').value = '';
+            document.getElementById('fieldEndTime').value = '';
+            document.getElementById('fieldNaltStart').value = '';
+            document.getElementById('fieldNaltEnd').value = '';
+            document.getElementById('fieldPremStart').value = '';
+            document.getElementById('fieldPremEnd').value = '';
         }
 
         modal.classList.add('open');
@@ -1097,14 +1099,23 @@
         document.getElementById('shiftModal').classList.remove('open');
     }
 
-    function saveShiftForm(e) {
-        e.preventDefault();
+    function parseNumericVal(val) {
+        if (!val) return 0;
+        const cleaned = String(val).replace(',', '.');
+        return parseFloat(cleaned) || 0;
+    }
+
+    function saveShiftDirect() {
         const editId = document.getElementById('editShiftId').value;
-        const dateVal = document.getElementById('fieldDate').value;
+        let dateVal = document.getElementById('fieldDate').value;
+        if (!dateVal) {
+            dateVal = new Date().toISOString().split('T')[0];
+        }
+
         const startVal = document.getElementById('fieldStartTime').value || null;
         const endVal = document.getElementById('fieldEndTime').value || null;
-        const naltStartVal = parseFloat(document.getElementById('fieldNaltStart').value) || 0;
-        const naltEndVal = parseFloat(document.getElementById('fieldNaltEnd').value) || 0;
+        const naltStartVal = parseNumericVal(document.getElementById('fieldNaltStart').value);
+        const naltEndVal = parseNumericVal(document.getElementById('fieldNaltEnd').value);
         const premStartVal = document.getElementById('fieldPremStart').value || '';
         const premEndVal = document.getElementById('fieldPremEnd').value || '';
 
