@@ -391,11 +391,13 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            gap: 8px;
         }
 
         .shift-date-box {
             display: flex;
             flex-direction: column;
+            min-width: fit-content;
         }
 
         .shift-day-name {
@@ -411,8 +413,31 @@
             font-variant-numeric: tabular-nums;
         }
 
+        .shift-middle-box {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex: 1;
+            padding: 0 4px;
+        }
+
+        .tag-siddur-top {
+            background: rgba(0, 210, 255, 0.12);
+            color: var(--accent-cyan);
+            border: 1px solid rgba(0, 210, 255, 0.3);
+            font-size: 0.85rem;
+            font-weight: 700;
+            padding: 4px 12px;
+            border-radius: 8px;
+            white-space: normal;
+            text-align: center;
+            display: inline-block;
+            line-height: 1.2;
+        }
+
         .shift-hours-summary {
             text-align: left;
+            min-width: fit-content;
         }
 
         .shift-time-range {
@@ -617,12 +642,33 @@
             line-height: 1;
         }
 
-        .form-group {
+        .card-sub-section {
+            background: rgba(0, 0, 0, 0.15);
+            border-radius: 12px;
+            padding: 12px;
+            margin-top: 6px;
             margin-bottom: 14px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .card-sub-title {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--accent-cyan);
+            margin-bottom: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 12px;
             display: flex;
             flex-direction: column;
             gap: 6px;
             min-width: 0;
+            width: 100%;
+        }
+
+        .form-group:last-child {
+            margin-bottom: 0;
         }
 
         .form-label {
@@ -670,22 +716,6 @@
             grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
             gap: 12px;
             width: 100%;
-        }
-
-        .card-sub-section {
-            background: rgba(0, 0, 0, 0.15);
-            border-radius: 12px;
-            padding: 12px;
-            margin-top: 6px;
-            margin-bottom: 14px;
-            border: 1px solid rgba(255, 255, 255, 0.05);
-        }
-
-        .card-sub-title {
-            font-size: 0.85rem;
-            font-weight: 700;
-            color: var(--accent-cyan);
-            margin-bottom: 10px;
         }
 
         .custom-nalt-input {
@@ -774,19 +804,27 @@
         <div>
             <input type="hidden" id="editShiftId">
 
-            <div class="form-group">
-                <label class="form-label">תאריך</label>
-                <input type="date" id="fieldDate" class="form-control">
-            </div>
-
-            <div class="form-row">
+            <div class="card-sub-section">
+                <div class="card-sub-title">📝 פרטי המשמרת</div>
                 <div class="form-group">
-                    <label class="form-label">שעת כניסה</label>
-                    <input type="time" id="fieldStartTime" class="form-control">
+                    <label class="form-label">סידור</label>
+                    <input type="text" id="fieldSiddur" class="form-control" placeholder="סידור / מספר רכבת">
                 </div>
+
                 <div class="form-group">
-                    <label class="form-label">שעת יציאה</label>
-                    <input type="time" id="fieldEndTime" class="form-control">
+                    <label class="form-label">תאריך</label>
+                    <input type="date" id="fieldDate" class="form-control">
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">שעת כניסה</label>
+                        <input type="time" id="fieldStartTime" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">שעת יציאה</label>
+                        <input type="time" id="fieldEndTime" class="form-control">
+                    </div>
                 </div>
             </div>
 
@@ -917,6 +955,7 @@
 
         const newShift = {
             id: 'shift_' + Date.now(),
+            siddur: '',
             date: dateStr,
             startTime: timeStr,
             endTime: null,
@@ -944,6 +983,7 @@
             const d = String(now.getDate()).padStart(2, '0');
             const newShift = {
                 id: 'shift_' + Date.now(),
+                siddur: '',
                 date: `${y}-${m}-${d}`,
                 startTime: null,
                 endTime: timeStr,
@@ -1148,6 +1188,7 @@
             const totalNaltMins = naltStart + naltEnd;
             const hasNalt = totalNaltMins > 0;
             const hasPrem = Boolean(shift.premStartTime && shift.premEndTime);
+            const hasSiddur = Boolean(shift.siddur && shift.siddur.trim());
 
             const parts = shift.date.split('-');
             const dObj = new Date(parts[0], parts[1] - 1, parts[2]);
@@ -1176,6 +1217,10 @@
                                     <span class="shift-day-name">${dayName}</span>
                                     <span class="shift-formatted-date">${dateFmt}</span>
                                 </div>
+                                ${hasSiddur ? `
+                                <div class="shift-middle-box">
+                                    <span class="tag-siddur-top">${shift.siddur}</span>
+                                </div>` : ''}
                                 <div class="shift-hours-summary">
                                     <div class="shift-time-range">${shift.startTime || '--:--'} - ${shift.endTime || '--:--'}</div>
                                     <div class="shift-total-duration">${calculateDuration(shift.startTime, shift.endTime)}</div>
@@ -1194,6 +1239,11 @@
                     <div class="shift-details" id="details_${shift.id}">
                         <div class="details-inner">
                             <div class="sub-breakdown">
+                                ${hasSiddur ? `
+                                <div class="breakdown-item">
+                                    <span class="breakdown-label">סידור / הערה:</span>
+                                    <span class="breakdown-value" style="direction: rtl;">${shift.siddur}</span>
+                                </div>` : ''}
                                 <div class="breakdown-item">
                                     <span class="breakdown-label">כניסה:</span>
                                     <span class="breakdown-value">${shift.startTime || 'לא הוזן'}</span>
@@ -1239,6 +1289,7 @@
             if (!shift) return;
             title.textContent = 'עריכת משמרת';
             document.getElementById('editShiftId').value = shift.id;
+            document.getElementById('fieldSiddur').value = shift.siddur || '';
             document.getElementById('fieldDate').value = shift.date;
             document.getElementById('fieldStartTime').value = shift.startTime || '';
             document.getElementById('fieldEndTime').value = shift.endTime || '';
@@ -1258,6 +1309,7 @@
 
             title.textContent = 'הוספת משמרת ידנית';
             document.getElementById('editShiftId').value = '';
+            document.getElementById('fieldSiddur').value = '';
             document.getElementById('fieldDate').value = `${y}-${m}-${d}`;
             document.getElementById('fieldStartTime').value = '';
             document.getElementById('fieldEndTime').value = '';
@@ -1276,6 +1328,7 @@
 
     function saveShiftDirect() {
         const editId = document.getElementById('editShiftId').value;
+        const siddurVal = document.getElementById('fieldSiddur').value.trim();
         let dateVal = document.getElementById('fieldDate').value;
         if (!dateVal) {
             const now = new Date();
@@ -1297,6 +1350,7 @@
             if (index !== -1) {
                 shifts[index] = {
                     ...shifts[index],
+                    siddur: siddurVal,
                     date: dateVal,
                     startTime: startVal,
                     endTime: endVal,
@@ -1309,6 +1363,7 @@
         } else {
             const newShift = {
                 id: 'shift_' + Date.now(),
+                siddur: siddurVal,
                 date: dateVal,
                 startTime: startVal,
                 endTime: endVal,
