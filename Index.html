@@ -66,10 +66,10 @@
             display: flex;
             flex-direction: column;
             gap: 16px;
-            padding-bottom: 60px;
+            padding-bottom: 40px;
+            position: relative;
         }
 
-        /* Generic inline SVG styling */
         .svg-icon {
             display: inline-flex;
             align-items: center;
@@ -79,53 +79,90 @@
             flex-shrink: 0;
         }
 
+        /* Top Header */
         header {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 12px 16px;
+            padding: 10px 14px;
             background: var(--bg-card);
             border-radius: 16px;
             border: 1px solid var(--border-color);
             box-shadow: var(--shadow);
+            position: relative;
+            z-index: 600;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .menu-trigger-btn {
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            width: 38px;
+            height: 38px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+
+        .menu-trigger-btn:active {
+            background: rgba(0, 210, 255, 0.15);
         }
 
         .logo-area {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 8px;
         }
 
         .rail-icon-svg {
-            width: 42px;
-            height: 42px;
-            border-radius: 10px;
+            width: 36px;
+            height: 36px;
+            border-radius: 9px;
             flex-shrink: 0;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
         }
 
         .logo-text h1 {
-            font-size: 1.15rem;
+            font-size: 1.05rem;
             font-weight: 800;
             color: #fff;
+            line-height: 1.1;
         }
 
         .logo-text span {
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             color: var(--accent-cyan);
             font-weight: 600;
+        }
+
+        .header-status-box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-width: 85px;
         }
 
         .status-badge {
             display: flex;
             align-items: center;
-            gap: 6px;
-            padding: 6px 12px;
+            justify-content: center;
+            gap: 5px;
+            padding: 4px 10px;
             border-radius: 20px;
-            font-size: 0.8rem;
+            font-size: 0.78rem;
             font-weight: 700;
             background: rgba(255, 255, 255, 0.05);
             border: 1px solid var(--border-color);
+            width: 100%;
         }
 
         .status-badge.active {
@@ -141,8 +178,8 @@
         }
 
         .pulse-dot {
-            width: 8px;
-            height: 8px;
+            width: 7px;
+            height: 7px;
             border-radius: 50%;
             background: currentColor;
             display: inline-block;
@@ -159,60 +196,163 @@
             100% { transform: scale(0.85); opacity: 0.4; }
         }
 
-        .control-panel {
+        .header-live-timer {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--accent-cyan);
+            font-family: 'Inter', monospace;
+            font-variant-numeric: tabular-nums;
+            margin-top: 4px;
+            display: none;
+            text-align: center;
+            direction: ltr;
+            width: 100%;
+        }
+
+        /* Top Dropdown Menu */
+        .dropdown-menu-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 550;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s ease;
+        }
+
+        .dropdown-menu-overlay.open {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            top: 70px;
+            right: 12px;
+            left: 12px;
             background: var(--bg-card);
-            border-radius: 20px;
-            padding: 18px;
             border: 1px solid var(--border-color);
-            box-shadow: var(--shadow);
+            border-radius: 16px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+            padding: 8px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            transform: translateY(-20px);
+            opacity: 0;
+            pointer-events: none;
+            transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s ease;
+            z-index: 560;
+        }
+
+        .dropdown-menu.open {
+            transform: translateY(0);
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 14px;
+            border-radius: 10px;
+            background: transparent;
+            border: none;
+            color: var(--text-main);
+            font-size: 0.95rem;
+            font-weight: 700;
+            cursor: pointer;
+            text-align: right;
+            width: 100%;
+        }
+
+        .menu-item:active {
+            background: rgba(255, 255, 255, 0.06);
+        }
+
+        .menu-item.active {
+            background: rgba(0, 210, 255, 0.12);
+            color: var(--accent-cyan);
+        }
+
+        .menu-divider {
+            height: 1px;
+            background: var(--border-color);
+            margin: 4px 6px;
+        }
+
+        .btn-reload-app {
+            background: rgba(255, 255, 255, 0.04);
+            color: var(--text-muted);
+        }
+
+        .btn-reload-app:active {
+            background: rgba(245, 158, 11, 0.15);
+            color: var(--accent-orange);
+        }
+
+        /* View Container */
+        .app-view {
             display: flex;
             flex-direction: column;
             gap: 16px;
         }
 
-        .live-clock-card {
+        /* Clock View Styles */
+        .clock-screen-card {
+            background: var(--bg-card);
+            border-radius: 20px;
+            padding: 28px 18px;
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 24px;
+        }
+
+        .clock-display-wrap {
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding: 12px 10px;
-            background: rgba(0, 0, 0, 0.22);
-            border-radius: 14px;
+            padding: 24px 20px;
+            background: rgba(0, 0, 0, 0.25);
+            border-radius: 18px;
             border: 1px solid rgba(255, 255, 255, 0.04);
+            width: 100%;
         }
 
-        .live-time-wrapper {
-            display: flex;
-            align-items: center;
-            justify-content: center;
+        .clock-time-huge {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-variant-numeric: tabular-nums;
+            font-size: 3.4rem;
+            font-weight: 700;
+            color: #e2e8f0;
+            letter-spacing: 1px;
+            line-height: 1;
             direction: ltr;
         }
 
-        .live-time-main {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            font-variant-numeric: tabular-nums;
-            font-size: 2rem;
-            font-weight: 600;
-            color: #e2e8f0;
-            letter-spacing: 0.5px;
-            line-height: 1.1;
-        }
-
-        .live-date-wrapper {
+        .clock-date-sub {
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 6px;
-            margin-top: 4px;
-            font-size: 0.88rem;
+            gap: 8px;
+            margin-top: 10px;
+            font-size: 1rem;
             color: var(--text-muted);
             font-weight: 600;
             direction: ltr;
         }
 
         .calendar-icon-svg {
-            width: 14px;
-            height: 14px;
+            width: 16px;
+            height: 16px;
             fill: currentColor;
             opacity: 0.75;
             flex-shrink: 0;
@@ -222,24 +362,11 @@
             direction: rtl;
         }
 
-        .shift-duration-indicator {
-            margin-top: 8px;
-            font-size: 0.82rem;
-            color: var(--accent-cyan);
-            font-weight: 600;
-            background: rgba(0, 210, 255, 0.08);
-            padding: 3px 10px;
-            border-radius: 6px;
-            display: none;
-            font-family: 'Inter', 'Assistant', sans-serif;
-            font-variant-numeric: tabular-nums;
-            border: 1px solid rgba(0, 210, 255, 0.15);
-        }
-
         .action-buttons-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 12px;
+            gap: 14px;
+            width: 100%;
         }
 
         .btn-action {
@@ -248,12 +375,12 @@
             align-items: center;
             justify-content: center;
             gap: 8px;
-            padding: 18px 10px;
+            padding: 22px 10px;
             border-radius: 16px;
             border: none;
             cursor: pointer;
             font-weight: 700;
-            font-size: 1.05rem;
+            font-size: 1.1rem;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25);
         }
 
@@ -279,18 +406,19 @@
         }
 
         .manual-entry-btn {
-            background: transparent;
+            background: var(--bg-card);
             border: 1px dashed var(--accent-blue);
             color: var(--accent-cyan);
-            padding: 12px;
-            border-radius: 12px;
+            padding: 14px;
+            border-radius: 14px;
             font-size: 0.95rem;
-            font-weight: 600;
+            font-weight: 700;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 8px;
+            box-shadow: var(--shadow);
         }
 
         .manual-entry-btn:active {
@@ -475,7 +603,7 @@
             gap: 10px;
         }
 
-        /* Perfectly Aligned 3-Column Header */
+        /* 3-Column Header */
         .shift-row-main {
             display: grid;
             grid-template-columns: 1fr 1fr 1fr;
@@ -578,7 +706,7 @@
             white-space: nowrap;
         }
 
-        /* Structured Badges Row with Dual Alignment */
+        /* Badges Alignment */
         .shift-badges-row {
             display: flex;
             align-items: center;
@@ -620,28 +748,24 @@
             border: 1px solid rgba(234, 179, 8, 0.5);
         }
 
-        /* Taxi-Yellow for NALT */
         .tag-nalt {
             background: rgba(250, 204, 21, 0.15);
             color: var(--accent-taxi);
             border: 1px solid rgba(250, 204, 21, 0.35);
         }
 
-        /* Purple for Premium */
         .tag-prem {
             background: rgba(192, 132, 252, 0.15);
             color: var(--accent-purple);
             border: 1px solid rgba(192, 132, 252, 0.35);
         }
 
-        /* Completed (Closed) */
         .tag-complete {
             background: rgba(16, 185, 129, 0.15);
             color: var(--accent-green);
             border: 1px solid rgba(16, 185, 129, 0.4);
         }
 
-        /* Missing */
         .tag-alert {
             background: rgba(239, 68, 68, 0.2);
             color: #fca5a5;
@@ -780,6 +904,7 @@
             color: #fca5a5;
         }
 
+        /* Modal Styles */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -951,7 +1076,7 @@
             border: 1px dashed var(--border-color);
         }
 
-        /* Error Dialog Overlay */
+        /* Error Dialog */
         .error-dialog-overlay {
             position: fixed;
             top: 0;
@@ -1035,121 +1160,160 @@
 <body>
 
 <div class="app-container">
+    <!-- Header -->
     <header>
-        <div class="logo-area">
-            <svg class="rail-icon-svg" viewBox="0 0 512 512">
-                <defs>
-                    <linearGradient id="hdrBg" x1="0%" y1="0%" x2="100%" y2="100%">
-                        <stop offset="0%" stop-color="#132247"/>
-                        <stop offset="100%" stop-color="#060b16"/>
-                    </linearGradient>
-                    <linearGradient id="hdrRail" x1="0%" y1="0%" x2="0%" y2="100%">
-                        <stop offset="0%" stop-color="#00e5ff"/>
-                        <stop offset="100%" stop-color="#0077ff"/>
-                    </linearGradient>
-                    <linearGradient id="hdrTieTop" x1="0%" y1="0%" x2="0%" y2="100%">
-                        <stop offset="0%" stop-color="#3a558a"/>
-                        <stop offset="100%" stop-color="#2c426f"/>
-                    </linearGradient>
-                    <linearGradient id="hdrTieFront" x1="0%" y1="0%" x2="0%" y2="100%">
-                        <stop offset="0%" stop-color="#1e2e4e"/>
-                        <stop offset="100%" stop-color="#141f36"/>
-                    </linearGradient>
-                </defs>
-                <rect width="512" height="512" rx="115" fill="url(#hdrBg)"/>
-                <rect x="16" y="16" width="480" height="480" rx="100" fill="none" stroke="rgba(0, 229, 255, 0.15)" stroke-width="4"/>
-                <polygon points="186,306 326,306 332,314 180,314" fill="url(#hdrTieTop)" stroke="rgba(0,229,255,0.4)" stroke-width="1.5"/>
-                <polygon points="180,314 332,314 332,320 180,320" fill="url(#hdrTieFront)"/>
-                <polygon points="164,338 348,338 356,348 156,348" fill="url(#hdrTieTop)" stroke="rgba(0,229,255,0.45)" stroke-width="1.8"/>
-                <polygon points="156,348 356,348 356,356 156,356" fill="url(#hdrTieFront)"/>
-                <polygon points="136,378 376,378 388,392 124,392" fill="url(#hdrTieTop)" stroke="rgba(0,229,255,0.55)" stroke-width="2.2"/>
-                <polygon points="124,392 388,392 388,402 124,402" fill="url(#hdrTieFront)"/>
-                <polygon points="98,428 414,428 430,446 82,446" fill="url(#hdrTieTop)" stroke="rgba(0,229,255,0.7)" stroke-width="2.6"/>
-                <polygon points="82,446 430,446 430,460 82,460" fill="url(#hdrTieFront)"/>
-                <polygon points="194,290 206,290 120,465 102,465" fill="url(#hdrRail)"/>
-                <line x1="194" y1="290" x2="102" y2="465" stroke="#ffffff" stroke-width="2" opacity="0.65"/>
-                <polygon points="306,290 318,290 410,465 392,465" fill="url(#hdrRail)"/>
-                <line x1="318" y1="290" x2="410" y2="465" stroke="#ffffff" stroke-width="2" opacity="0.65"/>
-                <path d="M165 110 C165 65 200 50 256 50 C312 50 347 65 347 110 L360 250 C360 278 335 292 256 292 C177 292 152 278 152 250 Z" fill="#132247" stroke="#00d2ff" stroke-width="12" stroke-linejoin="round"/>
-                <path d="M188 115 C188 95 210 82 256 82 C302 82 324 95 324 115 L332 172 L180 172 Z" fill="#080e1d" stroke="#00d2ff" stroke-width="5" stroke-linejoin="round"/>
-                <circle cx="202" cy="242" r="14" fill="#00d2ff"/>
-                <circle cx="310" cy="242" r="14" fill="#00d2ff"/>
-                <rect x="230" y="233" width="52" height="18" rx="6" fill="#10b981"/>
-                <circle cx="365" cy="365" r="76" fill="#080e1d" stroke="#00d2ff" stroke-width="9"/>
-                <circle cx="365" cy="365" r="66" fill="rgba(0, 210, 255, 0.08)"/>
-                <polyline points="365,315 365,365 408,365" fill="none" stroke="#ffffff" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
-                <circle cx="365" cy="365" r="6.5" fill="#00d2ff"/>
-            </svg>
-            <div class="logo-text">
-                <h1>יומן משמרות</h1>
-                <span>רכבת ישראל</span>
+        <div class="header-right">
+            <button class="menu-trigger-btn" onclick="toggleTopMenu()" aria-label="תפריט">
+                <svg class="svg-icon" width="22" height="22" viewBox="0 0 24 24">
+                    <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/>
+                </svg>
+            </button>
+            <div class="logo-area">
+                <svg class="rail-icon-svg" viewBox="0 0 512 512">
+                    <defs>
+                        <linearGradient id="hdrBg" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stop-color="#132247"/>
+                            <stop offset="100%" stop-color="#060b16"/>
+                        </linearGradient>
+                        <linearGradient id="hdrRail" x1="0%" y1="0%" x2="0%" y2="100%">
+                            <stop offset="0%" stop-color="#00e5ff"/>
+                            <stop offset="100%" stop-color="#0077ff"/>
+                        </linearGradient>
+                        <linearGradient id="hdrTieTop" x1="0%" y1="0%" x2="0%" y2="100%">
+                            <stop offset="0%" stop-color="#3a558a"/>
+                            <stop offset="100%" stop-color="#2c426f"/>
+                        </linearGradient>
+                        <linearGradient id="hdrTieFront" x1="0%" y1="0%" x2="0%" y2="100%">
+                            <stop offset="0%" stop-color="#1e2e4e"/>
+                            <stop offset="100%" stop-color="#141f36"/>
+                        </linearGradient>
+                    </defs>
+                    <rect width="512" height="512" rx="115" fill="url(#hdrBg)"/>
+                    <rect x="16" y="16" width="480" height="480" rx="100" fill="none" stroke="rgba(0, 229, 255, 0.15)" stroke-width="4"/>
+                    <polygon points="186,306 326,306 332,314 180,314" fill="url(#hdrTieTop)" stroke="rgba(0,229,255,0.4)" stroke-width="1.5"/>
+                    <polygon points="180,314 332,314 332,320 180,320" fill="url(#hdrTieFront)"/>
+                    <polygon points="164,338 348,338 356,348 156,348" fill="url(#hdrTieTop)" stroke="rgba(0,229,255,0.45)" stroke-width="1.8"/>
+                    <polygon points="156,348 356,348 356,356 156,356" fill="url(#hdrTieFront)"/>
+                    <polygon points="136,378 376,378 388,392 124,392" fill="url(#hdrTieTop)" stroke="rgba(0,229,255,0.55)" stroke-width="2.2"/>
+                    <polygon points="124,392 388,392 388,402 124,402" fill="url(#hdrTieFront)"/>
+                    <polygon points="98,428 414,428 430,446 82,446" fill="url(#hdrTieTop)" stroke="rgba(0,229,255,0.7)" stroke-width="2.6"/>
+                    <polygon points="82,446 430,446 430,460 82,460" fill="url(#hdrTieFront)"/>
+                    <polygon points="194,290 206,290 120,465 102,465" fill="url(#hdrRail)"/>
+                    <line x1="194" y1="290" x2="102" y2="465" stroke="#ffffff" stroke-width="2" opacity="0.65"/>
+                    <polygon points="306,290 318,290 410,465 392,465" fill="url(#hdrRail)"/>
+                    <line x1="318" y1="290" x2="410" y2="465" stroke="#ffffff" stroke-width="2" opacity="0.65"/>
+                    <path d="M165 110 C165 65 200 50 256 50 C312 50 347 65 347 110 L360 250 C360 278 335 292 256 292 C177 292 152 278 152 250 Z" fill="#132247" stroke="#00d2ff" stroke-width="12" stroke-linejoin="round"/>
+                    <path d="M188 115 C188 95 210 82 256 82 C302 82 324 95 324 115 L332 172 L180 172 Z" fill="#080e1d" stroke="#00d2ff" stroke-width="5" stroke-linejoin="round"/>
+                    <circle cx="202" cy="242" r="14" fill="#00d2ff"/>
+                    <circle cx="310" cy="242" r="14" fill="#00d2ff"/>
+                    <rect x="230" y="233" width="52" height="18" rx="6" fill="#10b981"/>
+                    <circle cx="365" cy="365" r="76" fill="#080e1d" stroke="#00d2ff" stroke-width="9"/>
+                    <circle cx="365" cy="365" r="66" fill="rgba(0, 210, 255, 0.08)"/>
+                    <polyline points="365,315 365,365 408,365" fill="none" stroke="#ffffff" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+                    <circle cx="365" cy="365" r="6.5" fill="#00d2ff"/>
+                </svg>
+                <div class="logo-text">
+                    <h1>יומן משמרות</h1>
+                    <span>רכבת ישראל</span>
+                </div>
             </div>
         </div>
-        <div id="statusIndicator" class="status-badge idle">
-            <span class="pulse-dot"></span>
-            <span id="statusText">במנוחה</span>
+
+        <div class="header-status-box">
+            <div id="statusIndicator" class="status-badge idle">
+                <span class="pulse-dot"></span>
+                <span id="statusText">במנוחה</span>
+            </div>
+            <div class="header-live-timer" id="headerShiftDuration">00:00:00</div>
         </div>
     </header>
 
-    <div class="control-panel">
-        <div class="live-clock-card">
-            <div class="live-time-wrapper">
-                <span class="live-time-main" id="clockMain">--:--</span>
-            </div>
-            <div class="live-date-wrapper">
-                <svg class="calendar-icon-svg" viewBox="0 0 24 24">
-                    <path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20a2 2 0 0 0 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10zm0-12H5V6h14v2z"/>
-                </svg>
-                <span class="date-text-content" id="currentDate">--</span>
-            </div>
-            <div class="shift-duration-indicator" id="liveShiftDuration">משמרת פעילה: 00:00:00</div>
-        </div>
+    <!-- Dropdown Menu -->
+    <div class="dropdown-menu-overlay" id="dropdownMenuOverlay" onclick="toggleTopMenu()"></div>
+    <div class="dropdown-menu" id="topMenu">
+        <button class="menu-item active" id="menuBtnPunch" onclick="navigateTo('clock')">
+            <svg class="svg-icon" width="20" height="20" viewBox="0 0 24 24">
+                <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/>
+            </svg>
+            הדפסת נוכחות
+        </button>
+        <button class="menu-item" id="menuBtnHistory" onclick="navigateTo('history')">
+            <svg class="svg-icon" width="20" height="20" viewBox="0 0 24 24">
+                <path d="M19 3h-4.18C14.4 1.84 13.3 1 12 1c-1.3 0-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm2 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/>
+            </svg>
+            היסטוריית משמרות
+        </button>
+        <div class="menu-divider"></div>
+        <button class="menu-item btn-reload-app" onclick="reloadApp()">
+            <svg class="svg-icon" width="18" height="18" viewBox="0 0 24 24">
+                <path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/>
+            </svg>
+            רענון
+        </button>
+    </div>
 
-        <div class="action-buttons-grid">
-            <button id="btnStartShift" class="btn-action btn-start" onclick="handleLiveStart()">כניסה למשמרת</button>
-            <button id="btnEndShift" class="btn-action btn-end" onclick="handleLiveEnd()">יציאה ממשמרת</button>
-        </div>
+    <!-- VIEW 1: Clock Screen -->
+    <div id="viewClock" class="app-view">
+        <div class="clock-screen-card">
+            <div class="clock-display-wrap">
+                <div class="clock-time-huge" id="clockMain">--:--</div>
+                <div class="clock-date-sub">
+                    <svg class="calendar-icon-svg" viewBox="0 0 24 24">
+                        <path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20a2 2 0 0 0 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10zm0-12H5V6h14v2z"/>
+                    </svg>
+                    <span class="date-text-content" id="currentDate">--</span>
+                </div>
+            </div>
 
+            <div class="action-buttons-grid">
+                <button id="btnStartShift" class="btn-action btn-start" onclick="handleLiveStart()">כניסה למשמרת</button>
+                <button id="btnEndShift" class="btn-action btn-end" onclick="handleLiveEnd()">יציאה ממשמרת</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- VIEW 2: History Screen -->
+    <div id="viewHistory" class="app-view" style="display: none;">
         <button class="manual-entry-btn" onclick="openShiftModal(null)">
             <svg class="svg-icon" width="16" height="16" viewBox="0 0 24 24">
                 <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
             </svg>
             הוספת / עריכת משמרת ידנית
         </button>
-    </div>
 
-    <div class="section-header">
-        <div class="section-title">
-            <svg class="svg-icon" width="18" height="18" viewBox="0 0 24 24">
-                <path d="M19 3h-4.18C14.4 1.84 13.3 1 12 1c-1.3 0-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm2 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/>
-            </svg>
-            היסטוריית משמרות
+        <div class="section-header">
+            <div class="section-title">
+                <svg class="svg-icon" width="18" height="18" viewBox="0 0 24 24">
+                    <path d="M19 3h-4.18C14.4 1.84 13.3 1 12 1c-1.3 0-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm2 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/>
+                </svg>
+                היסטוריית משמרות
+            </div>
+            <div class="header-actions-group">
+                <button id="btnToggleSorting" class="btn-text-action" onclick="toggleSortingMode()">מיון</button>
+                <button id="btnToggleSelection" class="btn-text-action" onclick="toggleSelectionMode()">בחירה</button>
+            </div>
         </div>
-        <div class="header-actions-group">
-            <button id="btnToggleSorting" class="btn-text-action" onclick="toggleSortingMode()">מיון</button>
-            <button id="btnToggleSelection" class="btn-text-action" onclick="toggleSelectionMode()">בחירה</button>
-        </div>
-    </div>
 
-    <!-- Selection Toolbar -->
-    <div id="selectionToolbar" class="selection-toolbar">
-        <span id="selectedCountText" style="font-size: 0.85rem; font-weight: 700; color: var(--accent-cyan);">0 נבחרו</span>
-        <div class="toolbar-buttons">
-            <button class="btn-toolbar btn-toolbar-select" onclick="selectAllShifts()">בחר הכל</button>
-            <button class="btn-toolbar btn-toolbar-delete" onclick="deleteSelectedShifts()">מחק נבחרים</button>
+        <!-- Selection Toolbar -->
+        <div id="selectionToolbar" class="selection-toolbar">
+            <span id="selectedCountText" style="font-size: 0.85rem; font-weight: 700; color: var(--accent-cyan);">0 נבחרו</span>
+            <div class="toolbar-buttons">
+                <button class="btn-toolbar btn-toolbar-select" onclick="selectAllShifts()">בחר הכל</button>
+                <button class="btn-toolbar btn-toolbar-delete" onclick="deleteSelectedShifts()">מחק נבחרים</button>
+            </div>
         </div>
-    </div>
 
-    <!-- Sorting Toolbar -->
-    <div id="sortingToolbar" class="selection-toolbar">
-        <span style="font-size: 0.85rem; font-weight: 700; color: var(--accent-cyan);">גרור לסידור מחדש</span>
-        <div class="toolbar-buttons">
-            <button class="btn-toolbar btn-toolbar-select" onclick="sortShiftsByDate()">איפוס לתאריכים</button>
-            <button class="btn-toolbar btn-toolbar-save" onclick="saveManualSorting()">שמור סדר</button>
+        <!-- Sorting Toolbar -->
+        <div id="sortingToolbar" class="selection-toolbar">
+            <span style="font-size: 0.85rem; font-weight: 700; color: var(--accent-cyan);">גרור לסידור מחדש</span>
+            <div class="toolbar-buttons">
+                <button class="btn-toolbar btn-toolbar-select" onclick="sortShiftsByDate()">איפוס לתאריכים</button>
+                <button class="btn-toolbar btn-toolbar-save" onclick="saveManualSorting()">שמור סדר</button>
+            </div>
         </div>
-    </div>
 
-    <div id="shiftsContainer" class="shifts-list"></div>
+        <div id="shiftsContainer" class="shifts-list"></div>
+    </div>
 </div>
 
 <!-- Shift Modal Form -->
@@ -1295,7 +1459,6 @@
         ctx.fillStyle = grad;
         ctx.fillRect(0, 0, 512, 512);
 
-        // Helper function for polygon paths
         function drawPoly(points, fillStyle, strokeStyle, lineWidth) {
             ctx.beginPath();
             ctx.moveTo(points[0][0], points[0][1]);
@@ -1428,12 +1591,47 @@
     })();
 
     let shifts = JSON.parse(localStorage.getItem('railway_shifts') || '[]');
+    let currentView = sessionStorage.getItem('railway_active_view') || 'clock';
     let isSelectionMode = false;
     let isSortingMode = false;
     let selectedShiftIds = new Set();
     let draggedElement = null;
 
     const PRESET_NALT_MINUTES = [0, 30, 40, 45, 60, 90, 150, 270];
+
+    // Navigation & Dropdown Menu
+    function toggleTopMenu() {
+        const menu = document.getElementById('topMenu');
+        const overlay = document.getElementById('dropdownMenuOverlay');
+        menu.classList.toggle('open');
+        overlay.classList.toggle('open');
+    }
+
+    function navigateTo(viewName, closeMenu = true) {
+        currentView = viewName;
+        sessionStorage.setItem('railway_active_view', viewName);
+
+        document.getElementById('viewClock').style.display = (viewName === 'clock') ? 'flex' : 'none';
+        document.getElementById('viewHistory').style.display = (viewName === 'history') ? 'flex' : 'none';
+
+        document.getElementById('menuBtnPunch').classList.toggle('active', viewName === 'clock');
+        document.getElementById('menuBtnHistory').classList.toggle('active', viewName === 'history');
+
+        if (closeMenu) {
+            const menu = document.getElementById('topMenu');
+            const overlay = document.getElementById('dropdownMenuOverlay');
+            menu.classList.remove('open');
+            overlay.classList.remove('open');
+        }
+
+        if (viewName === 'history') {
+            renderShifts();
+        }
+    }
+
+    function reloadApp() {
+        window.location.reload(true);
+    }
 
     function updateLiveClock() {
         const now = new Date();
@@ -1462,7 +1660,7 @@
         const btnStart = document.getElementById('btnStartShift');
         const statusIndicator = document.getElementById('statusIndicator');
         const statusText = document.getElementById('statusText');
-        const durationBox = document.getElementById('liveShiftDuration');
+        const headerTimer = document.getElementById('headerShiftDuration');
 
         if (active) {
             btnStart.disabled = true;
@@ -1478,13 +1676,13 @@
             const m = String(Math.floor((totalSec % 3600) / 60)).padStart(2, '0');
             const s = String(totalSec % 60).padStart(2, '0');
 
-            durationBox.style.display = 'block';
-            durationBox.textContent = `משמרת פעילה: ${h}:${m}:${s}`;
+            headerTimer.style.display = 'block';
+            headerTimer.textContent = `${h}:${m}:${s}`;
         } else {
             btnStart.disabled = false;
             statusIndicator.className = 'status-badge idle';
             statusText.textContent = 'במנוחה';
-            durationBox.style.display = 'none';
+            headerTimer.style.display = 'none';
         }
     }
 
@@ -1972,7 +2170,6 @@
 
             const { primary: siddurPrimary, secondary: siddurSecondary } = parseSiddurDisplay(shift.siddur);
 
-            // Dynamic font sizing for secondary text based on length
             let secFontSize = '0.78rem';
             if (siddurSecondary.length > 24) {
                 secFontSize = '0.62rem';
@@ -2210,12 +2407,11 @@
 
         const sStart = timeToMinutes(shiftStart);
         let sEnd = timeToMinutes(shiftEnd);
-        if (sEnd <= sStart) sEnd += 1440; // overnight shift
+        if (sEnd <= sStart) sEnd += 1440;
 
         let pStart = timeToMinutes(premStart);
         let pEnd = timeToMinutes(premEnd);
 
-        // Adjust for overnight shift if start time is after shift start
         if (pStart < sStart && pStart + 1440 <= sEnd) pStart += 1440;
         if (pEnd <= pStart) pEnd += 1440;
 
@@ -2248,7 +2444,6 @@
         const premStartVal = document.getElementById('fieldPremStart').value || '';
         const premEndVal = document.getElementById('fieldPremEnd').value || '';
 
-        // Validation for Premium bounds
         const validation = validatePremiumRange(startVal, endVal, premStartVal, premEndVal);
         if (!validation.valid) {
             showErrorDialog(validation.error);
@@ -2299,7 +2494,8 @@
         }
     }
 
-    renderShifts();
+    // Initialize to session view (defaults to 'clock' on a fresh launch)
+    navigateTo(currentView, false);
 </script>
 </body>
 </html>
