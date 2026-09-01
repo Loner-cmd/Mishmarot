@@ -17,6 +17,7 @@
             --accent-green: #10b981;
             --accent-orange: #f59e0b;
             --accent-red: #ef4444;
+            --accent-yellow: #eab308;
             --text-main: #f8fafc;
             --text-muted: #94a3b8;
             --border-color: rgba(255, 255, 255, 0.1);
@@ -348,6 +349,11 @@
             border-color: rgba(16, 185, 129, 0.5);
         }
 
+        .shift-card.has-overlap {
+            border-color: rgba(234, 179, 8, 0.6);
+            background: linear-gradient(180deg, rgba(234, 179, 8, 0.05) 0%, var(--bg-card) 100%);
+        }
+
         .shift-card.selected-for-delete {
             border-color: var(--accent-red);
             background: rgba(239, 68, 68, 0.08);
@@ -522,6 +528,12 @@
             font-variant-numeric: tabular-nums;
         }
 
+        .tag-overlap {
+            background: rgba(234, 179, 8, 0.2);
+            color: #fde047;
+            border: 1px solid rgba(234, 179, 8, 0.5);
+        }
+
         .tag-nalt {
             background: rgba(245, 158, 11, 0.15);
             color: var(--accent-orange);
@@ -559,19 +571,21 @@
         }
 
         .details-inner {
-            padding: 16px;
+            padding: 14px 16px;
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 10px;
         }
 
+        /* Separate Breakdown Group Styling */
         .sub-breakdown {
             display: flex;
             flex-direction: column;
             gap: 8px;
             background: rgba(0, 0, 0, 0.2);
             border-radius: 12px;
-            padding: 12px;
+            padding: 10px 14px;
+            border: 1px solid rgba(255, 255, 255, 0.04);
         }
 
         .breakdown-item {
@@ -1019,6 +1033,46 @@
         });
     }
 
+    function calculateOverlaps() {
+        const overlappingIds = new Set();
+        const intervals = [];
+
+        shifts.forEach(shift => {
+            if (!shift.date || !shift.startTime) return;
+            const [y, m, d] = shift.date.split('-').map(Number);
+            const [sh, sm] = shift.startTime.split(':').map(Number);
+            
+            const startEpoch = new Date(y, m - 1, d, sh, sm, 0).getTime();
+            let endEpoch;
+
+            if (shift.endTime) {
+                const [eh, em] = shift.endTime.split(':').map(Number);
+                let endDate = new Date(y, m - 1, d, eh, em, 0);
+                if (endDate.getTime() <= startEpoch) {
+                    endDate.setDate(endDate.getDate() + 1);
+                }
+                endEpoch = endDate.getTime();
+            } else {
+                endEpoch = Date.now();
+            }
+
+            intervals.push({ id: shift.id, start: startEpoch, end: endEpoch });
+        });
+
+        for (let i = 0; i < intervals.length; i++) {
+            for (let j = i + 1; j < intervals.length; j++) {
+                const a = intervals[i];
+                const b = intervals[j];
+                if (Math.max(a.start, b.start) < Math.min(a.end, b.end)) {
+                    overlappingIds.add(a.id);
+                    overlappingIds.add(b.id);
+                }
+            }
+        }
+
+        return overlappingIds;
+    }
+
     function handleLiveStart() {
         const now = new Date();
         const y = now.getFullYear();
@@ -1294,7 +1348,6 @@
         const cards = container.querySelectorAll('.shift-card');
 
         cards.forEach(card => {
-            // Desktop HTML5 drag
             card.addEventListener('dragstart', (e) => {
                 if (!isSortingMode) return;
                 draggedElement = card;
@@ -1335,7 +1388,6 @@
                 }
             });
 
-            // Mobile Touch Support
             const handle = card.querySelector('.drag-handle-container');
             if (handle) {
                 let activeTouchCard = null;
@@ -1349,7 +1401,7 @@
 
                 handle.addEventListener('touchmove', (e) => {
                     if (!isSortingMode || !activeTouchCard) return;
-                    e.preventDefault(); // Prevents full page scroll while dragging
+                    e.preventDefault();
                     e.stopPropagation();
 
                     const touch = e.touches[0];
@@ -1393,6 +1445,7 @@
         }
 
         const daysArr = ['ראשון', 'שני', 'שלישי', 'רביעי', 'חמישי', 'שישי', 'שבת'];
+        const overlappingIds = calculateOverlaps();
 
         container.innerHTML = shifts.map(shift => {
             const hasStart = Boolean(shift.startTime);
@@ -1400,6 +1453,7 @@
             const isIncomplete = !hasStart || !hasEnd;
             const isActive = hasStart && !hasEnd;
             const isSelected = selectedShiftIds.has(shift.id);
+            const isOverlap = overlappingIds.has(shift.id);
 
             const naltStart = Number(shift.naltStartMinutes ?? (shift.naltStartHours ? shift.naltStartHours * 60 : 0)) || 0;
             const naltEnd = Number(shift.naltEndMinutes ?? (shift.naltEndHours ? shift.naltEndHours * 60 : 0)) || 0;
@@ -1424,7 +1478,7 @@
             }
 
             return `
-                <div class="shift-card ${isActive ? 'active-shift' : ''} ${isIncomplete && !isActive ? 'incomplete' : ''} ${isSelected ? 'selected-for-delete' : ''}" 
+                <div class="shift-card ${isActive ? 'active-shift' : ''} ${isOverlap ? 'has-overlap' : ''} ${isIncomplete && !isActive ? 'incomplete' : ''} ${isSelected ? 'selected-for-delete' : ''}" 
                      data-id="${shift.id}" 
                      draggable="${isSortingMode ? 'true' : 'false'}">
                     <div class="shift-header" onclick="handleCardClick('${shift.id}')">
@@ -1450,6 +1504,7 @@
                                 </div>
                             </div>
                             <div class="shift-badges-row">
+                                ${isOverlap ? '<span class="tag tag-overlap">⚠️ חפיפת שעות</span>' : ''}
                                 ${!hasStart ? '<span class="tag tag-alert">✖ חסרה כניסה</span>' : ''}
                                 ${!hasEnd ? '<span class="tag tag-alert">✖ חסרה יציאה</span>' : ''}
                                 ${hasStart && hasEnd ? '<span class="tag tag-complete">✔ הושלמה</span>' : ''}
@@ -1461,6 +1516,15 @@
 
                     <div class="shift-details" id="details_${shift.id}">
                         <div class="details-inner">
+                            ${isOverlap ? `
+                            <div class="sub-breakdown" style="border-color: rgba(234, 179, 8, 0.3);">
+                                <div class="breakdown-item" style="color: var(--accent-yellow); border-bottom: none; padding-bottom: 0;">
+                                    <span class="breakdown-label" style="color: var(--accent-yellow);">שים לב:</span>
+                                    <span class="breakdown-value" style="color: var(--accent-yellow); font-family: 'Assistant', sans-serif;">קיימת חפיפת שעות עם משמרת נוספת</span>
+                                </div>
+                            </div>` : ''}
+
+                            <!-- 1. Main Details Group -->
                             <div class="sub-breakdown">
                                 ${hasSiddur ? `
                                 <div class="breakdown-item">
@@ -1471,6 +1535,15 @@
                                     <span class="breakdown-label">כניסה:</span>
                                     <span class="breakdown-value">${shift.startTime || 'לא הוזן'}</span>
                                 </div>
+                                <div class="breakdown-item">
+                                    <span class="breakdown-label">יציאה:</span>
+                                    <span class="breakdown-value">${shift.endTime || 'לא הוזן'}</span>
+                                </div>
+                            </div>
+
+                            <!-- 2. NALT Group -->
+                            ${hasNalt ? `
+                            <div class="sub-breakdown">
                                 ${naltStart > 0 ? `
                                 <div class="breakdown-item">
                                     <span class="breakdown-label">נל״ת הלוך (${formatMinutesToHM(naltStart)}):</span>
@@ -1481,16 +1554,16 @@
                                     <span class="breakdown-label">נל״ת חזור (${formatMinutesToHM(naltEnd)}):</span>
                                     <span class="breakdown-value">${naltEndRange}</span>
                                 </div>` : ''}
-                                <div class="breakdown-item">
-                                    <span class="breakdown-label">יציאה:</span>
-                                    <span class="breakdown-value">${shift.endTime || 'לא הוזן'}</span>
-                                </div>
-                                ${hasPrem ? `
+                            </div>` : ''}
+
+                            <!-- 3. Premium Group -->
+                            ${hasPrem ? `
+                            <div class="sub-breakdown">
                                 <div class="breakdown-item">
                                     <span class="breakdown-label">פרמיה:</span>
                                     <span class="breakdown-value">${shift.premStartTime} – ${shift.premEndTime}</span>
-                                </div>` : ''}
-                            </div>
+                                </div>
+                            </div>` : ''}
 
                             <div class="card-actions-bar">
                                 <button class="btn-secondary" onclick="openShiftModal('${shift.id}')">עריכה / השלמת חוסר</button>
