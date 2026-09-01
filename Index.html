@@ -22,10 +22,13 @@
             --bg-card-inner: #1a2f60;
             --accent-blue: #0088ff;
             --accent-cyan: #00d2ff;
+            --accent-cyan-dim: rgba(0, 210, 255, 0.7);
             --accent-green: #10b981;
             --accent-orange: #f59e0b;
             --accent-red: #ef4444;
             --accent-yellow: #eab308;
+            --accent-taxi: #facc15;
+            --accent-purple: #c084fc;
             --text-main: #f8fafc;
             --text-muted: #94a3b8;
             --border-color: rgba(255, 255, 255, 0.1);
@@ -64,6 +67,16 @@
             flex-direction: column;
             gap: 16px;
             padding-bottom: 60px;
+        }
+
+        /* Generic inline SVG styling */
+        .svg-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            vertical-align: middle;
+            fill: currentColor;
+            flex-shrink: 0;
         }
 
         header {
@@ -297,7 +310,7 @@
             color: var(--text-muted);
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 8px;
         }
 
         .header-actions-group {
@@ -426,14 +439,6 @@
             display: flex;
         }
 
-        .drag-handle-icon {
-            font-size: 1.4rem;
-            font-weight: 900;
-            line-height: 1;
-            user-select: none;
-            pointer-events: none;
-        }
-
         .select-checkbox-container {
             display: none;
             align-items: center;
@@ -454,78 +459,101 @@
             justify-content: center;
             background: var(--bg-card-inner);
             pointer-events: none;
+            color: transparent;
         }
 
         .selected-for-delete .custom-checkbox {
             background: var(--accent-red);
             border-color: var(--accent-red);
-        }
-
-        .selected-for-delete .custom-checkbox::after {
-            content: '✔';
             color: #fff;
-            font-size: 0.8rem;
-            font-weight: bold;
         }
 
         .shift-content-block {
             flex: 1;
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 10px;
         }
 
+        /* Perfectly Aligned 3-Column Header */
         .shift-row-main {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 8px;
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            align-items: start;
+            width: 100%;
         }
 
         .shift-date-box {
             display: flex;
             flex-direction: column;
-            min-width: fit-content;
+            align-items: flex-start;
+            text-align: right;
+            min-width: 0;
         }
 
         .shift-day-name {
             font-size: 0.95rem;
             font-weight: 700;
             color: var(--text-main);
+            line-height: 1.25;
+            white-space: nowrap;
         }
 
         .shift-formatted-date {
             font-size: 0.8rem;
+            font-weight: 500;
             color: var(--text-muted);
+            line-height: 1.25;
+            margin-top: 2px;
+            font-family: 'Inter', 'Assistant', sans-serif;
+            font-variant-numeric: tabular-nums;
+            white-space: nowrap;
+        }
+
+        /* Center Column for Siddur - Multi-line & Responsive */
+        .shift-middle-box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            min-width: 0;
+            text-align: center;
+            padding: 0 4px;
+        }
+
+        .shift-siddur-primary {
+            font-size: 0.95rem;
+            font-weight: 800;
+            color: var(--accent-cyan);
+            line-height: 1.25;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 100%;
+            direction: ltr;
             font-family: 'Inter', 'Assistant', sans-serif;
             font-variant-numeric: tabular-nums;
         }
 
-        .shift-middle-box {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex: 1;
-            padding: 0 4px;
-        }
-
-        .tag-siddur-top {
-            background: rgba(0, 210, 255, 0.12);
-            color: var(--accent-cyan);
-            border: 1px solid rgba(0, 210, 255, 0.3);
-            font-size: 0.85rem;
-            font-weight: 700;
-            padding: 4px 12px;
-            border-radius: 8px;
-            white-space: normal;
+        .shift-siddur-secondary {
+            font-weight: 600;
+            color: var(--accent-cyan-dim);
+            line-height: 1.15;
+            margin-top: 2px;
             text-align: center;
-            display: inline-block;
-            line-height: 1.2;
+            word-break: break-word;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
         }
 
         .shift-hours-summary {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
             text-align: left;
-            min-width: fit-content;
+            min-width: 0;
         }
 
         .shift-time-range {
@@ -534,15 +562,20 @@
             font-size: 0.95rem;
             font-weight: 700;
             color: #fff;
+            line-height: 1.25;
             direction: ltr;
+            white-space: nowrap;
         }
 
         .shift-total-duration {
             font-size: 0.8rem;
-            font-weight: 600;
-            color: var(--accent-cyan);
+            font-weight: 500;
+            color: var(--text-muted);
+            line-height: 1.25;
+            margin-top: 2px;
             font-family: 'Inter', 'Assistant', sans-serif;
             font-variant-numeric: tabular-nums;
+            white-space: nowrap;
         }
 
         .shift-badges-row {
@@ -555,10 +588,11 @@
         .tag {
             font-size: 0.72rem;
             font-weight: 700;
-            padding: 2px 8px;
+            padding: 3px 8px;
             border-radius: 6px;
             display: inline-flex;
             align-items: center;
+            gap: 4px;
             font-family: 'Inter', 'Assistant', sans-serif;
             font-variant-numeric: tabular-nums;
         }
@@ -569,21 +603,25 @@
             border: 1px solid rgba(234, 179, 8, 0.5);
         }
 
+        /* Taxi-Yellow for NALT */
         .tag-nalt {
-            background: rgba(245, 158, 11, 0.15);
-            color: var(--accent-orange);
-            border: 1px solid rgba(245, 158, 11, 0.3);
+            background: rgba(250, 204, 21, 0.15);
+            color: var(--accent-taxi);
+            border: 1px solid rgba(250, 204, 21, 0.35);
         }
 
+        /* Purple for Premium */
         .tag-prem {
-            background: rgba(0, 136, 255, 0.15);
-            color: var(--accent-cyan);
-            border: 1px solid rgba(0, 136, 255, 0.3);
+            background: rgba(192, 132, 252, 0.15);
+            color: var(--accent-purple);
+            border: 1px solid rgba(192, 132, 252, 0.35);
         }
 
+        /* Completed with matching subtle border */
         .tag-complete {
             background: rgba(16, 185, 129, 0.15);
             color: var(--accent-green);
+            border: 1px solid rgba(16, 185, 129, 0.4);
         }
 
         .tag-alert {
@@ -783,8 +821,10 @@
             border: none;
             color: var(--text-muted);
             cursor: pointer;
-            font-size: 1.6rem;
-            line-height: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 4px;
         }
 
         .card-sub-section {
@@ -801,6 +841,9 @@
             font-weight: 700;
             color: var(--accent-cyan);
             margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
         }
 
         .form-group {
@@ -889,6 +932,86 @@
             border-radius: 16px;
             border: 1px dashed var(--border-color);
         }
+
+        /* Error Dialog Overlay */
+        .error-dialog-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s ease;
+            padding: 20px;
+        }
+
+        .error-dialog-overlay.open {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .error-dialog-card {
+            background: var(--bg-card);
+            border: 1px solid rgba(239, 68, 68, 0.4);
+            border-radius: 20px;
+            padding: 22px 20px;
+            width: 100%;
+            max-width: 380px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            gap: 12px;
+            transform: scale(0.92);
+            transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .error-dialog-overlay.open .error-dialog-card {
+            transform: scale(1);
+        }
+
+        .error-dialog-icon {
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            background: rgba(239, 68, 68, 0.15);
+            color: var(--accent-red);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .error-dialog-title {
+            font-size: 1.15rem;
+            font-weight: 800;
+            color: #fff;
+        }
+
+        .error-dialog-msg {
+            font-size: 0.92rem;
+            color: var(--text-muted);
+            line-height: 1.45;
+        }
+
+        .btn-error-close {
+            width: 100%;
+            background: var(--accent-red);
+            color: #fff;
+            padding: 12px;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            font-weight: 700;
+            border: none;
+            cursor: pointer;
+            margin-top: 6px;
+        }
     </style>
 </head>
 <body>
@@ -969,11 +1092,21 @@
             <button id="btnEndShift" class="btn-action btn-end" onclick="handleLiveEnd()">יציאה ממשמרת</button>
         </div>
 
-        <button class="manual-entry-btn" onclick="openShiftModal(null)">+ הוספת / עריכת משמרת ידנית</button>
+        <button class="manual-entry-btn" onclick="openShiftModal(null)">
+            <svg class="svg-icon" width="16" height="16" viewBox="0 0 24 24">
+                <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+            </svg>
+            הוספת / עריכת משמרת ידנית
+        </button>
     </div>
 
     <div class="section-header">
-        <div class="section-title">📋 היסטוריית משמרות</div>
+        <div class="section-title">
+            <svg class="svg-icon" width="18" height="18" viewBox="0 0 24 24">
+                <path d="M19 3h-4.18C14.4 1.84 13.3 1 12 1c-1.3 0-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm2 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/>
+            </svg>
+            היסטוריית משמרות
+        </div>
         <div class="header-actions-group">
             <button id="btnToggleSorting" class="btn-text-action" onclick="toggleSortingMode()">מיון</button>
             <button id="btnToggleSelection" class="btn-text-action" onclick="toggleSelectionMode()">בחירה</button>
@@ -1001,11 +1134,16 @@
     <div id="shiftsContainer" class="shifts-list"></div>
 </div>
 
+<!-- Shift Modal Form -->
 <div class="modal-overlay" id="shiftModal">
     <div class="modal-sheet">
         <div class="modal-header">
             <h2 class="modal-title" id="modalTitle">פרטי משמרת</h2>
-            <button class="btn-close" onclick="closeModal()">&times;</button>
+            <button class="btn-close" onclick="closeModal()">
+                <svg class="svg-icon" width="22" height="22" viewBox="0 0 24 24">
+                    <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+                </svg>
+            </button>
         </div>
 
         <div>
@@ -1013,7 +1151,12 @@
 
             <!-- General Details Section -->
             <div class="card-sub-section">
-                <div class="card-sub-title">📝 פרטי המשמרת</div>
+                <div class="card-sub-title">
+                    <svg class="svg-icon" width="16" height="16" viewBox="0 0 24 24">
+                        <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
+                    </svg>
+                    פרטי המשמרת
+                </div>
                 <div class="form-group">
                     <label class="form-label">סידור</label>
                     <input type="text" id="fieldSiddur" class="form-control" placeholder="סידור / מספר רכבת">
@@ -1038,7 +1181,14 @@
 
             <!-- NALT Section -->
             <div class="card-sub-section">
-                <div class="card-sub-title">🚗 נל״ת (נסיעה ללא תפקיד - אופציונלי)</div>
+                <div class="card-sub-title">
+                    <svg class="svg-icon" width="16" height="16" viewBox="0 0 24 24">
+                        <path d="M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11c-.66 0-1.21.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99zM6.85 7h10.29l1.04 3H5.81l1.04-3zM19 17H5v-4.66l.12-.34h13.77l.11.34V17z"/>
+                        <circle cx="7.5" cy="14.5" r="1.5"/>
+                        <circle cx="16.5" cy="14.5" r="1.5"/>
+                    </svg>
+                    נל״ת (נסיעה ללא תפקיד - אופציונלי)
+                </div>
                 <div class="form-row">
                     <div class="form-group">
                         <label class="form-label">נל״ת הלוך</label>
@@ -1075,7 +1225,12 @@
 
             <!-- Premium Section -->
             <div class="card-sub-section">
-                <div class="card-sub-title">⭐ פרמיה (אופציונלי)</div>
+                <div class="card-sub-title">
+                    <svg class="svg-icon" width="16" height="16" viewBox="0 0 24 24">
+                        <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/>
+                    </svg>
+                    פרמיה (אופציונלי)
+                </div>
                 <div class="form-row">
                     <div class="form-group">
                         <label class="form-label">משעה</label>
@@ -1090,6 +1245,20 @@
 
             <button type="button" class="btn-save-modal" onclick="saveShiftDirect()">שמור משמרת</button>
         </div>
+    </div>
+</div>
+
+<!-- Custom Error Dialog -->
+<div class="error-dialog-overlay" id="errorDialog">
+    <div class="error-dialog-card">
+        <div class="error-dialog-icon">
+            <svg class="svg-icon" width="28" height="28" viewBox="0 0 24 24">
+                <path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/>
+            </svg>
+        </div>
+        <div class="error-dialog-title">שגיאה בנתוני הפרמיה</div>
+        <div class="error-dialog-msg" id="errorDialogMessage">שעות הפרמיה חייבות להיות בתוך טווח שעות המשמרת בלבד.</div>
+        <button type="button" class="btn-error-close" onclick="closeErrorDialog()">הבנתי</button>
     </div>
 </div>
 
@@ -1469,7 +1638,12 @@
         const [h2, m2] = end.split(':').map(Number);
         let diff = (h2 * 60 + m2) - (h1 * 60 + m1);
         if (diff < 0) diff += 1440;
-        return `${Math.floor(diff / 60)} שעות ו-${diff % 60} דק׳`;
+        const hours = Math.floor(diff / 60);
+        const mins = diff % 60;
+        if (hours === 0 && mins === 0) return '0 דק׳';
+        if (mins === 0) return `${hours} שעות`;
+        if (hours === 0) return `${mins} דק׳`;
+        return `${hours} שעות ו-${mins} דק׳`;
     }
 
     function calculateDurationMinutes(start, end) {
@@ -1479,6 +1653,21 @@
         let diff = (h2 * 60 + m2) - (h1 * 60 + m1);
         if (diff < 0) diff += 1440;
         return diff;
+    }
+
+    function parseSiddurDisplay(siddur) {
+        if (!siddur || !siddur.trim()) return { primary: '', secondary: '' };
+        const text = siddur.trim();
+        const numPattern = /(\d+(?:[-/]\d+)*)/;
+        const match = text.match(numPattern);
+
+        if (match) {
+            const primary = match[1];
+            const secondary = text.replace(match[1], '').replace(/\s+/g, ' ').trim();
+            return { primary, secondary };
+        } else {
+            return { primary: text, secondary: '' };
+        }
     }
 
     function handleNaltSelectChange(type) {
@@ -1516,6 +1705,15 @@
             return parseInputToMinutes(customInput.value);
         }
         return Number(select.value) || 0;
+    }
+
+    function showErrorDialog(msg) {
+        document.getElementById('errorDialogMessage').textContent = msg;
+        document.getElementById('errorDialog').classList.add('open');
+    }
+
+    function closeErrorDialog() {
+        document.getElementById('errorDialog').classList.remove('open');
     }
 
     function toggleSelectionMode() {
@@ -1754,6 +1952,16 @@
             const hasPrem = Boolean(shift.premStartTime && shift.premEndTime);
             const hasSiddur = Boolean(shift.siddur && shift.siddur.trim());
 
+            const { primary: siddurPrimary, secondary: siddurSecondary } = parseSiddurDisplay(shift.siddur);
+
+            // Dynamic font sizing for secondary text based on length
+            let secFontSize = '0.78rem';
+            if (siddurSecondary.length > 22) {
+                secFontSize = '0.62rem';
+            } else if (siddurSecondary.length > 14) {
+                secFontSize = '0.70rem';
+            }
+
             const premDurationMins = hasPrem ? calculateDurationMinutes(shift.premStartTime, shift.premEndTime) : 0;
 
             const parts = (shift.date || '').split('-');
@@ -1777,10 +1985,18 @@
                      draggable="${isSortingMode ? 'true' : 'false'}">
                     <div class="shift-header" onclick="handleCardClick('${shiftIdStr}')">
                         <div class="drag-handle-container">
-                            <span class="drag-handle-icon">☰</span>
+                            <svg class="svg-icon" width="20" height="20" viewBox="0 0 24 24" style="color: var(--text-muted);">
+                                <circle cx="9" cy="6" r="1.5"/><circle cx="15" cy="6" r="1.5"/>
+                                <circle cx="9" cy="12" r="1.5"/><circle cx="15" cy="12" r="1.5"/>
+                                <circle cx="9" cy="18" r="1.5"/><circle cx="15" cy="18" r="1.5"/>
+                            </svg>
                         </div>
                         <div class="select-checkbox-container">
-                            <div class="custom-checkbox"></div>
+                            <div class="custom-checkbox">
+                                <svg class="svg-icon" width="14" height="14" viewBox="0 0 24 24">
+                                    <path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/>
+                                </svg>
+                            </div>
                         </div>
                         <div class="shift-content-block">
                             <div class="shift-row-main">
@@ -1788,22 +2004,60 @@
                                     <span class="shift-day-name">${dayName}</span>
                                     <span class="shift-formatted-date">${dateFmt}</span>
                                 </div>
-                                ${hasSiddur ? `
                                 <div class="shift-middle-box">
-                                    <span class="tag-siddur-top">${shift.siddur}</span>
-                                </div>` : ''}
+                                    ${hasSiddur ? `
+                                    <span class="shift-siddur-primary" style="${siddurPrimary.length > 10 ? 'font-size: 0.85rem;' : ''}">${siddurPrimary}</span>
+                                    ${siddurSecondary ? `<span class="shift-siddur-secondary" style="font-size: ${secFontSize};">${siddurSecondary}</span>` : ''}
+                                    ` : ''}
+                                </div>
                                 <div class="shift-hours-summary">
                                     <div class="shift-time-range">${shift.startTime || '--:--'} - ${shift.endTime || '--:--'}</div>
                                     <div class="shift-total-duration">${calculateDuration(shift.startTime, shift.endTime)}</div>
                                 </div>
                             </div>
                             <div class="shift-badges-row">
-                                ${isOverlap ? '<span class="tag tag-overlap">⚠️ חפיפת שעות</span>' : ''}
-                                ${!hasStart ? '<span class="tag tag-alert">✖ חסרה כניסה</span>' : ''}
-                                ${!hasEnd ? '<span class="tag tag-alert">✖ חסרה יציאה</span>' : ''}
-                                ${hasStart && hasEnd ? '<span class="tag tag-complete">✔ הושלמה</span>' : ''}
-                                ${hasNalt ? `<span class="tag tag-nalt">נל״ת: ${formatMinutesToHM(totalNaltMins)}</span>` : ''}
-                                ${hasPrem ? '<span class="tag tag-prem">פרמיה</span>' : ''}
+                                ${isOverlap ? `
+                                <span class="tag tag-overlap">
+                                    <svg class="svg-icon" width="13" height="13" viewBox="0 0 24 24">
+                                        <path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/>
+                                    </svg>
+                                    חפיפת שעות
+                                </span>` : ''}
+                                ${!hasStart ? `
+                                <span class="tag tag-alert">
+                                    <svg class="svg-icon" width="13" height="13" viewBox="0 0 24 24">
+                                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 13.59L15.59 17 12 13.41 8.41 17 7 15.59 10.59 12 7 8.41 8.41 7 12 10.59 15.59 7 17 8.41 13.41 12 17 15.59z"/>
+                                    </svg>
+                                    חסרה כניסה
+                                </span>` : ''}
+                                ${!hasEnd ? `
+                                <span class="tag tag-alert">
+                                    <svg class="svg-icon" width="13" height="13" viewBox="0 0 24 24">
+                                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 13.59L15.59 17 12 13.41 8.41 17 7 15.59 10.59 12 7 8.41 8.41 7 12 10.59 15.59 7 17 8.41 13.41 12 17 15.59z"/>
+                                    </svg>
+                                    חסרה יציאה
+                                </span>` : ''}
+                                ${hasStart && hasEnd ? `
+                                <span class="tag tag-complete">
+                                    <svg class="svg-icon" width="13" height="13" viewBox="0 0 24 24">
+                                        <path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/>
+                                    </svg>
+                                    הושלמה
+                                </span>` : ''}
+                                ${hasNalt ? `
+                                <span class="tag tag-nalt">
+                                    <svg class="svg-icon" width="13" height="13" viewBox="0 0 24 24">
+                                        <path d="M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11c-.66 0-1.21.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99zM6.85 7h10.29l1.04 3H5.81l1.04-3zM19 17H5v-4.66l.12-.34h13.77l.11.34V17z"/>
+                                    </svg>
+                                    נל״ת: ${formatMinutesToHM(totalNaltMins)}
+                                </span>` : ''}
+                                ${hasPrem ? `
+                                <span class="tag tag-prem">
+                                    <svg class="svg-icon" width="12" height="12" viewBox="0 0 24 24">
+                                        <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/>
+                                    </svg>
+                                    פרמיה
+                                </span>` : ''}
                             </div>
                         </div>
                     </div>
@@ -1813,7 +2067,10 @@
                             ${isOverlap ? `
                             <div class="sub-breakdown" style="border-color: rgba(234, 179, 8, 0.3);">
                                 <div class="breakdown-item" style="color: var(--accent-yellow); border-bottom: none; padding-bottom: 0;">
-                                    <span class="breakdown-label" style="color: var(--accent-yellow);">שים לב:</span>
+                                    <span class="breakdown-label" style="color: var(--accent-yellow); display: flex; align-items: center; gap: 4px;">
+                                        <svg class="svg-icon" width="14" height="14" viewBox="0 0 24 24"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/></svg>
+                                        שים לב:
+                                    </span>
                                     <span class="breakdown-value" style="color: var(--accent-yellow); font-family: 'Assistant', sans-serif;">קיימת חפיפת שעות עם משמרת נוספת</span>
                                 </div>
                             </div>` : ''}
@@ -1922,6 +2179,38 @@
         document.getElementById('shiftModal').classList.remove('open');
     }
 
+    function timeToMinutes(timeStr) {
+        if (!timeStr) return 0;
+        const [h, m] = timeStr.split(':').map(Number);
+        return h * 60 + m;
+    }
+
+    function validatePremiumRange(shiftStart, shiftEnd, premStart, premEnd) {
+        if (!premStart && !premEnd) return { valid: true };
+        if (premStart && !premEnd) return { valid: false, error: 'יש להזין גם שעת סיום לפרמיה.' };
+        if (!premStart && premEnd) return { valid: false, error: 'יש להזין גם שעת התחלה לפרמיה.' };
+        if (!shiftStart || !shiftEnd) return { valid: false, error: 'יש להגדיר שעת כניסה ויציאה למשמרת כדי להוסיף פרמיה.' };
+
+        const sStart = timeToMinutes(shiftStart);
+        let sEnd = timeToMinutes(shiftEnd);
+        if (sEnd <= sStart) sEnd += 1440; // overnight shift
+
+        let pStart = timeToMinutes(premStart);
+        let pEnd = timeToMinutes(premEnd);
+
+        if (pStart < sStart && pStart + 1440 <= sEnd) pStart += 1440;
+        if (pEnd <= pStart) pEnd += 1440;
+
+        if (pStart < sStart || pEnd > sEnd) {
+            return {
+                valid: false,
+                error: `שעות הפרמיה (${premStart} - ${premEnd}) חורגות מגבולות המשמרת (${shiftStart} - ${shiftEnd}). יש להזין זמנים בתוך טווח המשמרת בלבד.`
+            };
+        }
+
+        return { valid: true };
+    }
+
     function saveShiftDirect() {
         const editId = document.getElementById('editShiftId').value;
         const siddurVal = document.getElementById('fieldSiddur').value.trim();
@@ -1940,6 +2229,13 @@
         const naltEndVal = getNaltFieldValue('End');
         const premStartVal = document.getElementById('fieldPremStart').value || '';
         const premEndVal = document.getElementById('fieldPremEnd').value || '';
+
+        // Validation for Premium bounds
+        const validation = validatePremiumRange(startVal, endVal, premStartVal, premEndVal);
+        if (!validation.valid) {
+            showErrorDialog(validation.error);
+            return;
+        }
 
         if (editId) {
             const index = shifts.findIndex(s => String(s.id) === String(editId));
