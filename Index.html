@@ -2027,10 +2027,9 @@
             if (currentView === 'history') renderShifts();
             else renderRecentShifts();
         } else {
-            const el = document.getElementById('details_' + stringId);
-            if (el) {
-                el.classList.toggle('expanded');
-            }
+            // Find all matching detail blocks across views and toggle them together
+            const detailsEls = document.querySelectorAll('.shift-details[id="details_' + stringId + '"]');
+            detailsEls.forEach(el => el.classList.toggle('expanded'));
         }
     }
 
@@ -2056,7 +2055,8 @@
             shifts = shifts.filter(s => !selectedShiftIds.has(String(s.id)));
             selectedShiftIds.clear();
             saveShifts();
-            toggleSelectionMode();
+            if (currentView === 'history') renderShifts();
+            else renderRecentShifts();
         }
     }
 
