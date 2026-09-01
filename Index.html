@@ -740,8 +740,9 @@
             transition: opacity 0.2s ease;
         }
 
-        .modal-overlay.open .modal-sheet {
-            transform: translateY(0);
+        .modal-overlay.open {
+            opacity: 1;
+            pointer-events: auto;
         }
 
         .modal-sheet {
@@ -756,6 +757,10 @@
             transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
             max-height: 90vh;
             overflow-y: auto;
+        }
+
+        .modal-overlay.open .modal-sheet {
+            transform: translateY(0);
         }
 
         .modal-header {
@@ -1332,7 +1337,7 @@
                 endEpoch = Date.now();
             }
 
-            intervals.push({ id: shift.id, start: startEpoch, end: endEpoch });
+            intervals.push({ id: String(shift.id), start: startEpoch, end: endEpoch });
         });
 
         for (let i = 0; i < intervals.length; i++) {
@@ -1340,8 +1345,8 @@
                 const a = intervals[i];
                 const b = intervals[j];
                 if (Math.max(a.start, b.start) < Math.min(a.end, b.end)) {
-                    overlappingIds.add(a.id);
-                    overlappingIds.add(b.id);
+                    overlappingIds.add(String(a.id));
+                    overlappingIds.add(String(b.id));
                 }
             }
         }
@@ -1571,7 +1576,7 @@
 
         cardElements.forEach(card => {
             const shiftId = card.getAttribute('data-id');
-            const found = shifts.find(s => s.id === shiftId);
+            const found = shifts.find(s => String(s.id) === String(shiftId));
             if (found) newOrderedShifts.push(found);
         });
 
@@ -1586,16 +1591,17 @@
     function handleCardClick(id) {
         if (isSortingMode) return;
 
+        const stringId = String(id);
         if (isSelectionMode) {
-            if (selectedShiftIds.has(id)) {
-                selectedShiftIds.delete(id);
+            if (selectedShiftIds.has(stringId)) {
+                selectedShiftIds.delete(stringId);
             } else {
-                selectedShiftIds.add(id);
+                selectedShiftIds.add(stringId);
             }
             updateSelectionUI();
             renderShifts();
         } else {
-            const el = document.getElementById('details_' + id);
+            const el = document.getElementById('details_' + stringId);
             if (el) {
                 el.classList.toggle('expanded');
             }
@@ -1611,7 +1617,7 @@
         if (selectedShiftIds.size === shifts.length) {
             selectedShiftIds.clear();
         } else {
-            shifts.forEach(s => selectedShiftIds.add(s.id));
+            shifts.forEach(s => selectedShiftIds.add(String(s.id)));
         }
         updateSelectionUI();
         renderShifts();
@@ -1621,7 +1627,7 @@
         if (selectedShiftIds.size === 0) return;
         
         if (confirm(`האם למחוק ${selectedShiftIds.size} משמרות שנבחרו?`)) {
-            shifts = shifts.filter(s => !selectedShiftIds.has(s.id));
+            shifts = shifts.filter(s => !selectedShiftIds.has(String(s.id)));
             selectedShiftIds.clear();
             saveShifts();
             toggleSelectionMode();
@@ -1733,12 +1739,13 @@
         const overlappingIds = calculateOverlaps();
 
         container.innerHTML = shifts.map(shift => {
+            const shiftIdStr = String(shift.id);
             const hasStart = Boolean(shift.startTime);
             const hasEnd = Boolean(shift.endTime);
             const isIncomplete = !hasStart || !hasEnd;
             const isActive = hasStart && !hasEnd;
-            const isSelected = selectedShiftIds.has(shift.id);
-            const isOverlap = overlappingIds.has(shift.id);
+            const isSelected = selectedShiftIds.has(shiftIdStr);
+            const isOverlap = overlappingIds.has(shiftIdStr);
 
             const naltStart = Number(shift.naltStartMinutes ?? (shift.naltStartHours ? shift.naltStartHours * 60 : 0)) || 0;
             const naltEnd = Number(shift.naltEndMinutes ?? (shift.naltEndHours ? shift.naltEndHours * 60 : 0)) || 0;
@@ -1749,10 +1756,10 @@
 
             const premDurationMins = hasPrem ? calculateDurationMinutes(shift.premStartTime, shift.premEndTime) : 0;
 
-            const parts = shift.date.split('-');
-            const dObj = new Date(parts[0], parts[1] - 1, parts[2]);
+            const parts = (shift.date || '').split('-');
+            const dObj = parts.length === 3 ? new Date(parts[0], parts[1] - 1, parts[2]) : new Date();
             const dayName = 'יום ' + daysArr[dObj.getDay()];
-            const dateFmt = `${parts[2]}/${parts[1]}/${parts[0]}`;
+            const dateFmt = parts.length === 3 ? `${parts[2]}/${parts[1]}/${parts[0]}` : '--/--/----';
 
             let naltStartRange = '';
             if (hasStart && naltStart > 0) {
@@ -1766,9 +1773,9 @@
 
             return `
                 <div class="shift-card ${isActive ? 'active-shift' : ''} ${isOverlap ? 'has-overlap' : ''} ${isIncomplete && !isActive ? 'incomplete' : ''} ${isSelected ? 'selected-for-delete' : ''}" 
-                     data-id="${shift.id}" 
+                     data-id="${shiftIdStr}" 
                      draggable="${isSortingMode ? 'true' : 'false'}">
-                    <div class="shift-header" onclick="handleCardClick('${shift.id}')">
+                    <div class="shift-header" onclick="handleCardClick('${shiftIdStr}')">
                         <div class="drag-handle-container">
                             <span class="drag-handle-icon">☰</span>
                         </div>
@@ -1801,7 +1808,7 @@
                         </div>
                     </div>
 
-                    <div class="shift-details" id="details_${shift.id}">
+                    <div class="shift-details" id="details_${shiftIdStr}">
                         <div class="details-inner">
                             ${isOverlap ? `
                             <div class="sub-breakdown" style="border-color: rgba(234, 179, 8, 0.3);">
@@ -1857,8 +1864,8 @@
                             </div>` : ''}
 
                             <div class="card-actions-bar">
-                                <button class="btn-secondary" onclick="openShiftModal('${shift.id}')">עריכה / השלמת חוסר</button>
-                                <button class="btn-secondary btn-danger-outline" onclick="deleteShift('${shift.id}')">מחיקה</button>
+                                <button class="btn-secondary" onclick="event.stopPropagation(); openShiftModal('${shiftIdStr}')">עריכה / השלמת חוסר</button>
+                                <button class="btn-secondary btn-danger-outline" onclick="event.stopPropagation(); deleteShift('${shiftIdStr}')">מחיקה</button>
                             </div>
                         </div>
                     </div>
@@ -1874,12 +1881,12 @@
         const title = document.getElementById('modalTitle');
 
         if (shiftId) {
-            const shift = shifts.find(s => s.id === shiftId);
+            const shift = shifts.find(s => String(s.id) === String(shiftId));
             if (!shift) return;
             title.textContent = 'עריכת משמרת';
-            document.getElementById('editShiftId').value = shift.id;
+            document.getElementById('editShiftId').value = String(shift.id);
             document.getElementById('fieldSiddur').value = shift.siddur || '';
-            document.getElementById('fieldDate').value = shift.date;
+            document.getElementById('fieldDate').value = shift.date || '';
             document.getElementById('fieldStartTime').value = shift.startTime || '';
             document.getElementById('fieldEndTime').value = shift.endTime || '';
             
@@ -1935,7 +1942,7 @@
         const premEndVal = document.getElementById('fieldPremEnd').value || '';
 
         if (editId) {
-            const index = shifts.findIndex(s => s.id === editId);
+            const index = shifts.findIndex(s => String(s.id) === String(editId));
             if (index !== -1) {
                 shifts[index] = {
                     ...shifts[index],
@@ -1972,7 +1979,7 @@
 
     function deleteShift(id) {
         if (confirm('האם למחוק משמרת זו מהיומן?')) {
-            shifts = shifts.filter(s => !selectedShiftIds.has(s.id) && s.id !== id);
+            shifts = shifts.filter(s => !selectedShiftIds.has(String(s.id)) && String(s.id) !== String(id));
             saveShifts();
             renderShifts();
         }
