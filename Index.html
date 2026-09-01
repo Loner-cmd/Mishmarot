@@ -264,6 +264,11 @@
             gap: 6px;
         }
 
+        .header-actions-group {
+            display: flex;
+            gap: 8px;
+        }
+
         .btn-text-action {
             background: rgba(255, 255, 255, 0.08);
             border: 1px solid var(--border-color);
@@ -273,6 +278,10 @@
             padding: 6px 14px;
             border-radius: 20px;
             cursor: pointer;
+        }
+
+        .btn-text-action:active {
+            background: rgba(0, 136, 255, 0.2);
         }
 
         .selection-toolbar {
@@ -314,6 +323,11 @@
             color: #fff;
         }
 
+        .btn-toolbar-save {
+            background: var(--accent-green);
+            color: #fff;
+        }
+
         .shifts-list {
             display: flex;
             flex-direction: column;
@@ -326,7 +340,8 @@
             border: 1px solid var(--border-color);
             overflow: hidden;
             box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-            transition: border-color 0.2s;
+            transition: border-color 0.2s, transform 0.15s;
+            user-select: none;
         }
 
         .shift-card.active-shift {
@@ -338,12 +353,41 @@
             background: rgba(239, 68, 68, 0.08);
         }
 
+        .shift-card.dragging {
+            opacity: 0.4;
+            border: 2px dashed var(--accent-cyan);
+            transform: scale(0.98);
+        }
+
+        .shift-card.drag-over {
+            border-top: 3px solid var(--accent-cyan);
+        }
+
         .shift-header {
             padding: 14px 16px;
             cursor: pointer;
             display: flex;
             align-items: center;
             gap: 12px;
+        }
+
+        .drag-handle-container {
+            display: none;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            cursor: grab;
+            padding: 4px;
+        }
+
+        .mode-sorting .drag-handle-container {
+            display: flex;
+        }
+
+        .drag-handle-icon {
+            font-size: 1.3rem;
+            font-weight: 900;
+            line-height: 1;
         }
 
         .select-checkbox-container {
@@ -780,14 +824,27 @@
 
     <div class="section-header">
         <div class="section-title">📋 היסטוריית משמרות</div>
-        <button id="btnToggleSelection" class="btn-text-action" onclick="toggleSelectionMode()">בחירה</button>
+        <div class="header-actions-group">
+            <button id="btnToggleSorting" class="btn-text-action" onclick="toggleSortingMode()">מיון</button>
+            <button id="btnToggleSelection" class="btn-text-action" onclick="toggleSelectionMode()">בחירה</button>
+        </div>
     </div>
 
+    <!-- Selection Toolbar -->
     <div id="selectionToolbar" class="selection-toolbar">
         <span id="selectedCountText" style="font-size: 0.85rem; font-weight: 700; color: var(--accent-cyan);">0 נבחרו</span>
         <div class="toolbar-buttons">
             <button class="btn-toolbar btn-toolbar-select" onclick="selectAllShifts()">בחר הכל</button>
             <button class="btn-toolbar btn-toolbar-delete" onclick="deleteSelectedShifts()">מחק נבחרים</button>
+        </div>
+    </div>
+
+    <!-- Sorting Toolbar -->
+    <div id="sortingToolbar" class="selection-toolbar">
+        <span style="font-size: 0.85rem; font-weight: 700; color: var(--accent-cyan);">גרור לסידור מחדש</span>
+        <div class="toolbar-buttons">
+            <button class="btn-toolbar btn-toolbar-select" onclick="sortShiftsByDate()">איפוס לתאריכים</button>
+            <button class="btn-toolbar btn-toolbar-save" onclick="saveManualSorting()">שמור סדר</button>
         </div>
     </div>
 
@@ -804,6 +861,7 @@
         <div>
             <input type="hidden" id="editShiftId">
 
+            <!-- General Details Section -->
             <div class="card-sub-section">
                 <div class="card-sub-title">📝 פרטי המשמרת</div>
                 <div class="form-group">
@@ -828,6 +886,7 @@
                 </div>
             </div>
 
+            <!-- NALT Section -->
             <div class="card-sub-section">
                 <div class="card-sub-title">🚗 נל״ת (נסיעה ללא תפקיד - אופציונלי)</div>
                 <div class="form-row">
@@ -864,6 +923,7 @@
                 </div>
             </div>
 
+            <!-- Premium Section -->
             <div class="card-sub-section">
                 <div class="card-sub-title">⭐ פרמיה (אופציונלי)</div>
                 <div class="form-row">
@@ -886,7 +946,9 @@
 <script>
     let shifts = JSON.parse(localStorage.getItem('railway_shifts') || '[]');
     let isSelectionMode = false;
+    let isSortingMode = false;
     let selectedShiftIds = new Set();
+    let draggedElement = null;
 
     const PRESET_NALT_MINUTES = [0, 30, 40, 45, 60, 90, 150, 270];
 
@@ -945,6 +1007,19 @@
         }
     }
 
+    function autoSortShiftsArray(arr) {
+        arr.sort((a, b) => {
+            const dateA = a.date || '';
+            const dateB = b.date || '';
+            if (dateA !== dateB) {
+                return dateB.localeCompare(dateA); // Newer date first
+            }
+            const timeA = a.startTime || '00:00';
+            const timeB = b.startTime || '00:00';
+            return timeB.localeCompare(timeA);
+        });
+    }
+
     function handleLiveStart() {
         const now = new Date();
         const y = now.getFullYear();
@@ -966,6 +1041,7 @@
         };
 
         shifts.unshift(newShift);
+        autoSortShiftsArray(shifts);
         saveShifts();
         renderShifts();
     }
@@ -995,6 +1071,7 @@
             shifts.unshift(newShift);
         }
 
+        autoSortShiftsArray(shifts);
         saveShifts();
         renderShifts();
     }
@@ -1099,6 +1176,8 @@
     }
 
     function toggleSelectionMode() {
+        if (isSortingMode) toggleSortingMode();
+
         isSelectionMode = !isSelectionMode;
         selectedShiftIds.clear();
         
@@ -1120,7 +1199,55 @@
         renderShifts();
     }
 
+    function toggleSortingMode() {
+        if (isSelectionMode) toggleSelectionMode();
+
+        isSortingMode = !isSortingMode;
+        const btn = document.getElementById('btnToggleSorting');
+        const toolbar = document.getElementById('sortingToolbar');
+        const container = document.getElementById('shiftsContainer');
+
+        if (isSortingMode) {
+            btn.textContent = 'ביטול';
+            toolbar.classList.add('active');
+            container.classList.add('mode-sorting');
+        } else {
+            btn.textContent = 'מיון';
+            toolbar.classList.remove('active');
+            container.classList.remove('mode-sorting');
+        }
+
+        renderShifts();
+    }
+
+    function sortShiftsByDate() {
+        autoSortShiftsArray(shifts);
+        saveShifts();
+        renderShifts();
+    }
+
+    function saveManualSorting() {
+        const container = document.getElementById('shiftsContainer');
+        const cardElements = Array.from(container.querySelectorAll('.shift-card'));
+        const newOrderedShifts = [];
+
+        cardElements.forEach(card => {
+            const shiftId = card.getAttribute('data-id');
+            const found = shifts.find(s => s.id === shiftId);
+            if (found) newOrderedShifts.push(found);
+        });
+
+        if (newOrderedShifts.length === shifts.length) {
+            shifts = newOrderedShifts;
+            saveShifts();
+        }
+
+        toggleSortingMode();
+    }
+
     function handleCardClick(id) {
+        if (isSortingMode) return;
+
         if (isSelectionMode) {
             if (selectedShiftIds.has(id)) {
                 selectedShiftIds.delete(id);
@@ -1161,6 +1288,92 @@
             saveShifts();
             toggleSelectionMode();
         }
+    }
+
+    // Drag and Drop implementation (HTML5 + Mobile Touch)
+    function setupDragAndDrop() {
+        const container = document.getElementById('shiftsContainer');
+        const cards = container.querySelectorAll('.shift-card');
+
+        cards.forEach(card => {
+            card.addEventListener('dragstart', (e) => {
+                if (!isSortingMode) return;
+                draggedElement = card;
+                card.classList.add('dragging');
+                e.dataTransfer.effectAllowed = 'move';
+            });
+
+            card.addEventListener('dragend', () => {
+                if (!isSortingMode) return;
+                card.classList.remove('dragging');
+                cards.forEach(c => c.classList.remove('drag-over'));
+                draggedElement = null;
+            });
+
+            card.addEventListener('dragover', (e) => {
+                if (!isSortingMode || !draggedElement || draggedElement === card) return;
+                e.preventDefault();
+                card.classList.add('drag-over');
+            });
+
+            card.addEventListener('dragleave', () => {
+                card.classList.remove('drag-over');
+            });
+
+            card.addEventListener('drop', (e) => {
+                if (!isSortingMode || !draggedElement || draggedElement === card) return;
+                e.preventDefault();
+                card.classList.remove('drag-over');
+
+                const allCards = [...container.querySelectorAll('.shift-card')];
+                const draggedIdx = allCards.indexOf(draggedElement);
+                const targetIdx = allCards.indexOf(card);
+
+                if (draggedIdx < targetIdx) {
+                    container.insertBefore(draggedElement, card.nextSibling);
+                } else {
+                    container.insertBefore(draggedElement, card);
+                }
+            });
+
+            // Touch support for mobile devices
+            const handle = card.querySelector('.drag-handle-container');
+            if (handle) {
+                let initialY = 0;
+                let activeTouchCard = null;
+
+                handle.addEventListener('touchstart', (e) => {
+                    if (!isSortingMode) return;
+                    activeTouchCard = card;
+                    card.classList.add('dragging');
+                    initialY = e.touches[0].clientY;
+                }, { passive: true });
+
+                handle.addEventListener('touchmove', (e) => {
+                    if (!isSortingMode || !activeTouchCard) return;
+                    const touch = e.touches[0];
+                    const targetEl = document.elementFromPoint(touch.clientX, touch.clientY);
+                    const targetCard = targetEl ? targetEl.closest('.shift-card') : null;
+
+                    if (targetCard && targetCard !== activeTouchCard && container.contains(targetCard)) {
+                        const targetRect = targetCard.getBoundingClientRect();
+                        const isAfter = touch.clientY > targetRect.top + targetRect.height / 2;
+                        if (isAfter) {
+                            container.insertBefore(activeTouchCard, targetCard.nextSibling);
+                        } else {
+                            container.insertBefore(activeTouchCard, targetCard);
+                        }
+                    }
+                }, { passive: true });
+
+                handle.addEventListener('touchend', () => {
+                    if (activeTouchCard) {
+                        activeTouchCard.classList.remove('dragging');
+                        activeTouchCard = null;
+                    }
+                });
+            }
+        });
     }
 
     function renderShifts() {
@@ -1206,8 +1419,13 @@
             }
 
             return `
-                <div class="shift-card ${isActive ? 'active-shift' : ''} ${isIncomplete && !isActive ? 'incomplete' : ''} ${isSelected ? 'selected-for-delete' : ''}">
+                <div class="shift-card ${isActive ? 'active-shift' : ''} ${isIncomplete && !isActive ? 'incomplete' : ''} ${isSelected ? 'selected-for-delete' : ''}" 
+                     data-id="${shift.id}" 
+                     draggable="${isSortingMode ? 'true' : 'false'}">
                     <div class="shift-header" onclick="handleCardClick('${shift.id}')">
+                        <div class="drag-handle-container">
+                            <span class="drag-handle-icon">☰</span>
+                        </div>
                         <div class="select-checkbox-container">
                             <div class="custom-checkbox"></div>
                         </div>
@@ -1241,7 +1459,7 @@
                             <div class="sub-breakdown">
                                 ${hasSiddur ? `
                                 <div class="breakdown-item">
-                                    <span class="breakdown-label">סידור / הערה:</span>
+                                    <span class="breakdown-label">סידור:</span>
                                     <span class="breakdown-value" style="direction: rtl;">${shift.siddur}</span>
                                 </div>` : ''}
                                 <div class="breakdown-item">
@@ -1278,6 +1496,8 @@
                 </div>
             `;
         }).join('');
+
+        setupDragAndDrop();
     }
 
     function openShiftModal(shiftId) {
@@ -1375,6 +1595,7 @@
             shifts.unshift(newShift);
         }
 
+        autoSortShiftsArray(shifts);
         saveShifts();
         renderShifts();
         closeModal();
