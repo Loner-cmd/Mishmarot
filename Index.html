@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>רכבת ישראל - יומן משמרות קטר</title>
+    <title>רכבת ישראל - יומן משמרות</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;600;700;800&family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
             --bg-primary: #0b1329;
@@ -117,6 +117,8 @@
         }
 
         .status-badge.idle {
+            background: rgba(148, 163, 184, 0.08);
+            border-color: rgba(148, 163, 184, 0.2);
             color: var(--text-muted);
         }
 
@@ -129,13 +131,14 @@
         }
 
         .status-badge.active .pulse-dot {
-            animation: pulse 1.5s infinite;
+            animation: pulse-live 1.2s infinite ease-in-out;
+            box-shadow: 0 0 8px rgba(16, 185, 129, 0.8);
         }
 
-        @keyframes pulse {
-            0% { transform: scale(0.95); opacity: 0.8; }
-            70% { transform: scale(1.1); opacity: 1; }
-            100% { transform: scale(0.95); opacity: 0.8; }
+        @keyframes pulse-live {
+            0% { transform: scale(0.85); opacity: 0.4; }
+            50% { transform: scale(1.25); opacity: 1; }
+            100% { transform: scale(0.85); opacity: 0.4; }
         }
 
         .control-panel {
@@ -154,70 +157,65 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding: 14px 12px;
-            background: rgba(0, 0, 0, 0.25);
+            padding: 12px 10px;
+            background: rgba(0, 0, 0, 0.22);
             border-radius: 14px;
-            border: 1px solid rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.04);
         }
 
         .live-time-wrapper {
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
-        }
-
-        .clock-icon {
-            font-size: 1.35rem;
-            opacity: 0.9;
+            direction: ltr;
         }
 
         .live-time-main {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
             font-variant-numeric: tabular-nums;
-            font-size: 2.25rem;
-            font-weight: 800;
-            color: #fff;
+            font-size: 2rem;
+            font-weight: 600;
+            color: #e2e8f0;
             letter-spacing: 0.5px;
-            line-height: 1;
-        }
-
-        .live-time-seconds {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            font-variant-numeric: tabular-nums;
-            font-size: 1.15rem;
-            font-weight: 700;
-            color: var(--accent-cyan);
-            margin-right: 2px;
-            line-height: 1;
+            line-height: 1.1;
         }
 
         .live-date-wrapper {
             display: flex;
             align-items: center;
+            justify-content: center;
             gap: 6px;
-            margin-top: 6px;
+            margin-top: 4px;
             font-size: 0.88rem;
             color: var(--text-muted);
             font-weight: 600;
+            direction: ltr;
         }
 
-        .calendar-icon {
-            font-size: 0.95rem;
+        .calendar-icon-svg {
+            width: 14px;
+            height: 14px;
+            fill: currentColor;
+            opacity: 0.75;
+            flex-shrink: 0;
+        }
+
+        .date-text-content {
+            direction: rtl;
         }
 
         .shift-duration-indicator {
-            margin-top: 10px;
-            font-size: 0.85rem;
+            margin-top: 8px;
+            font-size: 0.82rem;
             color: var(--accent-cyan);
             font-weight: 600;
-            background: rgba(0, 210, 255, 0.1);
-            padding: 4px 12px;
-            border-radius: 8px;
+            background: rgba(0, 210, 255, 0.08);
+            padding: 3px 10px;
+            border-radius: 6px;
             display: none;
             font-family: 'Inter', 'Assistant', sans-serif;
             font-variant-numeric: tabular-nums;
-            border: 1px solid rgba(0, 210, 255, 0.2);
+            border: 1px solid rgba(0, 210, 255, 0.15);
         }
 
         .action-buttons-grid {
@@ -609,7 +607,6 @@
             gap: 10px;
         }
 
-        /* Separate Breakdown Group Styling */
         .sub-breakdown {
             display: flex;
             flex-direction: column;
@@ -873,26 +870,26 @@
         <div class="logo-area">
             <div class="rail-icon">🚆</div>
             <div class="logo-text">
-                <h1>יומן נהג קטר</h1>
+                <h1>יומן משמרות</h1>
                 <span>רכבת ישראל</span>
             </div>
         </div>
         <div id="statusIndicator" class="status-badge idle">
             <span class="pulse-dot"></span>
-            <span id="statusText">לא במשמרת</span>
+            <span id="statusText">במנוחה</span>
         </div>
     </header>
 
     <div class="control-panel">
         <div class="live-clock-card">
             <div class="live-time-wrapper">
-                <span class="clock-icon">🕒</span>
                 <span class="live-time-main" id="clockMain">--:--</span>
-                <span class="live-time-seconds" id="clockSec">:--</span>
             </div>
             <div class="live-date-wrapper">
-                <span class="calendar-icon">📅</span>
-                <span id="currentDate">--</span>
+                <svg class="calendar-icon-svg" viewBox="0 0 24 24">
+                    <path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20a2 2 0 0 0 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10zm0-12H5V6h14v2z"/>
+                </svg>
+                <span class="date-text-content" id="currentDate">--</span>
             </div>
             <div class="shift-duration-indicator" id="liveShiftDuration">משמרת פעילה: 00:00:00</div>
         </div>
@@ -1039,10 +1036,8 @@
         const now = new Date();
         const hh = String(now.getHours()).padStart(2, '0');
         const mm = String(now.getMinutes()).padStart(2, '0');
-        const ss = String(now.getSeconds()).padStart(2, '0');
 
         document.getElementById('clockMain').textContent = `${hh}:${mm}`;
-        document.getElementById('clockSec').textContent = `:${ss}`;
 
         const days = ['ראשון', 'שני', 'שלישי', 'רביעי', 'חמישי', 'שישי', 'שבת'];
         const dStr = `יום ${days[now.getDay()]}, ${now.getDate()}.${now.getMonth() + 1}.${now.getFullYear()}`;
@@ -1069,7 +1064,7 @@
         if (active) {
             btnStart.disabled = true;
             statusIndicator.className = 'status-badge active';
-            statusText.textContent = 'במשמרת פעילה';
+            statusText.textContent = 'במשמרת';
 
             const [sh, sm] = active.startTime.split(':').map(Number);
             const now = new Date();
@@ -1085,7 +1080,7 @@
         } else {
             btnStart.disabled = false;
             statusIndicator.className = 'status-badge idle';
-            statusText.textContent = 'לא במשמרת';
+            statusText.textContent = 'במנוחה';
             durationBox.style.display = 'none';
         }
     }
