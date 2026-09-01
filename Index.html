@@ -354,7 +354,7 @@
         }
 
         .shift-card.dragging {
-            opacity: 0.4;
+            opacity: 0.5;
             border: 2px dashed var(--accent-cyan);
             transform: scale(0.98);
         }
@@ -377,7 +377,8 @@
             justify-content: center;
             color: var(--text-muted);
             cursor: grab;
-            padding: 4px;
+            padding: 6px 8px;
+            touch-action: none;
         }
 
         .mode-sorting .drag-handle-container {
@@ -385,9 +386,11 @@
         }
 
         .drag-handle-icon {
-            font-size: 1.3rem;
+            font-size: 1.4rem;
             font-weight: 900;
             line-height: 1;
+            user-select: none;
+            pointer-events: none;
         }
 
         .select-checkbox-container {
@@ -968,12 +971,8 @@
     updateLiveClock();
 
     function getActiveShift() {
-        if (shifts.length === 0) return null;
-        const latest = shifts[0];
-        if (latest.startTime && !latest.endTime) {
-            return latest;
-        }
-        return null;
+        if (!shifts || shifts.length === 0) return null;
+        return shifts.find(s => s.startTime && !s.endTime) || null;
     }
 
     function updateActiveShiftUI() {
@@ -1012,7 +1011,7 @@
             const dateA = a.date || '';
             const dateB = b.date || '';
             if (dateA !== dateB) {
-                return dateB.localeCompare(dateA); // Newer date first
+                return dateB.localeCompare(dateA);
             }
             const timeA = a.startTime || '00:00';
             const timeB = b.startTime || '00:00';
@@ -1290,12 +1289,12 @@
         }
     }
 
-    // Drag and Drop implementation (HTML5 + Mobile Touch)
     function setupDragAndDrop() {
         const container = document.getElementById('shiftsContainer');
         const cards = container.querySelectorAll('.shift-card');
 
         cards.forEach(card => {
+            // Desktop HTML5 drag
             card.addEventListener('dragstart', (e) => {
                 if (!isSortingMode) return;
                 draggedElement = card;
@@ -1336,21 +1335,23 @@
                 }
             });
 
-            // Touch support for mobile devices
+            // Mobile Touch Support
             const handle = card.querySelector('.drag-handle-container');
             if (handle) {
-                let initialY = 0;
                 let activeTouchCard = null;
 
                 handle.addEventListener('touchstart', (e) => {
                     if (!isSortingMode) return;
+                    e.stopPropagation();
                     activeTouchCard = card;
                     card.classList.add('dragging');
-                    initialY = e.touches[0].clientY;
-                }, { passive: true });
+                }, { passive: false });
 
                 handle.addEventListener('touchmove', (e) => {
                     if (!isSortingMode || !activeTouchCard) return;
+                    e.preventDefault(); // Prevents full page scroll while dragging
+                    e.stopPropagation();
+
                     const touch = e.touches[0];
                     const targetEl = document.elementFromPoint(touch.clientX, touch.clientY);
                     const targetCard = targetEl ? targetEl.closest('.shift-card') : null;
@@ -1364,14 +1365,18 @@
                             container.insertBefore(activeTouchCard, targetCard);
                         }
                     }
-                }, { passive: true });
+                }, { passive: false });
 
-                handle.addEventListener('touchend', () => {
+                const stopTouch = (e) => {
                     if (activeTouchCard) {
+                        e.stopPropagation();
                         activeTouchCard.classList.remove('dragging');
                         activeTouchCard = null;
                     }
-                });
+                };
+
+                handle.addEventListener('touchend', stopTouch);
+                handle.addEventListener('touchcancel', stopTouch);
             }
         });
     }
