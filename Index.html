@@ -1270,6 +1270,15 @@
                 <button id="btnEndShift" class="btn-action btn-end" onclick="handleLiveEnd()">יציאה ממשמרת</button>
             </div>
         </div>
+
+        <!-- Recent Shifts Section on Clock Screen -->
+        <div class="section-header" style="margin-top: 4px;">
+            <div class="section-title">משמרות אחרונות</div>
+        </div>
+        <div id="recentShiftsContainer" class="shifts-list"></div>
+        <button class="manual-entry-btn" onclick="navigateTo('history')" style="background: rgba(0, 136, 255, 0.1); border-style: solid; margin-top: 2px;">
+            מעבר לכל המשמרות
+        </button>
     </div>
 
     <!-- VIEW 2: History Screen -->
@@ -1626,6 +1635,8 @@
 
         if (viewName === 'history') {
             renderShifts();
+        } else if (viewName === 'clock') {
+            renderRecentShifts();
         }
     }
 
@@ -1762,7 +1773,7 @@
         shifts.unshift(newShift);
         autoSortShiftsArray(shifts);
         saveShifts();
-        renderShifts();
+        renderRecentShifts();
     }
 
     function handleLiveEnd() {
@@ -1792,7 +1803,7 @@
 
         autoSortShiftsArray(shifts);
         saveShifts();
-        renderShifts();
+        renderRecentShifts();
     }
 
     function saveShifts() {
@@ -2013,7 +2024,8 @@
                 selectedShiftIds.add(stringId);
             }
             updateSelectionUI();
-            renderShifts();
+            if (currentView === 'history') renderShifts();
+            else renderRecentShifts();
         } else {
             const el = document.getElementById('details_' + stringId);
             if (el) {
@@ -2050,6 +2062,7 @@
 
     function setupDragAndDrop() {
         const container = document.getElementById('shiftsContainer');
+        if (!container) return;
         const cards = container.querySelectorAll('.shift-card');
 
         cards.forEach(card => {
@@ -2138,8 +2151,197 @@
         });
     }
 
+    function buildShiftCardHTML(shift, overlappingIds) {
+        const shiftIdStr = String(shift.id);
+        const hasStart = Boolean(shift.startTime);
+        const hasEnd = Boolean(shift.endTime);
+        const isIncomplete = !hasStart || !hasEnd;
+        const isActive = hasStart && !hasEnd;
+        const isSelected = selectedShiftIds.has(shiftIdStr);
+        const isOverlap = overlappingIds.has(shiftIdStr);
+
+        const naltStart = Number(shift.naltStartMinutes ?? (shift.naltStartHours ? shift.naltStartHours * 60 : 0)) || 0;
+        const naltEnd = Number(shift.naltEndMinutes ?? (shift.naltEndHours ? shift.naltEndHours * 60 : 0)) || 0;
+        const totalNaltMins = naltStart + naltEnd;
+        const hasNalt = totalNaltMins > 0;
+        const hasPrem = Boolean(shift.premStartTime && shift.premEndTime);
+        const hasSiddur = Boolean(shift.siddur && shift.siddur.trim());
+
+        const { primary: siddurPrimary, secondary: siddurSecondary } = parseSiddurDisplay(shift.siddur);
+
+        let secFontSize = '0.78rem';
+        if (siddurSecondary.length > 24) {
+            secFontSize = '0.62rem';
+        } else if (siddurSecondary.length > 15) {
+            secFontSize = '0.70rem';
+        }
+
+        const premDurationMins = hasPrem ? calculateDurationMinutes(shift.premStartTime, shift.premEndTime) : 0;
+
+        const parts = (shift.date || '').split('-');
+        const daysArr = ['ראשון', 'שני', 'שלישי', 'רביעי', 'חמישי', 'שישי', 'שבת'];
+        const dObj = parts.length === 3 ? new Date(parts[0], parts[1] - 1, parts[2]) : new Date();
+        const dayName = 'יום ' + daysArr[dObj.getDay()];
+        const dateFmt = parts.length === 3 ? `${parts[2]}/${parts[1]}/${parts[0]}` : '--/--/----';
+
+        let naltStartRange = '';
+        if (hasStart && naltStart > 0) {
+            naltStartRange = `${shift.startTime} – ${addMinutesToTime(shift.startTime, naltStart)}`;
+        }
+
+        let naltEndRange = '';
+        if (hasEnd && naltEnd > 0) {
+            naltEndRange = `${subtractMinutesFromTime(shift.endTime, naltEnd)} – ${shift.endTime}`;
+        }
+
+        return `
+            <div class="shift-card ${isActive ? 'active-shift' : ''} ${isOverlap ? 'has-overlap' : ''} ${isIncomplete && !isActive ? 'incomplete' : ''} ${isSelected ? 'selected-for-delete' : ''}" 
+                 data-id="${shiftIdStr}" 
+                 draggable="${isSortingMode ? 'true' : 'false'}">
+                <div class="shift-header" onclick="handleCardClick('${shiftIdStr}')">
+                    <div class="drag-handle-container">
+                        <svg class="svg-icon" width="20" height="20" viewBox="0 0 24 24" style="color: var(--text-muted);">
+                            <circle cx="9" cy="6" r="1.5"/><circle cx="15" cy="6" r="1.5"/>
+                            <circle cx="9" cy="12" r="1.5"/><circle cx="15" cy="12" r="1.5"/>
+                            <circle cx="9" cy="18" r="1.5"/><circle cx="15" cy="18" r="1.5"/>
+                        </svg>
+                    </div>
+                    <div class="select-checkbox-container">
+                        <div class="custom-checkbox">
+                            <svg class="svg-icon" width="14" height="14" viewBox="0 0 24 24">
+                                <path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="shift-content-block">
+                        <div class="shift-row-main">
+                            <div class="shift-date-box">
+                                <span class="shift-day-name">${dayName}</span>
+                                <span class="shift-formatted-date">${dateFmt}</span>
+                            </div>
+                            <div class="shift-middle-box">
+                                ${hasSiddur ? `
+                                <span class="shift-siddur-primary" style="${siddurPrimary.length > 10 ? 'font-size: 0.85rem;' : ''}">${siddurPrimary}</span>
+                                ${siddurSecondary ? `<span class="shift-siddur-secondary" style="font-size: ${secFontSize};">${siddurSecondary}</span>` : ''}
+                                ` : ''}
+                            </div>
+                            <div class="shift-hours-summary">
+                                <div class="shift-time-range">${shift.startTime || '--:--'} - ${shift.endTime || '--:--'}</div>
+                                <div class="shift-total-duration">${calculateDuration(shift.startTime, shift.endTime)}</div>
+                            </div>
+                        </div>
+                        <div class="shift-badges-row">
+                            <div class="badges-group-right">
+                                ${hasNalt ? `
+                                <span class="tag tag-nalt">
+                                    <svg class="svg-icon" width="13" height="13" viewBox="0 0 24 24">
+                                        <path d="M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11c-.66 0-1.21.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99zM6.85 7h10.29l1.04 3H5.81l1.04-3zM19 17H5v-4.66l.12-.34h13.77l.11.34V17z"/>
+                                    </svg>
+                                    נל״ת
+                                </span>` : ''}
+                                ${hasPrem ? `
+                                <span class="tag tag-prem">
+                                    <svg class="svg-icon" width="12" height="12" viewBox="0 0 24 24">
+                                        <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/>
+                                    </svg>
+                                    פרמיה
+                                </span>` : ''}
+                            </div>
+                            <div class="badges-group-left">
+                                ${hasStart && hasEnd ? `
+                                <span class="tag tag-complete">
+                                    <svg class="svg-icon" width="13" height="13" viewBox="0 0 24 24">
+                                        <path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/>
+                                    </svg>
+                                    סגור
+                                </span>` : `
+                                <span class="tag tag-alert">
+                                    <svg class="svg-icon" width="13" height="13" viewBox="0 0 24 24">
+                                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 13.59L15.59 17 12 13.41 8.41 17 7 15.59 10.59 12 7 8.41 8.41 7 12 10.59 15.59 7 17 8.41 13.41 12 17 15.59z"/>
+                                    </svg>
+                                    חסר
+                                </span>`}
+                                ${isOverlap ? `
+                                <span class="tag tag-overlap">
+                                    <svg class="svg-icon" width="13" height="13" viewBox="0 0 24 24">
+                                        <path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/>
+                                    </svg>
+                                    כפילות
+                                </span>` : ''}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="shift-details" id="details_${shiftIdStr}">
+                    <div class="details-inner">
+                        ${isOverlap ? `
+                        <div class="sub-breakdown" style="border-color: rgba(234, 179, 8, 0.3);">
+                            <div class="breakdown-item" style="color: var(--accent-yellow); border-bottom: none; padding-bottom: 0;">
+                                <span class="breakdown-label" style="color: var(--accent-yellow); display: flex; align-items: center; gap: 4px;">
+                                    <svg class="svg-icon" width="14" height="14" viewBox="0 0 24 24"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/></svg>
+                                    שים לב:
+                                </span>
+                                <span class="breakdown-value" style="color: var(--accent-yellow); font-family: 'Assistant', sans-serif;">קיימת חפיפת שעות עם משמרת נוספת</span>
+                            </div>
+                        </div>` : ''}
+
+                        <div class="sub-breakdown">
+                            ${hasSiddur ? `
+                            <div class="breakdown-item-siddur">
+                                <span class="breakdown-label">סידור:</span>
+                                <span class="breakdown-value-center">${shift.siddur}</span>
+                                <div></div>
+                            </div>` : ''}
+                            <div class="breakdown-item-duo">
+                                <div class="duo-col">
+                                    <span class="breakdown-label">כניסה:</span>
+                                    <span class="breakdown-value">${shift.startTime || 'לא הוזן'}</span>
+                                </div>
+                                <div class="duo-divider"></div>
+                                <div class="duo-col">
+                                    <span class="breakdown-label">יציאה:</span>
+                                    <span class="breakdown-value">${shift.endTime || 'לא הוזן'}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        ${hasNalt ? `
+                        <div class="sub-breakdown">
+                            ${naltStart > 0 ? `
+                            <div class="breakdown-item">
+                                <span class="breakdown-label">נל״ת הלוך (${formatMinutesToHM(naltStart)}):</span>
+                                <span class="breakdown-value">${naltStartRange}</span>
+                            </div>` : ''}
+                            ${naltEnd > 0 ? `
+                            <div class="breakdown-item">
+                                <span class="breakdown-label">נל״ת חזור (${formatMinutesToHM(naltEnd)}):</span>
+                                <span class="breakdown-value">${naltEndRange}</span>
+                            </div>` : ''}
+                        </div>` : ''}
+
+                        ${hasPrem ? `
+                        <div class="sub-breakdown">
+                            <div class="breakdown-item">
+                                <span class="breakdown-label">פרמיה (${formatMinutesToHM(premDurationMins)}):</span>
+                                <span class="breakdown-value">${shift.premStartTime} – ${shift.premEndTime}</span>
+                            </div>
+                        </div>` : ''}
+
+                        <div class="card-actions-bar">
+                            <button class="btn-secondary" onclick="event.stopPropagation(); openShiftModal('${shiftIdStr}')">עריכה / השלמת חוסר</button>
+                            <button class="btn-secondary btn-danger-outline" onclick="event.stopPropagation(); deleteShift('${shiftIdStr}')">מחיקה</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
     function renderShifts() {
         const container = document.getElementById('shiftsContainer');
+        if (!container) return;
+
         if (shifts.length === 0) {
             container.innerHTML = `
                 <div class="empty-state">
@@ -2149,202 +2351,51 @@
             return;
         }
 
-        const daysArr = ['ראשון', 'שני', 'שלישי', 'רביעי', 'חמישי', 'שישי', 'שבת'];
         const overlappingIds = calculateOverlaps();
+        container.innerHTML = shifts.map(shift => buildShiftCardHTML(shift, overlappingIds)).join('');
+        setupDragAndDrop();
+    }
 
-        container.innerHTML = shifts.map(shift => {
-            const shiftIdStr = String(shift.id);
-            const hasStart = Boolean(shift.startTime);
-            const hasEnd = Boolean(shift.endTime);
-            const isIncomplete = !hasStart || !hasEnd;
-            const isActive = hasStart && !hasEnd;
-            const isSelected = selectedShiftIds.has(shiftIdStr);
-            const isOverlap = overlappingIds.has(shiftIdStr);
+    function renderRecentShifts() {
+        const container = document.getElementById('recentShiftsContainer');
+        if (!container) return;
 
-            const naltStart = Number(shift.naltStartMinutes ?? (shift.naltStartHours ? shift.naltStartHours * 60 : 0)) || 0;
-            const naltEnd = Number(shift.naltEndMinutes ?? (shift.naltEndHours ? shift.naltEndHours * 60 : 0)) || 0;
-            const totalNaltMins = naltStart + naltEnd;
-            const hasNalt = totalNaltMins > 0;
-            const hasPrem = Boolean(shift.premStartTime && shift.premEndTime);
-            const hasSiddur = Boolean(shift.siddur && shift.siddur.trim());
-
-            const { primary: siddurPrimary, secondary: siddurSecondary } = parseSiddurDisplay(shift.siddur);
-
-            let secFontSize = '0.78rem';
-            if (siddurSecondary.length > 24) {
-                secFontSize = '0.62rem';
-            } else if (siddurSecondary.length > 15) {
-                secFontSize = '0.70rem';
-            }
-
-            const premDurationMins = hasPrem ? calculateDurationMinutes(shift.premStartTime, shift.premEndTime) : 0;
-
-            const parts = (shift.date || '').split('-');
-            const dObj = parts.length === 3 ? new Date(parts[0], parts[1] - 1, parts[2]) : new Date();
-            const dayName = 'יום ' + daysArr[dObj.getDay()];
-            const dateFmt = parts.length === 3 ? `${parts[2]}/${parts[1]}/${parts[0]}` : '--/--/----';
-
-            let naltStartRange = '';
-            if (hasStart && naltStart > 0) {
-                naltStartRange = `${shift.startTime} – ${addMinutesToTime(shift.startTime, naltStart)}`;
-            }
-
-            let naltEndRange = '';
-            if (hasEnd && naltEnd > 0) {
-                naltEndRange = `${subtractMinutesFromTime(shift.endTime, naltEnd)} – ${shift.endTime}`;
-            }
-
-            return `
-                <div class="shift-card ${isActive ? 'active-shift' : ''} ${isOverlap ? 'has-overlap' : ''} ${isIncomplete && !isActive ? 'incomplete' : ''} ${isSelected ? 'selected-for-delete' : ''}" 
-                     data-id="${shiftIdStr}" 
-                     draggable="${isSortingMode ? 'true' : 'false'}">
-                    <div class="shift-header" onclick="handleCardClick('${shiftIdStr}')">
-                        <div class="drag-handle-container">
-                            <svg class="svg-icon" width="20" height="20" viewBox="0 0 24 24" style="color: var(--text-muted);">
-                                <circle cx="9" cy="6" r="1.5"/><circle cx="15" cy="6" r="1.5"/>
-                                <circle cx="9" cy="12" r="1.5"/><circle cx="15" cy="12" r="1.5"/>
-                                <circle cx="9" cy="18" r="1.5"/><circle cx="15" cy="18" r="1.5"/>
-                            </svg>
-                        </div>
-                        <div class="select-checkbox-container">
-                            <div class="custom-checkbox">
-                                <svg class="svg-icon" width="14" height="14" viewBox="0 0 24 24">
-                                    <path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/>
-                                </svg>
-                            </div>
-                        </div>
-                        <div class="shift-content-block">
-                            <div class="shift-row-main">
-                                <div class="shift-date-box">
-                                    <span class="shift-day-name">${dayName}</span>
-                                    <span class="shift-formatted-date">${dateFmt}</span>
-                                </div>
-                                <div class="shift-middle-box">
-                                    ${hasSiddur ? `
-                                    <span class="shift-siddur-primary" style="${siddurPrimary.length > 10 ? 'font-size: 0.85rem;' : ''}">${siddurPrimary}</span>
-                                    ${siddurSecondary ? `<span class="shift-siddur-secondary" style="font-size: ${secFontSize};">${siddurSecondary}</span>` : ''}
-                                    ` : ''}
-                                </div>
-                                <div class="shift-hours-summary">
-                                    <div class="shift-time-range">${shift.startTime || '--:--'} - ${shift.endTime || '--:--'}</div>
-                                    <div class="shift-total-duration">${calculateDuration(shift.startTime, shift.endTime)}</div>
-                                </div>
-                            </div>
-                            <div class="shift-badges-row">
-                                <!-- Right Side Badges (NALT, Premia) -->
-                                <div class="badges-group-right">
-                                    ${hasNalt ? `
-                                    <span class="tag tag-nalt">
-                                        <svg class="svg-icon" width="13" height="13" viewBox="0 0 24 24">
-                                            <path d="M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11c-.66 0-1.21.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99zM6.85 7h10.29l1.04 3H5.81l1.04-3zM19 17H5v-4.66l.12-.34h13.77l.11.34V17z"/>
-                                        </svg>
-                                        נל״ת
-                                    </span>` : ''}
-                                    ${hasPrem ? `
-                                    <span class="tag tag-prem">
-                                        <svg class="svg-icon" width="12" height="12" viewBox="0 0 24 24">
-                                            <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/>
-                                        </svg>
-                                        פרמיה
-                                    </span>` : ''}
-                                </div>
-
-                                <!-- Left Side Badges (Status, Overlap) -->
-                                <div class="badges-group-left">
-                                    ${hasStart && hasEnd ? `
-                                    <span class="tag tag-complete">
-                                        <svg class="svg-icon" width="13" height="13" viewBox="0 0 24 24">
-                                            <path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/>
-                                        </svg>
-                                        סגור
-                                    </span>` : `
-                                    <span class="tag tag-alert">
-                                        <svg class="svg-icon" width="13" height="13" viewBox="0 0 24 24">
-                                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 13.59L15.59 17 12 13.41 8.41 17 7 15.59 10.59 12 7 8.41 8.41 7 12 10.59 15.59 7 17 8.41 13.41 12 17 15.59z"/>
-                                        </svg>
-                                        חסר
-                                    </span>`}
-                                    ${isOverlap ? `
-                                    <span class="tag tag-overlap">
-                                        <svg class="svg-icon" width="13" height="13" viewBox="0 0 24 24">
-                                            <path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/>
-                                        </svg>
-                                        כפילות
-                                    </span>` : ''}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="shift-details" id="details_${shiftIdStr}">
-                        <div class="details-inner">
-                            ${isOverlap ? `
-                            <div class="sub-breakdown" style="border-color: rgba(234, 179, 8, 0.3);">
-                                <div class="breakdown-item" style="color: var(--accent-yellow); border-bottom: none; padding-bottom: 0;">
-                                    <span class="breakdown-label" style="color: var(--accent-yellow); display: flex; align-items: center; gap: 4px;">
-                                        <svg class="svg-icon" width="14" height="14" viewBox="0 0 24 24"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/></svg>
-                                        שים לב:
-                                    </span>
-                                    <span class="breakdown-value" style="color: var(--accent-yellow); font-family: 'Assistant', sans-serif;">קיימת חפיפת שעות עם משמרת נוספת</span>
-                                </div>
-                            </div>` : ''}
-
-                            <!-- 1. Main Details Group -->
-                            <div class="sub-breakdown">
-                                ${hasSiddur ? `
-                                <div class="breakdown-item-siddur">
-                                    <span class="breakdown-label">סידור:</span>
-                                    <span class="breakdown-value-center">${shift.siddur}</span>
-                                    <div></div>
-                                </div>` : ''}
-                                <div class="breakdown-item-duo">
-                                    <div class="duo-col">
-                                        <span class="breakdown-label">כניסה:</span>
-                                        <span class="breakdown-value">${shift.startTime || 'לא הוזן'}</span>
-                                    </div>
-                                    <div class="duo-divider"></div>
-                                    <div class="duo-col">
-                                        <span class="breakdown-label">יציאה:</span>
-                                        <span class="breakdown-value">${shift.endTime || 'לא הוזן'}</span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- 2. NALT Group -->
-                            ${hasNalt ? `
-                            <div class="sub-breakdown">
-                                ${naltStart > 0 ? `
-                                <div class="breakdown-item">
-                                    <span class="breakdown-label">נל״ת הלוך (${formatMinutesToHM(naltStart)}):</span>
-                                    <span class="breakdown-value">${naltStartRange}</span>
-                                </div>` : ''}
-                                ${naltEnd > 0 ? `
-                                <div class="breakdown-item">
-                                    <span class="breakdown-label">נל״ת חזור (${formatMinutesToHM(naltEnd)}):</span>
-                                    <span class="breakdown-value">${naltEndRange}</span>
-                                </div>` : ''}
-                            </div>` : ''}
-
-                            <!-- 3. Premium Group -->
-                            ${hasPrem ? `
-                            <div class="sub-breakdown">
-                                <div class="breakdown-item">
-                                    <span class="breakdown-label">פרמיה (${formatMinutesToHM(premDurationMins)}):</span>
-                                    <span class="breakdown-value">${shift.premStartTime} – ${shift.premEndTime}</span>
-                                </div>
-                            </div>` : ''}
-
-                            <div class="card-actions-bar">
-                                <button class="btn-secondary" onclick="event.stopPropagation(); openShiftModal('${shiftIdStr}')">עריכה / השלמת חוסר</button>
-                                <button class="btn-secondary btn-danger-outline" onclick="event.stopPropagation(); deleteShift('${shiftIdStr}')">מחיקה</button>
-                            </div>
-                        </div>
-                    </div>
+        if (shifts.length === 0) {
+            container.innerHTML = `
+                <div class="empty-state" style="padding: 20px;">
+                    <p>אין משמרות אחרונות.</p>
                 </div>
             `;
-        }).join('');
+            return;
+        }
 
-        setupDragAndDrop();
+        const recent = shifts.slice(0, 2);
+        const overlappingIds = calculateOverlaps();
+        container.innerHTML = recent.map(shift => buildShiftCardHTML(shift, overlappingIds)).join('');
+    }
+
+    function navigateTo(viewName, closeMenu = true) {
+        currentView = viewName;
+        sessionStorage.setItem('railway_active_view', viewName);
+
+        document.getElementById('viewClock').style.display = (viewName === 'clock') ? 'flex' : 'none';
+        document.getElementById('viewHistory').style.display = (viewName === 'history') ? 'flex' : 'none';
+
+        document.getElementById('menuBtnPunch').classList.toggle('active', viewName === 'clock');
+        document.getElementById('menuBtnHistory').classList.toggle('active', viewName === 'history');
+
+        if (closeMenu) {
+            const menu = document.getElementById('topMenu');
+            const overlay = document.getElementById('dropdownMenuOverlay');
+            menu.classList.remove('open');
+            overlay.classList.remove('open');
+        }
+
+        if (viewName === 'history') {
+            renderShifts();
+        } else if (viewName === 'clock') {
+            renderRecentShifts();
+        }
     }
 
     function openShiftModal(shiftId) {
@@ -2482,7 +2533,8 @@
 
         autoSortShiftsArray(shifts);
         saveShifts();
-        renderShifts();
+        if (currentView === 'history') renderShifts();
+        else renderRecentShifts();
         closeModal();
     }
 
@@ -2490,11 +2542,12 @@
         if (confirm('האם למחוק משמרת זו מהיומן?')) {
             shifts = shifts.filter(s => !selectedShiftIds.has(String(s.id)) && String(s.id) !== String(id));
             saveShifts();
-            renderShifts();
+            if (currentView === 'history') renderShifts();
+            else renderRecentShifts();
         }
     }
 
-    // Initialize to session view (defaults to 'clock' on a fresh launch)
+    // Initialize to session view
     navigateTo(currentView, false);
 </script>
 </body>
