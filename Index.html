@@ -5,10 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>יומן משמרות</title>
     
-    <!-- Custom PWA & iOS App Icon -->
-    <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Cdefs%3E%3ClinearGradient id='bgGrad' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%23132247'/%3E%3Cstop offset='100%25' stop-color='%23080d1a'/%3E%3C/linearGradient%3E%3ClinearGradient id='cyanGrad' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%2300d2ff'/%3E%3Cstop offset='100%25' stop-color='%230077ff'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='512' height='512' rx='110' fill='url(%23bgGrad)'/%3E%3Crect x='24' y='24' width='464' height='464' rx='90' fill='none' stroke='rgba(255,255,255,0.08)' stroke-width='4'/%3E%3Cpath d='M156 120 C156 85 190 70 256 70 C322 70 356 85 356 120 L370 270 C370 300 340 320 256 320 C172 320 142 300 142 270 Z' fill='%231a2f60' stroke='url(%23cyanGrad)' stroke-width='10'/%3E%3Cpath d='M180 125 C180 105 205 95 256 95 C307 95 332 105 332 125 L340 180 L172 180 Z' fill='%230b1329' stroke='%2300d2ff' stroke-width='4'/%3E%3Ccircle cx='195' cy='265' r='14' fill='%2300d2ff'/%3E%3Ccircle cx='317' cy='265' r='14' fill='%2300d2ff'/%3E%3Crect x='226' y='255' width='60' height='20' rx='6' fill='%2310b981'/%3E%3Cline x1='120' y1='410' x2='392' y2='410' stroke='rgba(255,255,255,0.25)' stroke-width='8' stroke-linecap='round'/%3E%3Cline x1='150' y1='440' x2='362' y2='440' stroke='rgba(255,255,255,0.15)' stroke-width='6' stroke-linecap='round'/%3E%3Ccircle cx='370' cy='360' r='75' fill='%230b1329' stroke='%2300d2ff' stroke-width='8'/%3E%3Ccircle cx='370' cy='360' r='68' fill='rgba(0,210,255,0.06)'/%3E%3Cpolyline points='370,315 370,360 405,360' fill='none' stroke='%23ffffff' stroke-width='7' stroke-linecap='round' stroke-linejoin='round'/%3E%3Ccircle cx='370' cy='360' r='6' fill='%2300d2ff'/%3E%3C/svg%3E">
-    
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='110' fill='%23132247'/%3E%3Cpath d='M156 120 C156 85 190 70 256 70 C322 70 356 85 356 120 L370 270 C370 300 340 320 256 320 C172 320 142 300 142 270 Z' fill='%231a2f60' stroke='%2300d2ff' stroke-width='10'/%3E%3Ccircle cx='370' cy='360' r='75' fill='%230b1329' stroke='%2300d2ff' stroke-width='8'/%3E%3Cpolyline points='370,315 370,360 405,360' fill='none' stroke='%23ffffff' stroke-width='7' stroke-linecap='round'/%3E%3C/svg%3E">
+    <!-- iOS PWA Settings -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="יומן משמרות">
+    <link id="dynamic-touch-icon" rel="apple-touch-icon" href="">
+    <link id="dynamic-favicon" rel="icon" type="image/png" href="">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1053,6 +1055,105 @@
 </div>
 
 <script>
+    // Generator for Home Screen App Icon
+    (function generateAppIcon() {
+        const canvas = document.createElement('canvas');
+        canvas.width = 512;
+        canvas.height = 512;
+        const ctx = canvas.getContext('2d');
+
+        // Background
+        const grad = ctx.createLinearGradient(0, 0, 512, 512);
+        grad.addColorStop(0, '#132247');
+        grad.addColorStop(1, '#080d1a');
+        ctx.fillStyle = grad;
+        ctx.fillRect(0, 0, 512, 512);
+
+        // Train Body
+        ctx.fillStyle = '#1a2f60';
+        ctx.strokeStyle = '#00d2ff';
+        ctx.lineWidth = 10;
+        ctx.beginPath();
+        ctx.moveTo(156, 120);
+        ctx.bezierCurveTo(156, 85, 190, 70, 256, 70);
+        ctx.bezierCurveTo(322, 70, 356, 85, 356, 120);
+        ctx.lineTo(370, 270);
+        ctx.bezierCurveTo(370, 300, 340, 320, 256, 320);
+        ctx.bezierCurveTo(172, 320, 142, 300, 142, 270);
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
+
+        // Train Window
+        ctx.fillStyle = '#0b1329';
+        ctx.strokeStyle = '#00d2ff';
+        ctx.lineWidth = 4;
+        ctx.beginPath();
+        ctx.moveTo(180, 125);
+        ctx.bezierCurveTo(180, 105, 205, 95, 256, 95);
+        ctx.bezierCurveTo(307, 95, 332, 105, 332, 125);
+        ctx.lineTo(340, 180);
+        ctx.lineTo(172, 180);
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
+
+        // Headlights
+        ctx.fillStyle = '#00d2ff';
+        ctx.beginPath();
+        ctx.arc(195, 265, 14, 0, Math.PI * 2);
+        ctx.arc(317, 265, 14, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Buffer Plate
+        ctx.fillStyle = '#10b981';
+        ctx.fillRect(226, 255, 60, 20);
+
+        // Rails
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.25)';
+        ctx.lineWidth = 8;
+        ctx.lineCap = 'round';
+        ctx.beginPath();
+        ctx.moveTo(120, 410);
+        ctx.lineTo(392, 410);
+        ctx.stroke();
+
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.15)';
+        ctx.lineWidth = 6;
+        ctx.beginPath();
+        ctx.moveTo(150, 440);
+        ctx.lineTo(362, 440);
+        ctx.stroke();
+
+        // Clock Element
+        ctx.fillStyle = '#0b1329';
+        ctx.strokeStyle = '#00d2ff';
+        ctx.lineWidth = 8;
+        ctx.beginPath();
+        ctx.arc(370, 360, 75, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+
+        // Clock Hands
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 7;
+        ctx.lineJoin = 'round';
+        ctx.beginPath();
+        ctx.moveTo(370, 315);
+        ctx.lineTo(370, 360);
+        ctx.lineTo(405, 360);
+        ctx.stroke();
+
+        ctx.fillStyle = '#00d2ff';
+        ctx.beginPath();
+        ctx.arc(370, 360, 6, 0, Math.PI * 2);
+        ctx.fill();
+
+        const iconUrl = canvas.toDataURL('image/png');
+        document.getElementById('dynamic-touch-icon').href = iconUrl;
+        document.getElementById('dynamic-favicon').href = iconUrl;
+    })();
+
     let shifts = JSON.parse(localStorage.getItem('railway_shifts') || '[]');
     let isSelectionMode = false;
     let isSortingMode = false;
