@@ -578,10 +578,27 @@
             white-space: nowrap;
         }
 
+        /* Structured Badges Row with Dual Alignment */
         .shift-badges-row {
             display: flex;
             align-items: center;
+            justify-content: space-between;
+            width: 100%;
             gap: 6px;
+        }
+
+        .badges-group-right {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .badges-group-left {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-direction: row-reverse;
             flex-wrap: wrap;
         }
 
@@ -617,13 +634,14 @@
             border: 1px solid rgba(192, 132, 252, 0.35);
         }
 
-        /* Completed with matching subtle border */
+        /* Completed (Closed) */
         .tag-complete {
             background: rgba(16, 185, 129, 0.15);
             color: var(--accent-green);
             border: 1px solid rgba(16, 185, 129, 0.4);
         }
 
+        /* Missing */
         .tag-alert {
             background: rgba(239, 68, 68, 0.2);
             color: #fca5a5;
@@ -1956,9 +1974,9 @@
 
             // Dynamic font sizing for secondary text based on length
             let secFontSize = '0.78rem';
-            if (siddurSecondary.length > 22) {
+            if (siddurSecondary.length > 24) {
                 secFontSize = '0.62rem';
-            } else if (siddurSecondary.length > 14) {
+            } else if (siddurSecondary.length > 15) {
                 secFontSize = '0.70rem';
             }
 
@@ -2016,48 +2034,47 @@
                                 </div>
                             </div>
                             <div class="shift-badges-row">
-                                ${isOverlap ? `
-                                <span class="tag tag-overlap">
-                                    <svg class="svg-icon" width="13" height="13" viewBox="0 0 24 24">
-                                        <path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/>
-                                    </svg>
-                                    חפיפת שעות
-                                </span>` : ''}
-                                ${!hasStart ? `
-                                <span class="tag tag-alert">
-                                    <svg class="svg-icon" width="13" height="13" viewBox="0 0 24 24">
-                                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 13.59L15.59 17 12 13.41 8.41 17 7 15.59 10.59 12 7 8.41 8.41 7 12 10.59 15.59 7 17 8.41 13.41 12 17 15.59z"/>
-                                    </svg>
-                                    חסרה כניסה
-                                </span>` : ''}
-                                ${!hasEnd ? `
-                                <span class="tag tag-alert">
-                                    <svg class="svg-icon" width="13" height="13" viewBox="0 0 24 24">
-                                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 13.59L15.59 17 12 13.41 8.41 17 7 15.59 10.59 12 7 8.41 8.41 7 12 10.59 15.59 7 17 8.41 13.41 12 17 15.59z"/>
-                                    </svg>
-                                    חסרה יציאה
-                                </span>` : ''}
-                                ${hasStart && hasEnd ? `
-                                <span class="tag tag-complete">
-                                    <svg class="svg-icon" width="13" height="13" viewBox="0 0 24 24">
-                                        <path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/>
-                                    </svg>
-                                    הושלמה
-                                </span>` : ''}
-                                ${hasNalt ? `
-                                <span class="tag tag-nalt">
-                                    <svg class="svg-icon" width="13" height="13" viewBox="0 0 24 24">
-                                        <path d="M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11c-.66 0-1.21.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99zM6.85 7h10.29l1.04 3H5.81l1.04-3zM19 17H5v-4.66l.12-.34h13.77l.11.34V17z"/>
-                                    </svg>
-                                    נל״ת: ${formatMinutesToHM(totalNaltMins)}
-                                </span>` : ''}
-                                ${hasPrem ? `
-                                <span class="tag tag-prem">
-                                    <svg class="svg-icon" width="12" height="12" viewBox="0 0 24 24">
-                                        <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/>
-                                    </svg>
-                                    פרמיה
-                                </span>` : ''}
+                                <!-- Right Side Badges (NALT, Premia) -->
+                                <div class="badges-group-right">
+                                    ${hasNalt ? `
+                                    <span class="tag tag-nalt">
+                                        <svg class="svg-icon" width="13" height="13" viewBox="0 0 24 24">
+                                            <path d="M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11c-.66 0-1.21.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99zM6.85 7h10.29l1.04 3H5.81l1.04-3zM19 17H5v-4.66l.12-.34h13.77l.11.34V17z"/>
+                                        </svg>
+                                        נל״ת
+                                    </span>` : ''}
+                                    ${hasPrem ? `
+                                    <span class="tag tag-prem">
+                                        <svg class="svg-icon" width="12" height="12" viewBox="0 0 24 24">
+                                            <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/>
+                                        </svg>
+                                        פרמיה
+                                    </span>` : ''}
+                                </div>
+
+                                <!-- Left Side Badges (Status, Overlap) -->
+                                <div class="badges-group-left">
+                                    ${hasStart && hasEnd ? `
+                                    <span class="tag tag-complete">
+                                        <svg class="svg-icon" width="13" height="13" viewBox="0 0 24 24">
+                                            <path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/>
+                                        </svg>
+                                        סגור
+                                    </span>` : `
+                                    <span class="tag tag-alert">
+                                        <svg class="svg-icon" width="13" height="13" viewBox="0 0 24 24">
+                                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 13.59L15.59 17 12 13.41 8.41 17 7 15.59 10.59 12 7 8.41 8.41 7 12 10.59 15.59 7 17 8.41 13.41 12 17 15.59z"/>
+                                        </svg>
+                                        חסר
+                                    </span>`}
+                                    ${isOverlap ? `
+                                    <span class="tag tag-overlap">
+                                        <svg class="svg-icon" width="13" height="13" viewBox="0 0 24 24">
+                                            <path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/>
+                                        </svg>
+                                        כפילות
+                                    </span>` : ''}
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -2198,6 +2215,7 @@
         let pStart = timeToMinutes(premStart);
         let pEnd = timeToMinutes(premEnd);
 
+        // Adjust for overnight shift if start time is after shift start
         if (pStart < sStart && pStart + 1440 <= sEnd) pStart += 1440;
         if (pEnd <= pStart) pEnd += 1440;
 
