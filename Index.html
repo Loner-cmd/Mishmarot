@@ -83,15 +83,12 @@
             gap: 12px;
         }
 
-        .rail-icon {
-            width: 38px;
-            height: 38px;
-            background: linear-gradient(135deg, var(--accent-blue), var(--accent-cyan));
+        .rail-icon-svg {
+            width: 42px;
+            height: 42px;
             border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.2rem;
+            flex-shrink: 0;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
         }
 
         .logo-text h1 {
@@ -743,9 +740,8 @@
             transition: opacity 0.2s ease;
         }
 
-        .modal-overlay.open {
-            opacity: 1;
-            pointer-events: auto;
+        .modal-overlay.open .modal-sheet {
+            transform: translateY(0);
         }
 
         .modal-sheet {
@@ -760,10 +756,6 @@
             transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
             max-height: 90vh;
             overflow-y: auto;
-        }
-
-        .modal-overlay.open .modal-sheet {
-            transform: translateY(0);
         }
 
         .modal-header {
@@ -899,7 +891,49 @@
 <div class="app-container">
     <header>
         <div class="logo-area">
-            <div class="rail-icon">🚆</div>
+            <svg class="rail-icon-svg" viewBox="0 0 512 512">
+                <defs>
+                    <linearGradient id="hdrBg" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stop-color="#132247"/>
+                        <stop offset="100%" stop-color="#060b16"/>
+                    </linearGradient>
+                    <linearGradient id="hdrRail" x1="0%" y1="0%" x2="0%" y2="100%">
+                        <stop offset="0%" stop-color="#00e5ff"/>
+                        <stop offset="100%" stop-color="#0077ff"/>
+                    </linearGradient>
+                    <linearGradient id="hdrTieTop" x1="0%" y1="0%" x2="0%" y2="100%">
+                        <stop offset="0%" stop-color="#3a558a"/>
+                        <stop offset="100%" stop-color="#2c426f"/>
+                    </linearGradient>
+                    <linearGradient id="hdrTieFront" x1="0%" y1="0%" x2="0%" y2="100%">
+                        <stop offset="0%" stop-color="#1e2e4e"/>
+                        <stop offset="100%" stop-color="#141f36"/>
+                    </linearGradient>
+                </defs>
+                <rect width="512" height="512" rx="115" fill="url(#hdrBg)"/>
+                <rect x="16" y="16" width="480" height="480" rx="100" fill="none" stroke="rgba(0, 229, 255, 0.15)" stroke-width="4"/>
+                <polygon points="186,306 326,306 332,314 180,314" fill="url(#hdrTieTop)" stroke="rgba(0,229,255,0.4)" stroke-width="1.5"/>
+                <polygon points="180,314 332,314 332,320 180,320" fill="url(#hdrTieFront)"/>
+                <polygon points="164,338 348,338 356,348 156,348" fill="url(#hdrTieTop)" stroke="rgba(0,229,255,0.45)" stroke-width="1.8"/>
+                <polygon points="156,348 356,348 356,356 156,356" fill="url(#hdrTieFront)"/>
+                <polygon points="136,378 376,378 388,392 124,392" fill="url(#hdrTieTop)" stroke="rgba(0,229,255,0.55)" stroke-width="2.2"/>
+                <polygon points="124,392 388,392 388,402 124,402" fill="url(#hdrTieFront)"/>
+                <polygon points="98,428 414,428 430,446 82,446" fill="url(#hdrTieTop)" stroke="rgba(0,229,255,0.7)" stroke-width="2.6"/>
+                <polygon points="82,446 430,446 430,460 82,460" fill="url(#hdrTieFront)"/>
+                <polygon points="194,290 206,290 120,465 102,465" fill="url(#hdrRail)"/>
+                <line x1="194" y1="290" x2="102" y2="465" stroke="#ffffff" stroke-width="2" opacity="0.65"/>
+                <polygon points="306,290 318,290 410,465 392,465" fill="url(#hdrRail)"/>
+                <line x1="318" y1="290" x2="410" y2="465" stroke="#ffffff" stroke-width="2" opacity="0.65"/>
+                <path d="M165 110 C165 65 200 50 256 50 C312 50 347 65 347 110 L360 250 C360 278 335 292 256 292 C177 292 152 278 152 250 Z" fill="#132247" stroke="#00d2ff" stroke-width="12" stroke-linejoin="round"/>
+                <path d="M188 115 C188 95 210 82 256 82 C302 82 324 95 324 115 L332 172 L180 172 Z" fill="#080e1d" stroke="#00d2ff" stroke-width="5" stroke-linejoin="round"/>
+                <circle cx="202" cy="242" r="14" fill="#00d2ff"/>
+                <circle cx="310" cy="242" r="14" fill="#00d2ff"/>
+                <rect x="230" y="233" width="52" height="18" rx="6" fill="#10b981"/>
+                <circle cx="365" cy="365" r="76" fill="#080e1d" stroke="#00d2ff" stroke-width="9"/>
+                <circle cx="365" cy="365" r="66" fill="rgba(0, 210, 255, 0.08)"/>
+                <polyline points="365,315 365,365 408,365" fill="none" stroke="#ffffff" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+                <circle cx="365" cy="365" r="6.5" fill="#00d2ff"/>
+            </svg>
             <div class="logo-text">
                 <h1>יומן משמרות</h1>
                 <span>רכבת ישראל</span>
@@ -1055,7 +1089,7 @@
 </div>
 
 <script>
-    // Generator for 3D Perspective Tracks App Icon
+    // Generator for 3D Perspective Tracks App Icon (Used by iOS & Favicon)
     (function generateAppIcon() {
         const canvas = document.createElement('canvas');
         canvas.width = 512;
@@ -1088,7 +1122,7 @@
             }
         }
 
-        // ================= 3D TIES (SLEEPERS) =================
+        // 3D Ties (Sleepers)
         const ties = [
             { top: [[186, 306], [326, 306], [332, 314], [180, 314]], front: [[180, 314], [332, 314], [332, 320], [180, 320]], strokeWidth: 1.5 },
             { top: [[164, 338], [348, 338], [356, 348], [156, 348]], front: [[156, 348], [356, 348], [356, 356], [156, 356]], strokeWidth: 1.8 },
@@ -1108,12 +1142,11 @@
             drawPoly(tie.front, frontGrad, null);
         });
 
-        // ================= RAILS (TRACKS) =================
+        // Rails (Tracks)
         const railGrad = ctx.createLinearGradient(0, 290, 0, 465);
         railGrad.addColorStop(0, '#00e5ff');
         railGrad.addColorStop(1, '#0077ff');
 
-        // Left Rail
         drawPoly([[194, 290], [206, 290], [120, 465], [102, 465]], railGrad, null);
         ctx.strokeStyle = 'rgba(255, 255, 255, 0.65)';
         ctx.lineWidth = 2;
@@ -1122,14 +1155,13 @@
         ctx.lineTo(102, 465);
         ctx.stroke();
 
-        // Right Rail
         drawPoly([[306, 290], [318, 290], [410, 465], [392, 465]], railGrad, null);
         ctx.beginPath();
         ctx.moveTo(318, 290);
         ctx.lineTo(410, 465);
         ctx.stroke();
 
-        // ================= TRAIN / LOCOMOTIVE =================
+        // Locomotive
         ctx.fillStyle = '#132247';
         ctx.strokeStyle = '#00d2ff';
         ctx.lineWidth = 12;
@@ -1165,11 +1197,11 @@
         ctx.arc(310, 242, 14, 0, Math.PI * 2);
         ctx.fill();
 
-        // Bumper Bar
+        // Bumper
         ctx.fillStyle = '#10b981';
         ctx.fillRect(230, 233, 52, 18);
 
-        // ================= CLOCK BADGE =================
+        // Clock Badge
         ctx.fillStyle = '#080e1d';
         ctx.strokeStyle = '#00d2ff';
         ctx.lineWidth = 9;
@@ -1178,13 +1210,11 @@
         ctx.fill();
         ctx.stroke();
 
-        // Clock Inner Tint
         ctx.fillStyle = 'rgba(0, 210, 255, 0.08)';
         ctx.beginPath();
         ctx.arc(365, 365, 66, 0, Math.PI * 2);
         ctx.fill();
 
-        // Clock Hands
         ctx.strokeStyle = '#ffffff';
         ctx.lineWidth = 8;
         ctx.lineCap = 'round';
@@ -1195,7 +1225,6 @@
         ctx.lineTo(408, 365);
         ctx.stroke();
 
-        // Center Pin
         ctx.fillStyle = '#00d2ff';
         ctx.beginPath();
         ctx.arc(365, 365, 6.5, 0, Math.PI * 2);
