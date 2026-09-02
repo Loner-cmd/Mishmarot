@@ -1008,6 +1008,13 @@
             color: var(--text-muted);
         }
 
+        .input-wrapper {
+            position: relative;
+            width: 100%;
+            display: flex;
+            align-items: center;
+        }
+
         .form-control {
             background: var(--bg-card-inner);
             border: 1px solid var(--border-color);
@@ -1026,6 +1033,29 @@
             text-align: center;
             font-family: 'Inter', 'Assistant', sans-serif;
             font-variant-numeric: tabular-nums;
+            transition: border-color 0.2s, background-color 0.2s;
+        }
+
+        /* Error state for invalid fields with absolute inner icon */
+        .form-control.input-error {
+            border-color: var(--accent-red) !important;
+            background-color: rgba(239, 68, 68, 0.1) !important;
+        }
+
+        .field-error-icon {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 18px;
+            height: 18px;
+            color: var(--accent-red);
+            display: none;
+            pointer-events: none;
+        }
+
+        .form-control.input-error ~ .field-error-icon {
+            display: block;
         }
 
         select.form-control {
@@ -1052,6 +1082,17 @@
         .custom-nalt-input {
             display: none;
             margin-top: 8px;
+        }
+
+        .field-error-msg {
+            font-size: 0.75rem;
+            color: #fca5a5;
+            margin-top: 4px;
+            display: none;
+        }
+
+        .field-error-msg.visible {
+            display: block;
         }
 
         .btn-save-modal {
@@ -1101,7 +1142,7 @@
 
         .error-dialog-card {
             background: var(--bg-card);
-            border: 1px solid rgba(239, 68, 68, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.15);
             border-radius: 20px;
             padding: 22px 20px;
             width: 100%;
@@ -1124,8 +1165,8 @@
             width: 52px;
             height: 52px;
             border-radius: 50%;
-            background: rgba(239, 68, 68, 0.15);
-            color: var(--accent-red);
+            background: rgba(0, 210, 255, 0.15);
+            color: var(--accent-cyan);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -1143,9 +1184,37 @@
             line-height: 1.45;
         }
 
+        .error-dialog-actions {
+            display: flex;
+            gap: 10px;
+            width: 100%;
+            margin-top: 6px;
+        }
+
+        .btn-dialog-action {
+            flex: 1;
+            padding: 12px;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            font-weight: 700;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-dialog-confirm {
+            background: var(--accent-blue);
+            color: #fff;
+        }
+
+        .btn-dialog-cancel {
+            background: rgba(255, 255, 255, 0.08);
+            color: var(--text-main);
+            border: 1px solid var(--border-color);
+        }
+        
         .btn-error-close {
             width: 100%;
-            background: var(--accent-red);
+            background: var(--accent-blue);
             color: #fff;
             padding: 12px;
             border-radius: 12px;
@@ -1361,11 +1430,23 @@
                 <div class="form-row">
                     <div class="form-group">
                         <label class="form-label">שעת כניסה</label>
-                        <input type="time" id="fieldStartTime" class="form-control">
+                        <div class="input-wrapper">
+                            <input type="time" id="fieldStartTime" class="form-control" onchange="validateModalRealtime()">
+                            <svg class="field-error-icon" viewBox="0 0 24 24">
+                                <path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+                            </svg>
+                        </div>
+                        <div id="startTimeError" class="field-error-msg">שעת כניסה ויציאה זהות</div>
                     </div>
                     <div class="form-group">
                         <label class="form-label">שעת יציאה</label>
-                        <input type="time" id="fieldEndTime" class="form-control">
+                        <div class="input-wrapper">
+                            <input type="time" id="fieldEndTime" class="form-control" onchange="validateModalRealtime()">
+                            <svg class="field-error-icon" viewBox="0 0 24 24">
+                                <path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+                            </svg>
+                        </div>
+                        <div id="endTimeError" class="field-error-msg">שעת כניסה ויציאה זהות</div>
                     </div>
                 </div>
             </div>
@@ -1425,11 +1506,23 @@
                 <div class="form-row">
                     <div class="form-group">
                         <label class="form-label">משעה</label>
-                        <input type="time" id="fieldPremStart" class="form-control">
+                        <div class="input-wrapper">
+                            <input type="time" id="fieldPremStart" class="form-control" onchange="validateModalRealtime()">
+                            <svg class="field-error-icon" viewBox="0 0 24 24">
+                                <path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+                            </svg>
+                        </div>
+                        <div id="premStartError" class="field-error-msg">שעות הפרמיה חורגות מגבולות המשמרת</div>
                     </div>
                     <div class="form-group">
                         <label class="form-label">עד שעה</label>
-                        <input type="time" id="fieldPremEnd" class="form-control">
+                        <div class="input-wrapper">
+                            <input type="time" id="fieldPremEnd" class="form-control" onchange="validateModalRealtime()">
+                            <svg class="field-error-icon" viewBox="0 0 24 24">
+                                <path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+                            </svg>
+                        </div>
+                        <div id="premEndError" class="field-error-msg">שעות הפרמיה חורגות מגבולות המשמרת</div>
                     </div>
                 </div>
             </div>
@@ -1447,9 +1540,25 @@
                 <path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/>
             </svg>
         </div>
-        <div class="error-dialog-title">שגיאה בנתוני הפרמיה</div>
-        <div class="error-dialog-msg" id="errorDialogMessage">שעות הפרמיה חייבות להיות בתוך טווח שעות המשמרת בלבד.</div>
+        <div class="error-dialog-title" id="errorDialogTitle">שגיאה בנתוני המשמרת</div>
+        <div class="error-dialog-msg" id="errorDialogMessage">שעות הכניסה והיציאה אינן יכולות להיות זהות.</div>
         <button type="button" class="btn-error-close" onclick="closeErrorDialog()">הבנתי</button>
+    </div>
+</div>
+
+<!-- Smart Action Alert Dialog (For Live Start/End checks) -->
+<div class="error-dialog-overlay" id="smartAlertDialog">
+    <div class="error-dialog-card">
+        <div class="error-dialog-icon" id="smartAlertIcon">
+            <svg class="svg-icon" width="28" height="28" viewBox="0 0 24 24">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+            </svg>
+        </div>
+        <div class="error-dialog-title" id="smartAlertTitle">שים לב</div>
+        <div class="error-dialog-msg" id="smartAlertMessage">זמנים זהים זוהו.</div>
+        <div class="error-dialog-actions" id="smartAlertActions">
+            <!-- Dynamically populated buttons -->
+        </div>
     </div>
 </div>
 
@@ -1750,6 +1859,40 @@
         return overlappingIds;
     }
 
+    function showSmartAlertDialog(title, message, confirmText, cancelText, onConfirm, onCancel) {
+        document.getElementById('smartAlertTitle').textContent = title;
+        document.getElementById('smartAlertMessage').textContent = message;
+        
+        const actionsContainer = document.getElementById('smartAlertActions');
+        actionsContainer.innerHTML = '';
+
+        const btnConfirm = document.createElement('button');
+        btnConfirm.className = 'btn-dialog-action btn-dialog-confirm';
+        btnConfirm.textContent = confirmText;
+        btnConfirm.onclick = () => {
+            closeSmartAlert();
+            if (onConfirm) onConfirm();
+        };
+
+        if (cancelText) {
+            const btnCancel = document.createElement('button');
+            btnCancel.className = 'btn-dialog-action btn-dialog-cancel';
+            btnCancel.textContent = cancelText;
+            btnCancel.onclick = () => {
+                closeSmartAlert();
+                if (onCancel) onCancel();
+            };
+            actionsContainer.appendChild(btnCancel);
+        }
+        actionsContainer.appendChild(btnConfirm);
+
+        document.getElementById('smartAlertDialog').classList.add('open');
+    }
+
+    function closeSmartAlert() {
+        document.getElementById('smartAlertDialog').classList.remove('open');
+    }
+
     function handleLiveStart() {
         const now = new Date();
         const y = now.getFullYear();
@@ -1778,29 +1921,100 @@
 
     function handleLiveEnd() {
         const now = new Date();
+        const y = now.getFullYear();
+        const m = String(now.getMonth() + 1).padStart(2, '0');
+        const d = String(now.getDate()).padStart(2, '0');
+        const currentDateStr = `${y}-${m}-${d}`;
         const timeStr = String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0');
+        
         const active = getActiveShift();
 
-        if (active) {
-            active.endTime = timeStr;
-        } else {
-            const y = now.getFullYear();
-            const m = String(now.getMonth() + 1).padStart(2, '0');
-            const d = String(now.getDate()).padStart(2, '0');
-            const newShift = {
-                id: 'shift_' + Date.now(),
-                siddur: '',
-                date: `${y}-${m}-${d}`,
-                startTime: null,
-                endTime: timeStr,
-                naltStartMinutes: 0,
-                naltEndMinutes: 0,
-                premStartTime: '',
-                premEndTime: ''
-            };
-            shifts.unshift(newShift);
+        if (!active) {
+            showSmartAlertDialog(
+                'אין משמרת פעילה',
+                'לא נמצאה משמרת פעילה לסיום.',
+                'הבנתי',
+                '',
+                () => {},
+                () => {}
+            );
+            return;
         }
 
+        const shiftDateStr = active.date || currentDateStr;
+        const isSameDay = (shiftDateStr === currentDateStr);
+
+        const [sh, sm] = active.startTime.split(':').map(Number);
+        const [eh, em] = timeStr.split(':').map(Number);
+        let startMins = sh * 60 + sm;
+        let endMins = eh * 60 + em;
+
+        if (isSameDay) {
+            if (endMins <= startMins) endMins += 1440;
+        } else {
+            const shiftDateObj = new Date(shiftDateStr);
+            const currDateObj = new Date(currentDateStr);
+            const dayDiff = Math.round((currDateObj - shiftDateObj) / (1000 * 60 * 60 * 24));
+            if (dayDiff > 0) {
+                endMins += (dayDiff * 1440);
+            }
+        }
+
+        const durationMins = endMins - startMins;
+
+        if (isSameDay && (durationMins === 0 || active.startTime === timeStr)) {
+            showSmartAlertDialog(
+                'זמנים זהים זוהו',
+                'שעת הכניסה ושעת היציאה זהות (משמרת באורך 0 זמן). האם ברצונך לבטל ולמחוק משמרת זו?',
+                'אישור (מחיקה)',
+                'ביטול',
+                () => {
+                    shifts = shifts.filter(s => String(s.id) !== String(active.id));
+                    autoSortShiftsArray(shifts);
+                    saveShifts();
+                    if (currentView === 'history') renderShifts();
+                    else renderRecentShifts();
+                },
+                () => {}
+            );
+            return;
+        }
+
+        if (!isSameDay && durationMins > 780) {
+            showSmartAlertDialog(
+                'משמרת חורגת משכחה',
+                'עברו למעלה מ-13 שעות מתחילת המשמרת. יש להתאים את שעת הסיום הרלוונטית באופן ידני.',
+                'הבנתי',
+                '',
+                () => {},
+                () => {}
+            );
+            return;
+        }
+
+        if (isSameDay && durationMins > 0 && durationMins < 180) {
+            const hoursFormatted = Math.floor(durationMins / 60);
+            const minsFormatted = durationMins % 60;
+            const durStr = hoursFormatted > 0 ? `${hoursFormatted} שעות ו-${minsFormatted} דק׳` : `${minsFormatted} דק׳`;
+
+            showSmartAlertDialog(
+                'משמרת קצרה מהרגיל',
+                `משמרת זו קצרה מהרגיל ותימשך כ-${durStr}. האם אתה בטוח שברצונך לסיים ולשמור אותה?`,
+                'אישור (שמירה)',
+                'ביטול',
+                () => {
+                    active.endTime = timeStr;
+                    autoSortShiftsArray(shifts);
+                    saveShifts();
+                    if (currentView === 'history') renderShifts();
+                    else renderRecentShifts();
+                },
+                () => {}
+            );
+            return;
+        }
+
+        active.endTime = timeStr;
         autoSortShiftsArray(shifts);
         saveShifts();
         renderRecentShifts();
@@ -1934,7 +2148,8 @@
         return Number(select.value) || 0;
     }
 
-    function showErrorDialog(msg) {
+    function showErrorDialog(msg, title = 'שגיאה בנתוני המשמרת') {
+        document.getElementById('errorDialogTitle').textContent = title;
         document.getElementById('errorDialogMessage').textContent = msg;
         document.getElementById('errorDialog').classList.add('open');
     }
@@ -2027,7 +2242,6 @@
             if (currentView === 'history') renderShifts();
             else renderRecentShifts();
         } else {
-            // Find all matching detail blocks across views and toggle them together
             const detailsEls = document.querySelectorAll('.shift-details[id="details_' + stringId + '"]');
             detailsEls.forEach(el => el.classList.toggle('expanded'));
         }
@@ -2164,7 +2378,10 @@
         const naltEnd = Number(shift.naltEndMinutes ?? (shift.naltEndHours ? shift.naltEndHours * 60 : 0)) || 0;
         const totalNaltMins = naltStart + naltEnd;
         const hasNalt = totalNaltMins > 0;
-        const hasPrem = Boolean(shift.premStartTime && shift.premEndTime);
+        
+        // עדכון: פרמיה קיימת אם יש לפחות שדה אחד מלא (התחלה או סיום)
+        const hasPrem = Boolean(shift.premStartTime || shift.premEndTime);
+        
         const hasSiddur = Boolean(shift.siddur && shift.siddur.trim());
 
         const { primary: siddurPrimary, secondary: siddurSecondary } = parseSiddurDisplay(shift.siddur);
@@ -2176,7 +2393,7 @@
             secFontSize = '0.70rem';
         }
 
-        const premDurationMins = hasPrem ? calculateDurationMinutes(shift.premStartTime, shift.premEndTime) : 0;
+        const premDurationMins = (shift.premStartTime && shift.premEndTime) ? calculateDurationMinutes(shift.premStartTime, shift.premEndTime) : 0;
 
         const parts = (shift.date || '').split('-');
         const daysArr = ['ראשון', 'שני', 'שלישי', 'רביעי', 'חמישי', 'שישי', 'שבת'];
@@ -2323,8 +2540,8 @@
                         ${hasPrem ? `
                         <div class="sub-breakdown">
                             <div class="breakdown-item">
-                                <span class="breakdown-label">פרמיה (${formatMinutesToHM(premDurationMins)}):</span>
-                                <span class="breakdown-value">${shift.premStartTime} – ${shift.premEndTime}</span>
+                                <span class="breakdown-label">פרמיה ${premDurationMins > 0 ? '(' + formatMinutesToHM(premDurationMins) + ')' : ''}:</span>
+                                <span class="breakdown-value">${shift.premStartTime || '---'} – ${shift.premEndTime || '---'}</span>
                             </div>
                         </div>` : ''}
 
@@ -2374,30 +2591,6 @@
         container.innerHTML = recent.map(shift => buildShiftCardHTML(shift, overlappingIds)).join('');
     }
 
-    function navigateTo(viewName, closeMenu = true) {
-        currentView = viewName;
-        sessionStorage.setItem('railway_active_view', viewName);
-
-        document.getElementById('viewClock').style.display = (viewName === 'clock') ? 'flex' : 'none';
-        document.getElementById('viewHistory').style.display = (viewName === 'history') ? 'flex' : 'none';
-
-        document.getElementById('menuBtnPunch').classList.toggle('active', viewName === 'clock');
-        document.getElementById('menuBtnHistory').classList.toggle('active', viewName === 'history');
-
-        if (closeMenu) {
-            const menu = document.getElementById('topMenu');
-            const overlay = document.getElementById('dropdownMenuOverlay');
-            menu.classList.remove('open');
-            overlay.classList.remove('open');
-        }
-
-        if (viewName === 'history') {
-            renderShifts();
-        } else if (viewName === 'clock') {
-            renderRecentShifts();
-        }
-    }
-
     function openShiftModal(shiftId) {
         const modal = document.getElementById('shiftModal');
         const title = document.getElementById('modalTitle');
@@ -2438,6 +2631,7 @@
         }
 
         modal.classList.add('open');
+        validateModalRealtime();
     }
 
     function closeModal() {
@@ -2450,30 +2644,153 @@
         return h * 60 + m;
     }
 
-    function validatePremiumRange(shiftStart, shiftEnd, premStart, premEnd) {
-        if (!premStart && !premEnd) return { valid: true };
-        if (premStart && !premEnd) return { valid: false, error: 'יש להזין גם שעת סיום לפרמיה.' };
-        if (!premStart && premEnd) return { valid: false, error: 'יש להזין גם שעת התחלה לפרמיה.' };
-        if (!shiftStart || !shiftEnd) return { valid: false, error: 'יש להגדיר שעת כניסה ויציאה למשמרת כדי להוסיף פרמיה.' };
+    // Comprehensive real-time validation with strict shift bounds checking for partial premium
+    function getValidationState() {
+        const shiftStart = document.getElementById('fieldStartTime').value || '';
+        const shiftEnd = document.getElementById('fieldEndTime').value || '';
+        const premStart = document.getElementById('fieldPremStart').value || '';
+        const premEnd = document.getElementById('fieldPremEnd').value || '';
 
-        const sStart = timeToMinutes(shiftStart);
-        let sEnd = timeToMinutes(shiftEnd);
-        if (sEnd <= sStart) sEnd += 1440;
+        let startInvalid = false;
+        let endInvalid = false;
+        let premStartInvalid = false;
+        let premEndInvalid = false;
+        let errorMsg = '';
 
-        let pStart = timeToMinutes(premStart);
-        let pEnd = timeToMinutes(premEnd);
-
-        if (pStart < sStart && pStart + 1440 <= sEnd) pStart += 1440;
-        if (pEnd <= pStart) pEnd += 1440;
-
-        if (pStart < sStart || pEnd > sEnd) {
+        if (shiftStart && shiftEnd && shiftStart === shiftEnd) {
+            startInvalid = true;
+            endInvalid = true;
+            errorMsg = 'שעת כניסה ושעת יציאה למשמרת אינן יכולות להיות זהות.';
             return {
                 valid: false,
-                error: `שעות הפרמיה (${premStart} - ${premEnd}) חורגות מגבולות המשמרת (${shiftStart} - ${shiftEnd}). יש להזין זמנים בתוך טווח המשמרת בלבד.`
+                startInvalid,
+                endInvalid,
+                premStartInvalid,
+                premEndInvalid,
+                error: errorMsg
             };
         }
 
-        return { valid: true };
+        let sStartMins = 0;
+        let sEndMins = 0;
+
+        if (shiftStart && shiftEnd) {
+            sStartMins = timeToMinutes(shiftStart);
+            sEndMins = timeToMinutes(shiftEnd);
+            if (sEndMins <= sStartMins) {
+                sEndMins += 1440;
+            }
+            const shiftDuration = sEndMins - sStartMins;
+            if (shiftDuration > 780) { // > 13 hours
+                startInvalid = true;
+                endInvalid = true;
+                errorMsg = 'משך המשמרת חורג מהמותר (מעל 13 שעות).';
+                return { valid: false, startInvalid, endInvalid, premStartInvalid, premEndInvalid, error: errorMsg };
+            }
+        } else if (shiftStart) {
+            sStartMins = timeToMinutes(shiftStart);
+            sEndMins = sStartMins + 1440;
+        }
+
+        // Validate Premium Start against Shift Start
+        if (premStart && shiftStart) {
+            const pStartMins = timeToMinutes(premStart);
+            let adjustedPStart = pStartMins;
+            if (adjustedPStart < sStartMins && adjustedPStart + 1440 <= sEndMins) {
+                adjustedPStart += 1440;
+            }
+            if (adjustedPStart < sStartMins) {
+                premStartInvalid = true;
+                errorMsg = 'שעת תחילת הפרמיה קודמת לשעת תחילת המשמרת.';
+            }
+        }
+
+        // Validate Premium End against Shift End
+        if (premEnd && shiftEnd && shiftStart) {
+            const pEndMins = timeToMinutes(premEnd);
+            let adjustedPEnd = pEndMins;
+            if (adjustedPEnd <= sStartMins) {
+                adjustedPEnd += 1440;
+            }
+            let adjustedSEnd = sEndMins;
+            if (adjustedPEnd > adjustedSEnd) {
+                premEndInvalid = true;
+                errorMsg = 'שעת סיום הפרמיה חורגת משעת סיום המשמרת.';
+            }
+        }
+
+        // If both bounds provided, check max duration (12 hours)
+        if (premStart && premEnd) {
+            const pStart = timeToMinutes(premStart);
+            let pEnd = timeToMinutes(premEnd);
+            let premDuration = pEnd - pStart;
+            if (premDuration < 0) premDuration += 1440;
+
+            if (premDuration > 720 || premDuration === 0) {
+                premStartInvalid = true;
+                premEndInvalid = true;
+                errorMsg = 'משך הפרמיה חורג מהמותר (מקסימום 12 שעות) או שגוי.';
+            }
+        }
+
+        return {
+            valid: !startInvalid && !endInvalid && !premStartInvalid && !premEndInvalid,
+            startInvalid,
+            endInvalid,
+            premStartInvalid,
+            premEndInvalid,
+            error: errorMsg
+        };
+    }
+
+    function validateModalRealtime() {
+        const startInput = document.getElementById('fieldStartTime');
+        const endInput = document.getElementById('fieldEndTime');
+        const premStartInput = document.getElementById('fieldPremStart');
+        const premEndInput = document.getElementById('fieldPremEnd');
+        
+        const startErr = document.getElementById('startTimeError');
+        const endErr = document.getElementById('endTimeError');
+        const premStartErr = document.getElementById('premStartError');
+        const premEndErr = document.getElementById('premEndError');
+
+        const state = getValidationState();
+
+        if (state.startInvalid) {
+            startInput.classList.add('input-error');
+            startErr.textContent = state.error.includes('13 שעות') ? 'משך המשמרת חורג מהמותר (מעל 13 שעות)' : 'שעת כניסה ויציאה זהות';
+            startErr.classList.add('visible');
+        } else {
+            startInput.classList.remove('input-error');
+            startErr.classList.remove('visible');
+        }
+
+        if (state.endInvalid) {
+            endInput.classList.add('input-error');
+            endErr.textContent = state.error.includes('13 שעות') ? 'משך המשמרת חורג מהמותר (מעל 13 שעות)' : 'שעת כניסה ויציאה זהות';
+            endErr.classList.add('visible');
+        } else {
+            endInput.classList.remove('input-error');
+            endErr.classList.remove('visible');
+        }
+
+        if (state.premStartInvalid) {
+            premStartInput.classList.add('input-error');
+            premStartErr.textContent = state.error || 'שעות הפרמיה חורגות מגבולות המשמרת';
+            premStartErr.classList.add('visible');
+        } else {
+            premStartInput.classList.remove('input-error');
+            premStartErr.classList.remove('visible');
+        }
+
+        if (state.premEndInvalid) {
+            premEndInput.classList.add('input-error');
+            premEndErr.textContent = state.error || 'שעות הפרמיה חורגות מגבולות המשמרת';
+            premEndErr.classList.add('visible');
+        } else {
+            premEndInput.classList.remove('input-error');
+            premEndErr.classList.remove('visible');
+        }
     }
 
     function saveShiftDirect() {
@@ -2495,9 +2812,13 @@
         const premStartVal = document.getElementById('fieldPremStart').value || '';
         const premEndVal = document.getElementById('fieldPremEnd').value || '';
 
-        const validation = validatePremiumRange(startVal, endVal, premStartVal, premEndVal);
+        const validation = getValidationState();
+        
         if (!validation.valid) {
-            showErrorDialog(validation.error);
+            validateModalRealtime();
+            const errorMsg = validation.error || 'לא ניתן לשמור את המשמרת – קיימת שגיאה בנתונים שטרם תוקנה. יש לתקן את השדות המסומנים באדום.';
+            const errorTitle = (startVal && endVal && startVal === endVal) ? 'שגיאה בשעות המשמרת' : (validation.error.includes('13 שעות') ? 'חריגת משך משמרת' : 'שגיאה בשמירת נתוני הפרמיה');
+            showErrorDialog(errorMsg, errorTitle);
             return;
         }
 
