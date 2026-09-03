@@ -443,7 +443,8 @@
 
         .header-actions-group {
             display: flex;
-            gap: 8px;
+            gap: 6px;
+            flex-wrap: wrap;
         }
 
         .btn-text-action {
@@ -451,14 +452,19 @@
             border: 1px solid var(--border-color);
             color: var(--accent-cyan);
             font-weight: 700;
-            font-size: 0.85rem;
-            padding: 6px 14px;
+            font-size: 0.8rem;
+            padding: 6px 10px;
             border-radius: 20px;
             cursor: pointer;
         }
 
         .btn-text-action:active {
             background: rgba(0, 136, 255, 0.2);
+        }
+
+        .btn-text-action.active-mode {
+            background: rgba(0, 210, 255, 0.2);
+            border-color: var(--accent-cyan);
         }
 
         .selection-toolbar {
@@ -1402,6 +1408,7 @@
                 היסטוריית משמרות
             </div>
             <div class="header-actions-group">
+                <button id="btnToggleMultiPanel" class="btn-text-action" onclick="toggleMultiPanelMode()">ריבוי פאנלים</button>
                 <button id="btnToggleSorting" class="btn-text-action" onclick="toggleSortingMode()">מיון</button>
                 <button id="btnToggleSelection" class="btn-text-action" onclick="toggleSelectionMode()">בחירה</button>
             </div>
@@ -1755,6 +1762,7 @@
     let currentView = sessionStorage.getItem('railway_active_view') || 'clock';
     let isSelectionMode = false;
     let isSortingMode = false;
+    let isMultiPanelMode = false; 
     let selectedShiftIds = new Set();
     let draggedElement = null;
 
@@ -2253,6 +2261,22 @@
         renderShifts();
     }
 
+    // מצב ריבוי פאנלים
+    function toggleMultiPanelMode() {
+        isMultiPanelMode = !isMultiPanelMode;
+        const btn = document.getElementById('btnToggleMultiPanel');
+        if (btn) {
+            btn.classList.toggle('active-mode', isMultiPanelMode);
+        }
+
+        // אם מצב ריבוי פאנלים כובה, נסגור את כל הפאנלים הפתוחים
+        if (!isMultiPanelMode) {
+            document.querySelectorAll('.shift-details.expanded').forEach(el => {
+                el.classList.remove('expanded');
+            });
+        }
+    }
+
     function sortShiftsByDate() {
         autoSortShiftsArray(shifts);
         saveShifts();
@@ -2278,8 +2302,11 @@
         toggleSortingMode();
     }
 
-    function handleCardClick(id) {
+    function handleCardClick(event, id) {
         if (isSortingMode) return;
+        
+        // התעלמות מלחיצה על אלמנטים אינטראקטיביים בתוך הכותרת
+        if (event.target.closest('button') || event.target.closest('input') || event.target.closest('label')) return;
 
         const stringId = String(id);
         if (isSelectionMode) {
@@ -2292,8 +2319,26 @@
             if (currentView === 'history') renderShifts();
             else renderRecentShifts();
         } else {
-            const detailsEls = document.querySelectorAll('.shift-details[id="details_' + stringId + '"]');
-            detailsEls.forEach(el => el.classList.toggle('expanded'));
+            // זיהוי הפאנל שנמצא בדיוק מתחת לכרטיסייה שלחצנו עליה (מטפל נכון בכפילות בין היסטוריה לראשי)
+            const cardEl = event.currentTarget.closest('.shift-card');
+            const detailsEl = cardEl.querySelector('.shift-details');
+            if (!detailsEl) return;
+
+            const isCurrentlyExpanded = detailsEl.classList.contains('expanded');
+
+            // בדיקה אם צריך לסגור פאנלים אחרים
+            if (currentView !== 'history' || !isMultiPanelMode) {
+                if (!isCurrentlyExpanded) {
+                    const activeContainer = cardEl.closest('.shifts-list');
+                    if (activeContainer) {
+                        activeContainer.querySelectorAll('.shift-details.expanded').forEach(el => {
+                            if (el !== detailsEl) el.classList.remove('expanded');
+                        });
+                    }
+                }
+            }
+
+            detailsEl.classList.toggle('expanded');
         }
     }
 
@@ -2421,7 +2466,6 @@
         return h * 60 + m;
     }
 
-    // CALCULATE FULL PREMIUM TIMES WITH OPTIONAL 12-HOUR CAP SUPPORT
     function calculateFullPremTimes(startStr, endStr) {
         if (!startStr) return { start: '', end: '' };
         const sMins = timeToMinutes(startStr);
@@ -2440,7 +2484,6 @@
         if (eMins <= sMins) eMins += 1440;
 
         let duration = eMins - sMins;
-        // Cap at 12 hours (720 minutes) if shift exceeds 12 hours
         if (duration > 720) {
             eMins = sMins + 720;
         }
@@ -2497,17 +2540,20 @@
         }
     }
 
-    function toggleFullPremInline(shiftId) {
+    function toggleFullPremInline(event, shiftId) {
+        event.stopPropagation(); // עצירה מוחלטת של זליגת הלחיצה
+
         const shift = shifts.find(s => String(s.id) === String(shiftId));
         if (!shift) return;
 
-        shift.fullPrem = !shift.fullPrem;
+        shift.fullPrem = event.target.checked;
         if (shift.fullPrem && shift.startTime && shift.startTime !== shift.endTime) {
             applyFullPremToShift(shift);
         } else {
             shift.premStartTime = '';
             shift.premEndTime = '';
         }
+        
         saveShifts();
         if (currentView === 'history') renderShifts();
         else renderRecentShifts();
@@ -2561,7 +2607,7 @@
             <div class="shift-card ${isActive ? 'active-shift' : ''} ${isOverlap ? 'has-overlap' : ''} ${isIncomplete && !isActive ? 'incomplete' : ''} ${isSelected ? 'selected-for-delete' : ''}" 
                  data-id="${shiftIdStr}" 
                  draggable="${isSortingMode ? 'true' : 'false'}">
-                <div class="shift-header" onclick="handleCardClick('${shiftIdStr}')">
+                <div class="shift-header" onclick="handleCardClick(event, '${shiftIdStr}')">
                     <div class="drag-handle-container">
                         <svg class="svg-icon" width="20" height="20" viewBox="0 0 24 24" style="color: var(--text-muted);">
                             <circle cx="9" cy="6" r="1.5"/><circle cx="15" cy="6" r="1.5"/>
@@ -2636,7 +2682,7 @@
                     </div>
                 </div>
 
-                <div class="shift-details" id="details_${shiftIdStr}">
+                <div class="shift-details">
                     <div class="details-inner">
                         ${isOverlap ? `
                         <div class="sub-breakdown" style="border-color: rgba(234, 179, 8, 0.3);">
@@ -2664,7 +2710,7 @@
                                     <span class="breakdown-value">${shift.endTime || 'לא הוזן'}</span>
                                 </div>
                                 <label class="checkbox-label-container" onclick="event.stopPropagation();" style="margin-right: auto;">
-                                    <input type="checkbox" ${shift.fullPrem ? 'checked' : ''} onchange="toggleFullPremInline('${shiftIdStr}')">
+                                    <input type="checkbox" ${shift.fullPrem ? 'checked' : ''} onchange="toggleFullPremInline(event, '${shiftIdStr}')" onclick="event.stopPropagation();">
                                     פרמיה מלאה
                                 </label>
                             </div>
@@ -2706,6 +2752,10 @@
         const container = document.getElementById('shiftsContainer');
         if (!container) return;
 
+        // שמירת הזיכרון של הפאנלים הפתוחים לפני הריענון
+        const expandedIds = Array.from(container.querySelectorAll('.shift-details.expanded'))
+                                .map(el => el.closest('.shift-card').getAttribute('data-id'));
+
         if (shifts.length === 0) {
             container.innerHTML = `
                 <div class="empty-state">
@@ -2717,12 +2767,26 @@
 
         const overlappingIds = calculateOverlaps();
         container.innerHTML = shifts.map(shift => buildShiftCardHTML(shift, overlappingIds)).join('');
+        
+        // החזרת הפאנלים למצב הפתוח שלהם
+        expandedIds.forEach(id => {
+            const card = container.querySelector(`.shift-card[data-id="${id}"]`);
+            if (card) {
+                const details = card.querySelector('.shift-details');
+                if (details) details.classList.add('expanded');
+            }
+        });
+
         setupDragAndDrop();
     }
 
     function renderRecentShifts() {
         const container = document.getElementById('recentShiftsContainer');
         if (!container) return;
+
+        // שמירת הזיכרון של הפאנלים הפתוחים לפני הריענון
+        const expandedIds = Array.from(container.querySelectorAll('.shift-details.expanded'))
+                                .map(el => el.closest('.shift-card').getAttribute('data-id'));
 
         if (shifts.length === 0) {
             container.innerHTML = `
@@ -2736,6 +2800,15 @@
         const recent = shifts.slice(0, 2);
         const overlappingIds = calculateOverlaps();
         container.innerHTML = recent.map(shift => buildShiftCardHTML(shift, overlappingIds)).join('');
+
+        // החזרת הפאנלים למצב הפתוח שלהם
+        expandedIds.forEach(id => {
+            const card = container.querySelector(`.shift-card[data-id="${id}"]`);
+            if (card) {
+                const details = card.querySelector('.shift-details');
+                if (details) details.classList.add('expanded');
+            }
+        });
     }
 
     function openShiftModal(shiftId) {
@@ -2880,7 +2953,6 @@
             if (premDuration < 0) premDuration += 1440;
 
             let shiftDuration = adjustedSEnd - adjustedSStart;
-            // FIXED: Added precise tolerance (up to 722 minutes for 12-hour shifts) to prevent any 720/722 exact-match errors!
             if (premDuration > shiftDuration + 2 || premDuration === 0) {
                 premStartInvalid = true;
                 premEndInvalid = true;
