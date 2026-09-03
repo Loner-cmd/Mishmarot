@@ -362,6 +362,64 @@
             direction: rtl;
         }
 
+        /* Progress Bar Styles */
+        .live-progress-wrapper {
+            width: 100%;
+            height: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 6px;
+            margin-top: 20px;
+            position: relative;
+            overflow: hidden;
+            display: none;
+            direction: rtl;
+        }
+        
+        .live-progress-bg-green {
+            position: absolute; right: 0; width: 75%; height: 100%;
+            background: rgba(16, 185, 129, 0.15); /* Dimmed Green for 0-9h */
+        }
+        
+        .live-progress-bg-gold {
+            position: absolute; right: 75%; width: 25%; height: 100%;
+            background: rgba(234, 179, 8, 0.15); /* Dimmed Gold for 9-12h */
+        }
+        
+        .live-progress-marker {
+            position: absolute; right: 75%; top: 0; bottom: 0; width: 2px;
+            background: rgba(234, 179, 8, 0.6);
+            z-index: 2;
+        }
+
+        .live-progress-fill {
+            position: absolute; right: 0; top: 0; bottom: 0;
+            border-radius: 6px;
+            transition: width 1s linear, background-color 0.5s ease;
+            z-index: 3;
+        }
+
+        .fill-green {
+            background: linear-gradient(90deg, #10b981, #34d399);
+            box-shadow: 0 0 8px rgba(16, 185, 129, 0.4);
+            animation: pulse-green 2.5s infinite alternate;
+        }
+
+        .fill-gold {
+            background: linear-gradient(90deg, #fbbf24, #f59e0b);
+            box-shadow: 0 0 14px rgba(245, 158, 11, 0.8);
+            animation: pulse-gold 1.5s infinite alternate;
+        }
+
+        @keyframes pulse-green {
+            0% { opacity: 0.85; box-shadow: 0 0 4px rgba(16, 185, 129, 0.2); }
+            100% { opacity: 1; box-shadow: 0 0 10px rgba(16, 185, 129, 0.6); }
+        }
+
+        @keyframes pulse-gold {
+            0% { filter: brightness(1); box-shadow: 0 0 10px rgba(245, 158, 11, 0.6); }
+            100% { filter: brightness(1.25); box-shadow: 0 0 20px rgba(245, 158, 11, 1); }
+        }
+
         .action-buttons-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -443,7 +501,8 @@
 
         .header-actions-group {
             display: flex;
-            gap: 8px;
+            gap: 6px;
+            flex-wrap: wrap;
         }
 
         .btn-text-action {
@@ -451,14 +510,19 @@
             border: 1px solid var(--border-color);
             color: var(--accent-cyan);
             font-weight: 700;
-            font-size: 0.85rem;
-            padding: 6px 14px;
+            font-size: 0.8rem;
+            padding: 6px 10px;
             border-radius: 20px;
             cursor: pointer;
         }
 
         .btn-text-action:active {
             background: rgba(0, 136, 255, 0.2);
+        }
+
+        .btn-text-action.active-mode {
+            background: rgba(0, 210, 255, 0.2);
+            border-color: var(--accent-cyan);
         }
 
         .selection-toolbar {
@@ -505,12 +569,112 @@
             color: #fff;
         }
 
+        /* Monthly Accordion Styles */
+        .month-accordion {
+            background: var(--bg-card);
+            border-radius: 16px;
+            border: 1px solid var(--border-color);
+            overflow: hidden;
+            margin-bottom: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        
+        .month-accordion:last-child {
+            margin-bottom: 0;
+        }
+
+        .month-accordion-header {
+            padding: 14px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 1.05rem;
+            color: var(--accent-cyan);
+            user-select: none;
+            transition: background 0.2s;
+        }
+
+        .month-accordion-header:active {
+            background: rgba(0, 0, 0, 0.4);
+        }
+
+        .chevron-icon {
+            fill: currentColor;
+            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .month-accordion.open .chevron-icon {
+            transform: rotate(180deg);
+        }
+
+        .month-accordion-body {
+            padding: 12px;
+            display: none;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .month-accordion.open .month-accordion-body {
+            display: block;
+        }
+
+        .month-summary-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            background: rgba(255, 255, 255, 0.03);
+            padding: 12px;
+            border-radius: 12px;
+            margin-bottom: 14px;
+            align-items: center;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .summary-stat {
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: #e2e8f0;
+            background: rgba(0, 0, 0, 0.4);
+            padding: 6px 10px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .btn-export {
+            margin-right: auto; /* Push left in RTL */
+            background: rgba(16, 185, 129, 0.15);
+            color: var(--accent-green);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 0.85rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: background 0.15s;
+        }
+
+        .btn-export:active {
+            background: rgba(16, 185, 129, 0.3);
+        }
+
         .shifts-list {
             display: flex;
             flex-direction: column;
             gap: 12px;
         }
+        
+        .shifts-list-inner {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
 
+        /* Shift Card & Color Indicators */
         .shift-card {
             background: var(--bg-card);
             border-radius: 16px;
@@ -519,7 +683,20 @@
             box-shadow: 0 4px 12px rgba(0,0,0,0.15);
             transition: border-color 0.2s, transform 0.15s;
             user-select: none;
+            position: relative;
         }
+
+        .shift-type-strip {
+            position: absolute;
+            top: 0; right: 0; bottom: 0;
+            width: 4px;
+            background: transparent;
+            z-index: 5;
+        }
+
+        .type-morning .shift-type-strip { background: #38bdf8; } /* תכלת בוקר */
+        .type-noon .shift-type-strip { background: #fb923c; }    /* כתום צהריים */
+        .type-night .shift-type-strip { background: #818cf8; }   /* אינדיגו לילה */
 
         .shift-card.active-shift {
             border-color: rgba(16, 185, 129, 0.5);
@@ -546,11 +723,18 @@
         }
 
         .shift-header {
-            padding: 14px 16px;
+            padding: 14px 16px 14px 16px;
             cursor: pointer;
             display: flex;
             align-items: center;
             gap: 12px;
+        }
+
+        /* Adjust padding if color strip is active to avoid text overlap */
+        .shift-card.type-morning .shift-header, 
+        .shift-card.type-noon .shift-header, 
+        .shift-card.type-night .shift-header {
+            padding-right: 18px; 
         }
 
         .drag-handle-container {
@@ -781,7 +965,7 @@
         }
 
         .shift-details.expanded {
-            max-height: 800px;
+            max-height: 900px;
             transition: max-height 0.4s ease-in;
         }
 
@@ -1224,6 +1408,33 @@
             cursor: pointer;
             margin-top: 6px;
         }
+
+        /* Full Premium Checkbox Custom Styling */
+        .full-prem-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+        
+        .checkbox-label-container {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--accent-purple);
+            user-select: none;
+        }
+
+        .checkbox-label-container input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            accent-color: var(--accent-purple);
+            cursor: pointer;
+            border-radius: 4px;
+        }
     </style>
 </head>
 <body>
@@ -1333,12 +1544,28 @@
                     <span class="date-text-content" id="currentDate">--</span>
                 </div>
             </div>
+            
+            <!-- Live Progress Bar (0-9 Green, 9+ Gold) -->
+            <div class="live-progress-wrapper" id="liveProgressWrap">
+                <div class="live-progress-bg-green"></div>
+                <div class="live-progress-bg-gold"></div>
+                <div class="live-progress-marker"></div>
+                <div class="live-progress-fill fill-green" id="liveProgressFill"></div>
+            </div>
 
             <div class="action-buttons-grid">
                 <button id="btnStartShift" class="btn-action btn-start" onclick="handleLiveStart()">כניסה למשמרת</button>
                 <button id="btnEndShift" class="btn-action btn-end" onclick="handleLiveEnd()">יציאה ממשמרת</button>
             </div>
         </div>
+
+        <!-- Manual Entry Button on Clock Screen -->
+        <button class="manual-entry-btn" onclick="openShiftModal(null)">
+            <svg class="svg-icon" width="16" height="16" viewBox="0 0 24 24">
+                <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+            </svg>
+            הוספת משמרת ידנית
+        </button>
 
         <!-- Recent Shifts Section on Clock Screen -->
         <div class="section-header" style="margin-top: 4px;">
@@ -1356,7 +1583,7 @@
             <svg class="svg-icon" width="16" height="16" viewBox="0 0 24 24">
                 <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
             </svg>
-            הוספת / עריכת משמרת ידנית
+            הוספת משמרת ידנית
         </button>
 
         <div class="section-header">
@@ -1367,6 +1594,7 @@
                 היסטוריית משמרות
             </div>
             <div class="header-actions-group">
+                <button id="btnToggleMultiPanel" class="btn-text-action" onclick="toggleMultiPanelMode()">ריבוי פאנלים</button>
                 <button id="btnToggleSorting" class="btn-text-action" onclick="toggleSortingMode()">מיון</button>
                 <button id="btnToggleSelection" class="btn-text-action" onclick="toggleSelectionMode()">בחירה</button>
             </div>
@@ -1417,9 +1645,17 @@
                     </svg>
                     פרטי המשמרת
                 </div>
+                
+                <!-- Siddur & Full Premium Checkbox Row -->
                 <div class="form-group">
                     <label class="form-label">סידור</label>
-                    <input type="text" id="fieldSiddur" class="form-control" placeholder="סידור / מספר רכבת">
+                    <div class="full-prem-row">
+                        <input type="text" id="fieldSiddur" class="form-control" placeholder="סידור / מספר רכבת" style="flex: 1;">
+                        <label class="checkbox-label-container">
+                            <input type="checkbox" id="fieldFullPremModal" onchange="onFullPremCheckboxChange(this.checked)">
+                            פרמיה מלאה
+                        </label>
+                    </div>
                 </div>
 
                 <div class="form-group">
@@ -1431,7 +1667,7 @@
                     <div class="form-group">
                         <label class="form-label">שעת כניסה</label>
                         <div class="input-wrapper">
-                            <input type="time" id="fieldStartTime" class="form-control" onchange="validateModalRealtime()">
+                            <input type="time" id="fieldStartTime" class="form-control" onchange="validateModalRealtime(); handleModalTimeChangeForFullPrem();" oninput="handleModalTimeChangeForFullPrem();">
                             <svg class="field-error-icon" viewBox="0 0 24 24">
                                 <path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
                             </svg>
@@ -1441,7 +1677,7 @@
                     <div class="form-group">
                         <label class="form-label">שעת יציאה</label>
                         <div class="input-wrapper">
-                            <input type="time" id="fieldEndTime" class="form-control" onchange="validateModalRealtime()">
+                            <input type="time" id="fieldEndTime" class="form-control" onchange="validateModalRealtime(); handleModalTimeChangeForFullPrem();" oninput="handleModalTimeChangeForFullPrem();">
                             <svg class="field-error-icon" viewBox="0 0 24 24">
                                 <path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
                             </svg>
@@ -1507,7 +1743,7 @@
                     <div class="form-group">
                         <label class="form-label">משעה</label>
                         <div class="input-wrapper">
-                            <input type="time" id="fieldPremStart" class="form-control" onchange="validateModalRealtime()">
+                            <input type="time" id="fieldPremStart" class="form-control" onchange="validateModalRealtime()" oninput="validateModalRealtime()">
                             <svg class="field-error-icon" viewBox="0 0 24 24">
                                 <path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
                             </svg>
@@ -1517,13 +1753,24 @@
                     <div class="form-group">
                         <label class="form-label">עד שעה</label>
                         <div class="input-wrapper">
-                            <input type="time" id="fieldPremEnd" class="form-control" onchange="validateModalRealtime()">
+                            <input type="time" id="fieldPremEnd" class="form-control" onchange="validateModalRealtime()" oninput="validateModalRealtime()">
                             <svg class="field-error-icon" viewBox="0 0 24 24">
                                 <path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
                             </svg>
                         </div>
                         <div id="premEndError" class="field-error-msg">שעות הפרמיה חורגות מגבולות המשמרת</div>
                     </div>
+                </div>
+            </div>
+
+            <!-- Notes Section -->
+            <div class="card-sub-section">
+                <div class="form-group">
+                    <label class="form-label" style="display: flex; align-items: center; gap: 6px;">
+                        <svg class="svg-icon" width="16" height="16" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"/></svg>
+                        הערות למשמרת (אופציונלי)
+                    </label>
+                    <textarea id="fieldNotes" class="form-control" rows="2" placeholder="לדוגמה: עיכוב בגלל תקלה, החלפת משמרת..." style="height: auto; text-align: right; resize: none;"></textarea>
                 </div>
             </div>
 
@@ -1546,7 +1793,7 @@
     </div>
 </div>
 
-<!-- Smart Action Alert Dialog (For Live Start/End checks) -->
+<!-- Smart Action Alert Dialog -->
 <div class="error-dialog-overlay" id="smartAlertDialog">
     <div class="error-dialog-card">
         <div class="error-dialog-icon" id="smartAlertIcon">
@@ -1563,14 +1810,13 @@
 </div>
 
 <script>
-    // Generator for 3D Perspective Tracks App Icon (Used by iOS & Favicon)
+    // Generator for 3D Perspective Tracks App Icon
     (function generateAppIcon() {
         const canvas = document.createElement('canvas');
         canvas.width = 512;
         canvas.height = 512;
         const ctx = canvas.getContext('2d');
 
-        // Background
         const grad = ctx.createLinearGradient(0, 0, 512, 512);
         grad.addColorStop(0, '#132247');
         grad.addColorStop(1, '#060b16');
@@ -1584,18 +1830,10 @@
                 ctx.lineTo(points[i][0], points[i][1]);
             }
             ctx.closePath();
-            if (fillStyle) {
-                ctx.fillStyle = fillStyle;
-                ctx.fill();
-            }
-            if (strokeStyle) {
-                ctx.strokeStyle = strokeStyle;
-                ctx.lineWidth = lineWidth || 1;
-                ctx.stroke();
-            }
+            if (fillStyle) { ctx.fillStyle = fillStyle; ctx.fill(); }
+            if (strokeStyle) { ctx.strokeStyle = strokeStyle; ctx.lineWidth = lineWidth || 1; ctx.stroke(); }
         }
 
-        // 3D Ties (Sleepers)
         const ties = [
             { top: [[186, 306], [326, 306], [332, 314], [180, 314]], front: [[180, 314], [332, 314], [332, 320], [180, 320]], strokeWidth: 1.5 },
             { top: [[164, 338], [348, 338], [356, 348], [156, 348]], front: [[156, 348], [356, 348], [356, 356], [156, 356]], strokeWidth: 1.8 },
@@ -1615,7 +1853,6 @@
             drawPoly(tie.front, frontGrad, null);
         });
 
-        // Rails (Tracks)
         const railGrad = ctx.createLinearGradient(0, 290, 0, 465);
         railGrad.addColorStop(0, '#00e5ff');
         railGrad.addColorStop(1, '#0077ff');
@@ -1623,85 +1860,38 @@
         drawPoly([[194, 290], [206, 290], [120, 465], [102, 465]], railGrad, null);
         ctx.strokeStyle = 'rgba(255, 255, 255, 0.65)';
         ctx.lineWidth = 2;
-        ctx.beginPath();
-        ctx.moveTo(194, 290);
-        ctx.lineTo(102, 465);
-        ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(194, 290); ctx.lineTo(102, 465); ctx.stroke();
 
         drawPoly([[306, 290], [318, 290], [410, 465], [392, 465]], railGrad, null);
-        ctx.beginPath();
-        ctx.moveTo(318, 290);
-        ctx.lineTo(410, 465);
-        ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(318, 290); ctx.lineTo(410, 465); ctx.stroke();
 
-        // Locomotive
-        ctx.fillStyle = '#132247';
-        ctx.strokeStyle = '#00d2ff';
-        ctx.lineWidth = 12;
-        ctx.lineJoin = 'round';
-        ctx.beginPath();
-        ctx.moveTo(165, 110);
-        ctx.bezierCurveTo(165, 65, 200, 50, 256, 50);
-        ctx.bezierCurveTo(312, 50, 347, 65, 347, 110);
-        ctx.lineTo(360, 250);
-        ctx.bezierCurveTo(360, 278, 335, 292, 256, 292);
-        ctx.bezierCurveTo(177, 292, 152, 278, 152, 250);
-        ctx.closePath();
-        ctx.fill();
-        ctx.stroke();
+        ctx.fillStyle = '#132247'; ctx.strokeStyle = '#00d2ff'; ctx.lineWidth = 12; ctx.lineJoin = 'round';
+        ctx.beginPath(); ctx.moveTo(165, 110); ctx.bezierCurveTo(165, 65, 200, 50, 256, 50);
+        ctx.bezierCurveTo(312, 50, 347, 65, 347, 110); ctx.lineTo(360, 250);
+        ctx.bezierCurveTo(360, 278, 335, 292, 256, 292); ctx.bezierCurveTo(177, 292, 152, 278, 152, 250);
+        ctx.closePath(); ctx.fill(); ctx.stroke();
 
-        // Windshield
-        ctx.fillStyle = '#080e1d';
-        ctx.lineWidth = 5;
-        ctx.beginPath();
-        ctx.moveTo(188, 115);
-        ctx.bezierCurveTo(188, 95, 210, 82, 256, 82);
-        ctx.bezierCurveTo(302, 82, 324, 95, 324, 115);
-        ctx.lineTo(332, 172);
-        ctx.lineTo(180, 172);
-        ctx.closePath();
-        ctx.fill();
-        ctx.stroke();
+        ctx.fillStyle = '#080e1d'; ctx.lineWidth = 5;
+        ctx.beginPath(); ctx.moveTo(188, 115); ctx.bezierCurveTo(188, 95, 210, 82, 256, 82);
+        ctx.bezierCurveTo(302, 82, 324, 95, 324, 115); ctx.lineTo(332, 172); ctx.lineTo(180, 172);
+        ctx.closePath(); ctx.fill(); ctx.stroke();
 
-        // Headlights
         ctx.fillStyle = '#00d2ff';
-        ctx.beginPath();
-        ctx.arc(202, 242, 14, 0, Math.PI * 2);
-        ctx.arc(310, 242, 14, 0, Math.PI * 2);
-        ctx.fill();
+        ctx.beginPath(); ctx.arc(202, 242, 14, 0, Math.PI * 2); ctx.arc(310, 242, 14, 0, Math.PI * 2); ctx.fill();
 
-        // Bumper
-        ctx.fillStyle = '#10b981';
-        ctx.fillRect(230, 233, 52, 18);
+        ctx.fillStyle = '#10b981'; ctx.fillRect(230, 233, 52, 18);
 
-        // Clock Badge
-        ctx.fillStyle = '#080e1d';
-        ctx.strokeStyle = '#00d2ff';
-        ctx.lineWidth = 9;
-        ctx.beginPath();
-        ctx.arc(365, 365, 76, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.stroke();
+        ctx.fillStyle = '#080e1d'; ctx.strokeStyle = '#00d2ff'; ctx.lineWidth = 9;
+        ctx.beginPath(); ctx.arc(365, 365, 76, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
 
         ctx.fillStyle = 'rgba(0, 210, 255, 0.08)';
-        ctx.beginPath();
-        ctx.arc(365, 365, 66, 0, Math.PI * 2);
-        ctx.fill();
+        ctx.beginPath(); ctx.arc(365, 365, 66, 0, Math.PI * 2); ctx.fill();
 
-        ctx.strokeStyle = '#ffffff';
-        ctx.lineWidth = 8;
-        ctx.lineCap = 'round';
-        ctx.lineJoin = 'round';
-        ctx.beginPath();
-        ctx.moveTo(365, 315);
-        ctx.lineTo(365, 365);
-        ctx.lineTo(408, 365);
-        ctx.stroke();
+        ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 8; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+        ctx.beginPath(); ctx.moveTo(365, 315); ctx.lineTo(365, 365); ctx.lineTo(408, 365); ctx.stroke();
 
         ctx.fillStyle = '#00d2ff';
-        ctx.beginPath();
-        ctx.arc(365, 365, 6.5, 0, Math.PI * 2);
-        ctx.fill();
+        ctx.beginPath(); ctx.arc(365, 365, 6.5, 0, Math.PI * 2); ctx.fill();
 
         const iconUrl = canvas.toDataURL('image/png');
         document.getElementById('dynamic-touch-icon').href = iconUrl;
@@ -1712,8 +1902,10 @@
     let currentView = sessionStorage.getItem('railway_active_view') || 'clock';
     let isSelectionMode = false;
     let isSortingMode = false;
+    let isMultiPanelMode = false; 
     let selectedShiftIds = new Set();
     let draggedElement = null;
+    let activeMonthKey = ''; // למעקב אחרי החודש הפתוח כרגע
 
     const PRESET_NALT_MINUTES = [0, 30, 40, 45, 60, 90, 150, 270];
 
@@ -1781,6 +1973,8 @@
         const statusIndicator = document.getElementById('statusIndicator');
         const statusText = document.getElementById('statusText');
         const headerTimer = document.getElementById('headerShiftDuration');
+        const pWrap = document.getElementById('liveProgressWrap');
+        const pFill = document.getElementById('liveProgressFill');
 
         if (active) {
             btnStart.disabled = true;
@@ -1798,11 +1992,25 @@
 
             headerTimer.style.display = 'block';
             headerTimer.textContent = `${h}:${m}:${s}`;
+            
+            // Progress Bar Logic
+            pWrap.style.display = 'block';
+            let durMins = Math.floor(totalSec / 60);
+            let pct = Math.min((durMins / 720) * 100, 100); // Max 12 hours (720 mins)
+            pFill.style.width = pct + '%';
+            
+            if (durMins >= 540) { // Crossed 9 hours boundary
+                pFill.className = 'live-progress-fill fill-gold';
+            } else {
+                pFill.className = 'live-progress-fill fill-green';
+            }
+
         } else {
             btnStart.disabled = false;
             statusIndicator.className = 'status-badge idle';
             statusText.textContent = 'במנוחה';
             headerTimer.style.display = 'none';
+            pWrap.style.display = 'none';
         }
     }
 
@@ -1839,7 +2047,7 @@
                 }
                 endEpoch = endDate.getTime();
             } else {
-                endEpoch = Date.now();
+                endEpoch = startEpoch + (13 * 60 * 60 * 1000);
             }
 
             intervals.push({ id: String(shift.id), start: startEpoch, end: endEpoch });
@@ -1910,7 +2118,9 @@
             naltStartMinutes: 0,
             naltEndMinutes: 0,
             premStartTime: '',
-            premEndTime: ''
+            premEndTime: '',
+            fullPrem: false,
+            notes: ''
         };
 
         shifts.unshift(newShift);
@@ -2004,6 +2214,9 @@
                 'ביטול',
                 () => {
                     active.endTime = timeStr;
+                    if (active.fullPrem && active.startTime !== timeStr) {
+                        applyFullPremToShift(active);
+                    }
                     autoSortShiftsArray(shifts);
                     saveShifts();
                     if (currentView === 'history') renderShifts();
@@ -2015,6 +2228,9 @@
         }
 
         active.endTime = timeStr;
+        if (active.fullPrem && active.startTime !== timeStr) {
+            applyFullPremToShift(active);
+        }
         autoSortShiftsArray(shifts);
         saveShifts();
         renderRecentShifts();
@@ -2111,6 +2327,12 @@
         }
     }
 
+    function formatMonthName(mk) {
+        const [y, m] = mk.split('-');
+        const months = ['ינואר', 'פברואר', 'מרץ', 'אפריל', 'מאי', 'יוני', 'יולי', 'אוגוסט', 'ספטמבר', 'אוקטובר', 'נובמבר', 'דצמבר'];
+        return `${months[parseInt(m, 10) - 1]} ${y}`;
+    }
+
     function handleNaltSelectChange(type) {
         const select = document.getElementById(`selectNalt${type}`);
         const customInput = document.getElementById(`customNalt${type}`);
@@ -2203,6 +2425,76 @@
         renderShifts();
     }
 
+    function toggleMultiPanelMode() {
+        isMultiPanelMode = !isMultiPanelMode;
+        const btn = document.getElementById('btnToggleMultiPanel');
+        if (btn) {
+            btn.classList.toggle('active-mode', isMultiPanelMode);
+        }
+
+        if (!isMultiPanelMode) {
+            document.querySelectorAll('.shift-details.expanded').forEach(el => {
+                el.classList.remove('expanded');
+            });
+        }
+    }
+
+    function toggleMonthAccordion(mk) {
+        if (activeMonthKey === mk) {
+            activeMonthKey = ''; // סגירת החודש הנוכחי
+        } else {
+            activeMonthKey = mk; // פתיחת חודש חדש וסגירת האחרים
+        }
+        renderShifts();
+    }
+
+    function exportMonth(mk) {
+        const mShifts = shifts.filter(s => s.date && s.date.startsWith(mk));
+        if(mShifts.length === 0) return;
+        
+        let totWorkMins = 0;
+        let totPremMins = 0;
+        let totNaltMins = 0;
+        let details = [];
+
+        mShifts.forEach(s => {
+             let wMins = 0;
+             if(s.startTime && s.endTime) {
+                 wMins = calculateDurationMinutes(s.startTime, s.endTime);
+                 totWorkMins += wMins;
+             }
+             if(s.premStartTime && s.premEndTime) {
+                 totPremMins += calculateDurationMinutes(s.premStartTime, s.premEndTime);
+             }
+             totNaltMins += (Number(s.naltStartMinutes)||0) + (Number(s.naltEndMinutes)||0);
+
+             const dateParts = s.date.split('-');
+             const dFmt = `${dateParts[2]}/${dateParts[1]}`;
+             const durStr = s.startTime && s.endTime ? `${s.startTime}-${s.endTime} (${formatMinutesToDisplay(wMins)})` : 'חסר שעות סיום';
+             let premStr = s.premStartTime && s.premEndTime ? ` | פרמיה: ${s.premStartTime}-${s.premEndTime}` : '';
+             let naltStr = (Number(s.naltStartMinutes)||0) + (Number(s.naltEndMinutes)||0) > 0 ? ` | נל"ת: ${formatMinutesToDisplay((Number(s.naltStartMinutes)||0) + (Number(s.naltEndMinutes)||0))}` : '';
+             
+             details.push(`• ${dFmt}: ${durStr}${premStr}${naltStr}`);
+        });
+
+        const monthName = formatMonthName(mk);
+        const text = `סיכום משמרות - ${monthName}\n\n` +
+                     `סה"כ עבודה: ${formatMinutesToHM(totWorkMins)}\n` +
+                     `סה"כ פרמיה: ${formatMinutesToHM(totPremMins)}\n` +
+                     `סה"כ נל"ת: ${formatMinutesToHM(totNaltMins)}\n\n` +
+                     `פירוט:\n${details.reverse().join('\n')}`; 
+        
+        if (navigator.share) {
+            navigator.share({
+                title: `סיכום משמרות ${monthName}`,
+                text: text
+            }).catch(err => console.log('Share failed:', err));
+        } else {
+            const waLink = `https://wa.me/?text=${encodeURIComponent(text)}`;
+            window.open(waLink, '_blank');
+        }
+    }
+
     function sortShiftsByDate() {
         autoSortShiftsArray(shifts);
         saveShifts();
@@ -2228,8 +2520,9 @@
         toggleSortingMode();
     }
 
-    function handleCardClick(id) {
+    function handleCardClick(event, id) {
         if (isSortingMode) return;
+        if (event.target.closest('button') || event.target.closest('input') || event.target.closest('.checkbox-label-container')) return;
 
         const stringId = String(id);
         if (isSelectionMode) {
@@ -2242,8 +2535,24 @@
             if (currentView === 'history') renderShifts();
             else renderRecentShifts();
         } else {
-            const detailsEls = document.querySelectorAll('.shift-details[id="details_' + stringId + '"]');
-            detailsEls.forEach(el => el.classList.toggle('expanded'));
+            const cardEl = event.currentTarget.closest('.shift-card');
+            const detailsEl = cardEl.querySelector('.shift-details');
+            if (!detailsEl) return;
+
+            const isCurrentlyExpanded = detailsEl.classList.contains('expanded');
+
+            if (currentView !== 'history' || !isMultiPanelMode) {
+                if (!isCurrentlyExpanded) {
+                    const activeContainer = cardEl.closest('.shifts-list-inner') || cardEl.closest('.shifts-list');
+                    if (activeContainer) {
+                        activeContainer.querySelectorAll('.shift-details.expanded').forEach(el => {
+                            if (el !== detailsEl) el.classList.remove('expanded');
+                        });
+                    }
+                }
+            }
+
+            detailsEl.classList.toggle('expanded');
         }
     }
 
@@ -2275,94 +2584,226 @@
     }
 
     function setupDragAndDrop() {
-        const container = document.getElementById('shiftsContainer');
-        if (!container) return;
-        const cards = container.querySelectorAll('.shift-card');
+        // Now elements are grouped in months. So we just handle drag n drop inside .shifts-list-inner
+        const lists = document.querySelectorAll('.shifts-list-inner, #recentShiftsContainer');
+        
+        lists.forEach(container => {
+            const cards = container.querySelectorAll('.shift-card');
 
-        cards.forEach(card => {
-            card.addEventListener('dragstart', (e) => {
-                if (!isSortingMode) return;
-                draggedElement = card;
-                card.classList.add('dragging');
-                e.dataTransfer.effectAllowed = 'move';
-            });
+            cards.forEach(card => {
+                card.addEventListener('dragstart', (e) => {
+                    if (!isSortingMode) return;
+                    draggedElement = card;
+                    card.classList.add('dragging');
+                    e.dataTransfer.effectAllowed = 'move';
+                });
 
-            card.addEventListener('dragend', () => {
-                if (!isSortingMode) return;
-                card.classList.remove('dragging');
-                cards.forEach(c => c.classList.remove('drag-over'));
-                draggedElement = null;
-            });
+                card.addEventListener('dragend', () => {
+                    if (!isSortingMode) return;
+                    card.classList.remove('dragging');
+                    cards.forEach(c => c.classList.remove('drag-over'));
+                    draggedElement = null;
+                });
 
-            card.addEventListener('dragover', (e) => {
-                if (!isSortingMode || !draggedElement || draggedElement === card) return;
-                e.preventDefault();
-                card.classList.add('drag-over');
-            });
+                card.addEventListener('dragover', (e) => {
+                    if (!isSortingMode || !draggedElement || draggedElement === card) return;
+                    e.preventDefault();
+                    card.classList.add('drag-over');
+                });
 
-            card.addEventListener('dragleave', () => {
-                card.classList.remove('drag-over');
-            });
+                card.addEventListener('dragleave', () => {
+                    card.classList.remove('drag-over');
+                });
 
-            card.addEventListener('drop', (e) => {
-                if (!isSortingMode || !draggedElement || draggedElement === card) return;
-                e.preventDefault();
-                card.classList.remove('drag-over');
+                card.addEventListener('drop', (e) => {
+                    if (!isSortingMode || !draggedElement || draggedElement === card) return;
+                    e.preventDefault();
+                    card.classList.remove('drag-over');
 
-                const allCards = [...container.querySelectorAll('.shift-card')];
-                const draggedIdx = allCards.indexOf(draggedElement);
-                const targetIdx = allCards.indexOf(card);
+                    const allCards = [...container.querySelectorAll('.shift-card')];
+                    const draggedIdx = allCards.indexOf(draggedElement);
+                    const targetIdx = allCards.indexOf(card);
 
-                if (draggedIdx < targetIdx) {
-                    container.insertBefore(draggedElement, card.nextSibling);
-                } else {
-                    container.insertBefore(draggedElement, card);
+                    if (draggedIdx < targetIdx) {
+                        container.insertBefore(draggedElement, card.nextSibling);
+                    } else {
+                        container.insertBefore(draggedElement, card);
+                    }
+                });
+
+                const handle = card.querySelector('.drag-handle-container');
+                if (handle) {
+                    let activeTouchCard = null;
+
+                    handle.addEventListener('touchstart', (e) => {
+                        if (!isSortingMode) return;
+                        e.stopPropagation();
+                        activeTouchCard = card;
+                        card.classList.add('dragging');
+                    }, { passive: false });
+
+                    handle.addEventListener('touchmove', (e) => {
+                        if (!isSortingMode || !activeTouchCard) return;
+                        e.preventDefault();
+                        e.stopPropagation();
+
+                        const touch = e.touches[0];
+                        const targetEl = document.elementFromPoint(touch.clientX, touch.clientY);
+                        const targetCard = targetEl ? targetEl.closest('.shift-card') : null;
+
+                        if (targetCard && targetCard !== activeTouchCard && container.contains(targetCard)) {
+                            const targetRect = targetCard.getBoundingClientRect();
+                            const isAfter = touch.clientY > targetRect.top + targetRect.height / 2;
+                            if (isAfter) {
+                                container.insertBefore(activeTouchCard, targetCard.nextSibling);
+                            } else {
+                                container.insertBefore(activeTouchCard, targetCard);
+                            }
+                        }
+                    }, { passive: false });
+
+                    const stopTouch = (e) => {
+                        if (activeTouchCard) {
+                            e.stopPropagation();
+                            activeTouchCard.classList.remove('dragging');
+                            activeTouchCard = null;
+                        }
+                    };
+
+                    handle.addEventListener('touchend', stopTouch);
+                    handle.addEventListener('touchcancel', stopTouch);
                 }
             });
-
-            const handle = card.querySelector('.drag-handle-container');
-            if (handle) {
-                let activeTouchCard = null;
-
-                handle.addEventListener('touchstart', (e) => {
-                    if (!isSortingMode) return;
-                    e.stopPropagation();
-                    activeTouchCard = card;
-                    card.classList.add('dragging');
-                }, { passive: false });
-
-                handle.addEventListener('touchmove', (e) => {
-                    if (!isSortingMode || !activeTouchCard) return;
-                    e.preventDefault();
-                    e.stopPropagation();
-
-                    const touch = e.touches[0];
-                    const targetEl = document.elementFromPoint(touch.clientX, touch.clientY);
-                    const targetCard = targetEl ? targetEl.closest('.shift-card') : null;
-
-                    if (targetCard && targetCard !== activeTouchCard && container.contains(targetCard)) {
-                        const targetRect = targetCard.getBoundingClientRect();
-                        const isAfter = touch.clientY > targetRect.top + targetRect.height / 2;
-                        if (isAfter) {
-                            container.insertBefore(activeTouchCard, targetCard.nextSibling);
-                        } else {
-                            container.insertBefore(activeTouchCard, targetCard);
-                        }
-                    }
-                }, { passive: false });
-
-                const stopTouch = (e) => {
-                    if (activeTouchCard) {
-                        e.stopPropagation();
-                        activeTouchCard.classList.remove('dragging');
-                        activeTouchCard = null;
-                    }
-                };
-
-                handle.addEventListener('touchend', stopTouch);
-                handle.addEventListener('touchcancel', stopTouch);
-            }
         });
+    }
+
+    function timeToMinutes(timeStr) {
+        if (!timeStr) return 0;
+        const [h, m] = timeStr.split(':').map(Number);
+        return h * 60 + m;
+    }
+
+    function calculateFullPremTimes(startStr, endStr) {
+        if (!startStr) return { start: '', end: '' };
+        const sMins = timeToMinutes(startStr);
+        
+        if (endStr && startStr === endStr) {
+            return { start: '', end: '' };
+        }
+
+        if (!endStr) {
+            const pStartH = String(Math.floor((sMins % 1440) / 60)).padStart(2, '0');
+            const pStartM = String((sMins % 1440) % 60).padStart(2, '0');
+            return { start: `${pStartH}:${pStartM}`, end: '' };
+        }
+
+        let eMins = timeToMinutes(endStr);
+        if (eMins <= sMins) eMins += 1440;
+
+        let duration = eMins - sMins;
+        if (duration > 720) {
+            eMins = sMins + 720;
+        }
+
+        const pStartH = String(Math.floor((sMins % 1440) / 60)).padStart(2, '0');
+        const pStartM = String((sMins % 1440) % 60).padStart(2, '0');
+        const pEndH = String(Math.floor((eMins % 1440) / 60)).padStart(2, '0');
+        const pEndM = String((eMins % 1440) % 60).padStart(2, '0');
+
+        return {
+            start: `${pStartH}:${pStartM}`,
+            end: `${pEndH}:${pEndM}`
+        };
+    }
+
+    function applyFullPremToShift(shift) {
+        if (shift.startTime && shift.endTime && shift.startTime === shift.endTime) {
+            shift.premStartTime = '';
+            shift.premEndTime = '';
+            return;
+        }
+        const times = calculateFullPremTimes(shift.startTime, shift.endTime);
+        shift.premStartTime = times.start;
+        shift.premEndTime = times.end;
+    }
+
+    function onFullPremCheckboxChange(isChecked) {
+        const startInput = document.getElementById('fieldStartTime').value;
+        const endInput = document.getElementById('fieldEndTime').value;
+        if (isChecked && startInput && (!endInput || startInput !== endInput)) {
+            const times = calculateFullPremTimes(startInput, endInput);
+            document.getElementById('fieldPremStart').value = times.start;
+            document.getElementById('fieldPremEnd').value = times.end;
+        } else if (!isChecked || (startInput && endInput && startInput === endInput)) {
+            document.getElementById('fieldPremStart').value = '';
+            document.getElementById('fieldPremEnd').value = '';
+        }
+        validateModalRealtime();
+    }
+
+    function handleModalTimeChangeForFullPrem() {
+        const isChecked = document.getElementById('fieldFullPremModal').checked;
+        if (isChecked) {
+            const startInput = document.getElementById('fieldStartTime').value;
+            const endInput = document.getElementById('fieldEndTime').value;
+            if (startInput && endInput && startInput !== endInput) {
+                const times = calculateFullPremTimes(startInput, endInput);
+                document.getElementById('fieldPremStart').value = times.start;
+                document.getElementById('fieldPremEnd').value = times.end;
+            } else {
+                document.getElementById('fieldPremStart').value = startInput || '';
+                document.getElementById('fieldPremEnd').value = '';
+            }
+        }
+    }
+
+    function handleFullPremClick(event, shiftId) {
+        event.stopPropagation();
+        event.preventDefault(); 
+
+        const shift = shifts.find(s => String(s.id) === String(shiftId));
+        if (!shift) return;
+
+        const isChecking = !shift.fullPrem; 
+        const hasManualPrem = Boolean(shift.premStartTime || shift.premEndTime); 
+
+        if (isChecking && hasManualPrem) {
+            showSmartAlertDialog(
+                'עדכון נתוני פרמיה',
+                'שים לב, קיימים נתוני פרמיה שהוזנו מראש. הפעלת "פרמיה מלאה" תעדכן נתונים אלו ותסנכרן אותם אוטומטית עם שעות המשמרת. האם להמשיך?',
+                'עדכן וסנכרן',
+                'ביטול',
+                () => executeFullPremToggle(shift, true),
+                () => {}
+            );
+        } else if (!isChecking && hasManualPrem) {
+            showSmartAlertDialog(
+                'מחיקת נתוני פרמיה',
+                'ביטול סימון "פרמיה מלאה" יאפס את שעות הפרמיה המוגדרות כרגע. האם ברצונך להמשיך ולנקות את הנתונים?',
+                'נקה נתונים',
+                'ביטול',
+                () => executeFullPremToggle(shift, false),
+                () => {}
+            );
+        } else {
+            executeFullPremToggle(shift, isChecking);
+        }
+    }
+
+    function executeFullPremToggle(shift, isChecking) {
+        shift.fullPrem = isChecking;
+        if (isChecking) {
+            if (shift.startTime && shift.startTime !== shift.endTime) {
+                applyFullPremToShift(shift);
+            }
+        } else {
+            shift.premStartTime = '';
+            shift.premEndTime = '';
+        }
+        
+        saveShifts();
+        if (currentView === 'history') renderShifts();
+        else renderRecentShifts();
     }
 
     function buildShiftCardHTML(shift, overlappingIds) {
@@ -2379,10 +2820,9 @@
         const totalNaltMins = naltStart + naltEnd;
         const hasNalt = totalNaltMins > 0;
         
-        // עדכון: פרמיה קיימת אם יש לפחות שדה אחד מלא (התחלה או סיום)
         const hasPrem = Boolean(shift.premStartTime || shift.premEndTime);
-        
         const hasSiddur = Boolean(shift.siddur && shift.siddur.trim());
+        const hasNotes = Boolean(shift.notes && shift.notes.trim());
 
         const { primary: siddurPrimary, secondary: siddurSecondary } = parseSiddurDisplay(shift.siddur);
 
@@ -2411,11 +2851,30 @@
             naltEndRange = `${subtractMinutesFromTime(shift.endTime, naltEnd)} – ${shift.endTime}`;
         }
 
+        // צבעי המשמרת (בוקר, צהריים, לילה)
+        let shiftTypeClass = '';
+        if (hasStart) {
+            const startMins = timeToMinutes(shift.startTime);
+            const endMins = hasEnd ? timeToMinutes(shift.endTime) : -1;
+            const realEndMins = (endMins !== -1 && endMins < startMins) ? endMins + 1440 : endMins;
+
+            if (startMins >= 240 && startMins <= 600 && (realEndMins === -1 || realEndMins <= 1050)) {
+                shiftTypeClass = 'type-morning';
+            } else if (startMins > 600 && startMins <= 1080 && (realEndMins === -1 || realEndMins <= 1350)) {
+                shiftTypeClass = 'type-noon';
+            } else if (startMins >= 1140 || startMins <= 60) {
+                shiftTypeClass = 'type-night';
+            }
+        }
+
         return `
-            <div class="shift-card ${isActive ? 'active-shift' : ''} ${isOverlap ? 'has-overlap' : ''} ${isIncomplete && !isActive ? 'incomplete' : ''} ${isSelected ? 'selected-for-delete' : ''}" 
+            <div class="shift-card ${shiftTypeClass} ${isActive ? 'active-shift' : ''} ${isOverlap ? 'has-overlap' : ''} ${isIncomplete && !isActive ? 'incomplete' : ''} ${isSelected ? 'selected-for-delete' : ''}" 
                  data-id="${shiftIdStr}" 
                  draggable="${isSortingMode ? 'true' : 'false'}">
-                <div class="shift-header" onclick="handleCardClick('${shiftIdStr}')">
+                
+                <div class="shift-type-strip"></div>
+                
+                <div class="shift-header" onclick="handleCardClick(event, '${shiftIdStr}')">
                     <div class="drag-handle-container">
                         <svg class="svg-icon" width="20" height="20" viewBox="0 0 24 24" style="color: var(--text-muted);">
                             <circle cx="9" cy="6" r="1.5"/><circle cx="15" cy="6" r="1.5"/>
@@ -2510,15 +2969,16 @@
                                 <span class="breakdown-value-center">${shift.siddur}</span>
                                 <div></div>
                             </div>` : ''}
-                            <div class="breakdown-item-duo">
-                                <div class="duo-col">
+                            <div class="breakdown-item-duo" style="display: flex; justify-content: space-between; align-items: center;">
+                                <div class="duo-col" style="flex: 1;">
                                     <span class="breakdown-label">כניסה:</span>
                                     <span class="breakdown-value">${shift.startTime || 'לא הוזן'}</span>
-                                </div>
-                                <div class="duo-divider"></div>
-                                <div class="duo-col">
-                                    <span class="breakdown-label">יציאה:</span>
+                                    <span class="breakdown-label" style="margin-right: 8px;">יציאה:</span>
                                     <span class="breakdown-value">${shift.endTime || 'לא הוזן'}</span>
+                                </div>
+                                <div class="checkbox-label-container" onclick="handleFullPremClick(event, '${shiftIdStr}')" style="margin-right: auto;">
+                                    <input type="checkbox" ${shift.fullPrem ? 'checked' : ''} style="pointer-events: none;" tabindex="-1">
+                                    <span>פרמיה מלאה</span>
                                 </div>
                             </div>
                         </div>
@@ -2544,6 +3004,16 @@
                                 <span class="breakdown-value">${shift.premStartTime || '---'} – ${shift.premEndTime || '---'}</span>
                             </div>
                         </div>` : ''}
+                        
+                        ${hasNotes ? `
+                        <div class="sub-breakdown">
+                            <div class="breakdown-item" style="border: none; padding-bottom: 0;">
+                                <span class="breakdown-value" style="font-size: 0.85rem; color: #cbd5e1; font-family: 'Assistant', sans-serif; white-space: pre-wrap; word-break: break-word;">
+                                    <svg class="svg-icon" width="14" height="14" viewBox="0 0 24 24" style="margin-left: 4px; color: var(--text-muted);"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"/></svg>
+                                    ${shift.notes}
+                                </span>
+                            </div>
+                        </div>` : ''}
 
                         <div class="card-actions-bar">
                             <button class="btn-secondary" onclick="event.stopPropagation(); openShiftModal('${shiftIdStr}')">עריכה / השלמת חוסר</button>
@@ -2559,6 +3029,9 @@
         const container = document.getElementById('shiftsContainer');
         if (!container) return;
 
+        const expandedIds = Array.from(container.querySelectorAll('.shift-details.expanded'))
+                                .map(el => el.closest('.shift-card').getAttribute('data-id'));
+
         if (shifts.length === 0) {
             container.innerHTML = `
                 <div class="empty-state">
@@ -2569,13 +3042,83 @@
         }
 
         const overlappingIds = calculateOverlaps();
-        container.innerHTML = shifts.map(shift => buildShiftCardHTML(shift, overlappingIds)).join('');
+        
+        // חלוקה למגירות לפי חודשים
+        let grouped = {};
+        shifts.forEach(s => {
+            const d = s.date || '';
+            const monthKey = d.substring(0, 7); // YYYY-MM
+            if(!grouped[monthKey]) grouped[monthKey] = [];
+            grouped[monthKey].push(s);
+        });
+        
+        const monthKeys = Object.keys(grouped).sort((a,b) => b.localeCompare(a));
+        
+        // אם אין חודש פעיל (או אם הוא נמחק), מפעילים את הראשון (העדכני ביותר)
+        if (!activeMonthKey || !monthKeys.includes(activeMonthKey)) {
+            activeMonthKey = monthKeys[0];
+        }
+
+        let html = '';
+        monthKeys.forEach(mk => {
+            const mShifts = grouped[mk];
+            const isOpen = (mk === activeMonthKey);
+            
+            let totWorkMins = 0;
+            let totPremMins = 0;
+            let totNaltMins = 0;
+            
+            mShifts.forEach(s => {
+                 if(s.startTime && s.endTime) {
+                     totWorkMins += calculateDurationMinutes(s.startTime, s.endTime);
+                 }
+                 if(s.premStartTime && s.premEndTime) {
+                     totPremMins += calculateDurationMinutes(s.premStartTime, s.premEndTime);
+                 }
+                 totNaltMins += (Number(s.naltStartMinutes)||0) + (Number(s.naltEndMinutes)||0);
+            });
+
+            html += `<div class="month-accordion ${isOpen ? 'open' : ''}">
+                <div class="month-accordion-header" onclick="toggleMonthAccordion('${mk}')">
+                    <span>${formatMonthName(mk)} <span style="font-size: 0.8rem; font-weight: normal; color: var(--text-muted);">(${mShifts.length} משמרות)</span></span>
+                    <svg class="chevron-icon" width="20" height="20" viewBox="0 0 24 24"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/></svg>
+                </div>
+                <div class="month-accordion-body">
+                    <div class="month-summary-bar">
+                        <div class="summary-stat">עבודה: ${formatMinutesToHM(totWorkMins)}</div>
+                        <div class="summary-stat">פרמיה: ${formatMinutesToHM(totPremMins)}</div>
+                        <div class="summary-stat">נל״ת: ${formatMinutesToHM(totNaltMins)}</div>
+                        <button class="btn-export" onclick="exportMonth('${mk}')">
+                            <svg class="svg-icon" width="16" height="16" viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+                            שתף
+                        </button>
+                    </div>
+                    <div class="shifts-list-inner">
+                        ${mShifts.map(shift => buildShiftCardHTML(shift, overlappingIds)).join('')}
+                    </div>
+                </div>
+            </div>`;
+        });
+
+        container.innerHTML = html;
+        
+        expandedIds.forEach(id => {
+            const card = container.querySelector(`.shift-card[data-id="${id}"]`);
+            if (card) {
+                const details = card.querySelector('.shift-details');
+                if (details) details.classList.add('expanded');
+            }
+        });
+
         setupDragAndDrop();
     }
 
     function renderRecentShifts() {
         const container = document.getElementById('recentShiftsContainer');
         if (!container) return;
+
+        const expandedIds = Array.from(container.querySelectorAll('.shift-details.expanded'))
+                                .map(el => el.closest('.shift-card').getAttribute('data-id'));
 
         if (shifts.length === 0) {
             container.innerHTML = `
@@ -2589,6 +3132,14 @@
         const recent = shifts.slice(0, 2);
         const overlappingIds = calculateOverlaps();
         container.innerHTML = recent.map(shift => buildShiftCardHTML(shift, overlappingIds)).join('');
+
+        expandedIds.forEach(id => {
+            const card = container.querySelector(`.shift-card[data-id="${id}"]`);
+            if (card) {
+                const details = card.querySelector('.shift-details');
+                if (details) details.classList.add('expanded');
+            }
+        });
     }
 
     function openShiftModal(shiftId) {
@@ -2604,6 +3155,8 @@
             document.getElementById('fieldDate').value = shift.date || '';
             document.getElementById('fieldStartTime').value = shift.startTime || '';
             document.getElementById('fieldEndTime').value = shift.endTime || '';
+            document.getElementById('fieldFullPremModal').checked = Boolean(shift.fullPrem);
+            document.getElementById('fieldNotes').value = shift.notes || '';
             
             const nStartMins = shift.naltStartMinutes ?? (shift.naltStartHours ? shift.naltStartHours * 60 : 0);
             const nEndMins = shift.naltEndMinutes ?? (shift.naltEndHours ? shift.naltEndHours * 60 : 0);
@@ -2624,6 +3177,8 @@
             document.getElementById('fieldDate').value = `${y}-${m}-${d}`;
             document.getElementById('fieldStartTime').value = '';
             document.getElementById('fieldEndTime').value = '';
+            document.getElementById('fieldFullPremModal').checked = false;
+            document.getElementById('fieldNotes').value = '';
             setNaltFieldUI('Start', 0);
             setNaltFieldUI('End', 0);
             document.getElementById('fieldPremStart').value = '';
@@ -2638,13 +3193,6 @@
         document.getElementById('shiftModal').classList.remove('open');
     }
 
-    function timeToMinutes(timeStr) {
-        if (!timeStr) return 0;
-        const [h, m] = timeStr.split(':').map(Number);
-        return h * 60 + m;
-    }
-
-    // Comprehensive real-time validation with strict shift bounds checking for partial premium
     function getValidationState() {
         const shiftStart = document.getElementById('fieldStartTime').value || '';
         const shiftEnd = document.getElementById('fieldEndTime').value || '';
@@ -2692,44 +3240,56 @@
             sEndMins = sStartMins + 1440;
         }
 
-        // Validate Premium Start against Shift Start
+        let adjustedSStart = sStartMins;
+        let adjustedSEnd = sEndMins;
+
         if (premStart && shiftStart) {
-            const pStartMins = timeToMinutes(premStart);
+            let pStartMins = timeToMinutes(premStart);
             let adjustedPStart = pStartMins;
-            if (adjustedPStart < sStartMins && adjustedPStart + 1440 <= sEndMins) {
+            if (adjustedPStart < adjustedSStart) {
                 adjustedPStart += 1440;
             }
-            if (adjustedPStart < sStartMins) {
+
+            if (adjustedPStart < adjustedSStart || adjustedPStart > adjustedSEnd) {
                 premStartInvalid = true;
-                errorMsg = 'שעת תחילת הפרמיה קודמת לשעת תחילת המשמרת.';
+                errorMsg = 'שעת תחילת הפרמיה קודמת לשעת תחילת המשמרת או חורגת ממנה.';
             }
         }
 
-        // Validate Premium End against Shift End
         if (premEnd && shiftEnd && shiftStart) {
-            const pEndMins = timeToMinutes(premEnd);
+            let pEndMins = timeToMinutes(premEnd);
             let adjustedPEnd = pEndMins;
-            if (adjustedPEnd <= sStartMins) {
+            if (adjustedPEnd < adjustedSStart) {
                 adjustedPEnd += 1440;
             }
-            let adjustedSEnd = sEndMins;
+
             if (adjustedPEnd > adjustedSEnd) {
                 premEndInvalid = true;
                 errorMsg = 'שעת סיום הפרמיה חורגת משעת סיום המשמרת.';
             }
         }
 
-        // If both bounds provided, check max duration (12 hours)
         if (premStart && premEnd) {
-            const pStart = timeToMinutes(premStart);
-            let pEnd = timeToMinutes(premEnd);
-            let premDuration = pEnd - pStart;
+            let pStartMins = timeToMinutes(premStart);
+            let adjustedPStart = pStartMins;
+            if (adjustedPStart < adjustedSStart) {
+                adjustedPStart += 1440;
+            }
+
+            let pEndMins = timeToMinutes(premEnd);
+            let adjustedPEnd = pEndMins;
+            if (adjustedPEnd < adjustedSStart) {
+                adjustedPEnd += 1440;
+            }
+
+            let premDuration = adjustedPEnd - adjustedPStart;
             if (premDuration < 0) premDuration += 1440;
 
-            if (premDuration > 720 || premDuration === 0) {
+            let shiftDuration = adjustedSEnd - adjustedSStart;
+            if (premDuration > shiftDuration + 2 || premDuration === 0) {
                 premStartInvalid = true;
                 premEndInvalid = true;
-                errorMsg = 'משך הפרמיה חורג מהמותר (מקסימום 12 שעות) או שגוי.';
+                errorMsg = 'משך הפרמיה חורג ממשך המשמרת או שגוי.';
             }
         }
 
@@ -2809,8 +3369,10 @@
         const endVal = document.getElementById('fieldEndTime').value || null;
         const naltStartVal = getNaltFieldValue('Start');
         const naltEndVal = getNaltFieldValue('End');
+        const fullPremVal = document.getElementById('fieldFullPremModal').checked;
         const premStartVal = document.getElementById('fieldPremStart').value || '';
         const premEndVal = document.getElementById('fieldPremEnd').value || '';
+        const notesVal = document.getElementById('fieldNotes').value.trim();
 
         const validation = getValidationState();
         
@@ -2833,9 +3395,14 @@
                     endTime: endVal,
                     naltStartMinutes: naltStartVal,
                     naltEndMinutes: naltEndVal,
+                    fullPrem: fullPremVal,
                     premStartTime: premStartVal,
-                    premEndTime: premEndVal
+                    premEndTime: premEndVal,
+                    notes: notesVal
                 };
+                if (fullPremVal && startVal && startVal !== endVal) {
+                    applyFullPremToShift(shifts[index]);
+                }
             }
         } else {
             const newShift = {
@@ -2846,9 +3413,14 @@
                 endTime: endVal,
                 naltStartMinutes: naltStartVal,
                 naltEndMinutes: naltEndVal,
+                fullPrem: fullPremVal,
                 premStartTime: premStartVal,
-                premEndTime: premEndVal
+                premEndTime: premEndVal,
+                notes: notesVal
             };
+            if (fullPremVal && startVal && startVal !== endVal) {
+                applyFullPremToShift(newShift);
+            }
             shifts.unshift(newShift);
         }
 
@@ -2868,7 +3440,6 @@
         }
     }
 
-    // Initialize to session view
     navigateTo(currentView, false);
 </script>
 </body>
