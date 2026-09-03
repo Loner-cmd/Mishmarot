@@ -1890,7 +1890,8 @@
                 }
                 endEpoch = endDate.getTime();
             } else {
-                endEpoch = Date.now();
+                // אם אין שעת סיום, אנחנו מניחים מקסימום של 13 שעות מראש כדי למנוע חפיפות אינסופיות לימים הבאים
+                endEpoch = startEpoch + (13 * 60 * 60 * 1000);
             }
 
             intervals.push({ id: String(shift.id), start: startEpoch, end: endEpoch });
@@ -2305,8 +2306,8 @@
     function handleCardClick(event, id) {
         if (isSortingMode) return;
         
-        // התעלמות מלחיצה על אלמנטים אינטראקטיביים בתוך הכותרת
-        if (event.target.closest('button') || event.target.closest('input') || event.target.closest('label')) return;
+        // התעלמות מלחיצה על אלמנטים אינטראקטיביים בתוך הכותרת או התווית
+        if (event.target.closest('button') || event.target.closest('input') || event.target.closest('.checkbox-label-container')) return;
 
         const stringId = String(id);
         if (isSelectionMode) {
@@ -2540,15 +2541,52 @@
         }
     }
 
-    function toggleFullPremInline(event, shiftId) {
-        event.stopPropagation(); // עצירה מוחלטת של זליגת הלחיצה
+    // פונקציית טיפול חדשה ובטוחה ללחיצה על צ'ק-בוקס "פרמיה מלאה" בתוך הפאנל המהיר
+    function handleFullPremClick(event, shiftId) {
+        event.stopPropagation(); // מניעת זליגה שסוגרת את הפאנל
+        event.preventDefault();  // מניעת שינוי ויזואלי טבעי של הצ'ק-בוקס - אנחנו שולטים בזה!
 
         const shift = shifts.find(s => String(s.id) === String(shiftId));
         if (!shift) return;
 
-        shift.fullPrem = event.target.checked;
-        if (shift.fullPrem && shift.startTime && shift.startTime !== shift.endTime) {
-            applyFullPremToShift(shift);
+        const isChecking = !shift.fullPrem; // מה שהמשתמש מנסה לעשות עכשיו (להדליק או לכבות)
+        const hasManualPrem = Boolean(shift.premStartTime || shift.premEndTime); // האם יש נתונים קיימים?
+
+        // מקרה 1: מנסה להדליק, אבל יש כבר נתונים בפנים
+        if (isChecking && hasManualPrem) {
+            showSmartAlertDialog(
+                'עדכון נתוני פרמיה',
+                'שים לב, קיימים נתוני פרמיה שהוזנו מראש. הפעלת "פרמיה מלאה" תעדכן נתונים אלו ותסנכרן אותם אוטומטית עם שעות המשמרת. האם להמשיך?',
+                'עדכן וסנכרן',
+                'ביטול',
+                () => executeFullPremToggle(shift, true),
+                () => {} // ביטול - לא עושה כלום, הכל נשאר במקום
+            );
+        } 
+        // מקרה 2: מנסה לכבות, ויש נתונים (רוצה לאפס)
+        else if (!isChecking && hasManualPrem) {
+            showSmartAlertDialog(
+                'מחיקת נתוני פרמיה',
+                'ביטול סימון "פרמיה מלאה" יאפס את שעות הפרמיה המוגדרות כרגע. האם ברצונך להמשיך ולנקות את הנתונים?',
+                'נקה נתונים',
+                'ביטול',
+                () => executeFullPremToggle(shift, false),
+                () => {} // ביטול - לא עושה כלום, הצ'ק בוקס נשאר דלוק
+            );
+        } 
+        // מקרה 3: הכל ריק, פשוט מדליק/מכבה רגיל בלי התראה
+        else {
+            executeFullPremToggle(shift, isChecking);
+        }
+    }
+
+    // פונקציית העזר שמבצעת בפועל את שינוי הנתונים ומרעננת
+    function executeFullPremToggle(shift, isChecking) {
+        shift.fullPrem = isChecking;
+        if (isChecking) {
+            if (shift.startTime && shift.startTime !== shift.endTime) {
+                applyFullPremToShift(shift);
+            }
         } else {
             shift.premStartTime = '';
             shift.premEndTime = '';
@@ -2682,7 +2720,7 @@
                     </div>
                 </div>
 
-                <div class="shift-details">
+                <div class="shift-details" id="details_${shiftIdStr}">
                     <div class="details-inner">
                         ${isOverlap ? `
                         <div class="sub-breakdown" style="border-color: rgba(234, 179, 8, 0.3);">
@@ -2709,10 +2747,10 @@
                                     <span class="breakdown-label" style="margin-right: 8px;">יציאה:</span>
                                     <span class="breakdown-value">${shift.endTime || 'לא הוזן'}</span>
                                 </div>
-                                <label class="checkbox-label-container" onclick="event.stopPropagation();" style="margin-right: auto;">
-                                    <input type="checkbox" ${shift.fullPrem ? 'checked' : ''} onchange="toggleFullPremInline(event, '${shiftIdStr}')" onclick="event.stopPropagation();">
-                                    פרמיה מלאה
-                                </label>
+                                <div class="checkbox-label-container" onclick="handleFullPremClick(event, '${shiftIdStr}')" style="margin-right: auto;">
+                                    <input type="checkbox" ${shift.fullPrem ? 'checked' : ''} style="pointer-events: none;" tabindex="-1">
+                                    <span>פרמיה מלאה</span>
+                                </div>
                             </div>
                         </div>
 
