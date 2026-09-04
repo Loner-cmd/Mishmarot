@@ -1,3 +1,9 @@
+הבנתי אותך לגמרי. אתה רוצה שהקצה פשוט ייראה כמו ההמשך הטבעי של הפס עצמו (באותו עובי בדיוק, כמו חצי עיגול שסוגר את הקו) ושופך אור חזק שפועם יחד עם הפס, במקום "בועה" ענקית ונפרדת שרוכבת עליו ומשנה את הגודל שלה.
+מה עשיתי:
+ * ביטלתי לחלוטין את אנימציית הגדילה/הקטנה (Scale).
+ * הקטנתי את הנקודה ל-8 פיקסלים בדיוק (העובי המדויק של הפס). בגלל שהיא עגולה, היא מתלבשת בשלמות על הגימור המעוגל של ה-SVG, וזה ייראה כמו קצה לוהט ואחיד של הפס.
+ * סנכרנתי את ההילה של הקצה עם הפעימות של הפס: כשהפס מואר בירוק בהיר – הקצה בוהק בלבן/ירוק חזק, וכשהפס מתחלף לירוק כהה – הקצה נרגע יחד איתו.
+להלן הקוד המלא המעודכן:
 <!DOCTYPE html>
 <html lang="he" dir="rtl">
 <head>
@@ -409,8 +415,8 @@
         /* Main Circular Action Button */
         .main-action-wrapper {
             position: relative;
-            width: 240px;
-            height: 240px;
+            width: 260px; /* מורחב מ-240 כדי לתת להילה מקום לנשום */
+            height: 260px;
             margin: 10px auto;
             display: flex;
             align-items: center;
@@ -420,7 +426,8 @@
         .progress-ring {
             position: absolute;
             top: 0; left: 0;
-            width: 240px; height: 240px;
+            width: 260px; 
+            height: 260px;
             transform: rotate(-90deg);
             pointer-events: none;
         }
@@ -431,20 +438,41 @@
             stroke-width: 8;
         }
 
-        .progress-ring-fill {
+        /* תכונות משותפות לפס הקדמי ולהילה האחורית */
+        .progress-ring-fill, .progress-ring-glow {
             fill: none;
-            stroke-width: 8;
             stroke-linecap: round;
             transition: stroke-dashoffset 1s linear;
         }
 
-        /* Ring Neon Colors (Fixed SVG Glow & Gradient) */
-        .ring-green { 
-            stroke: url(#ringEnergyGrad); 
-            filter: drop-shadow(0 0 6px #39ff14) drop-shadow(0 0 12px rgba(57,255,20,0.6)); 
+        .progress-ring-fill {
+            stroke-width: 8;
         }
 
-        /* Rotating Spark on the Ring (Fixed Positioning) */
+        .progress-ring-glow {
+            stroke-width: 10; /* הילה בעובי ביניים לתחושת זוהר מורגשת אך עדינה */
+        }
+
+        /* אנימציית צבע ושקיפות במקום גרדיאנט, כדי ליצור זוהר ונשימה */
+        @keyframes pulse-ring-color {
+            0% { stroke: #39ff14; }
+            100% { stroke: #047857; }
+        }
+
+        @keyframes pulse-ring-glow-combo {
+            0% { stroke: #39ff14; opacity: 0.8; }
+            100% { stroke: #047857; opacity: 0.15; }
+        }
+
+        .ring-green { 
+            animation: pulse-ring-color 1.5s infinite alternate ease-in-out;
+        }
+
+        .ring-green-glow {
+            animation: pulse-ring-glow-combo 1.5s infinite alternate ease-in-out;
+        }
+
+        /* Rotating Spark on the Ring */
         .ring-spark-container {
             position: absolute;
             top: 0; left: 0; right: 0; bottom: 0;
@@ -454,25 +482,32 @@
             display: none;
         }
 
+        /* הנקודה המאירה בקצה הפס (תואמת בדיוק לרוחב הקו ומסתיימת יחד איתו) */
         .ring-spark {
             position: absolute;
-            top: 10px; /* Aligns precisely on the stroke at y=10px for r=110 */
+            top: 20px; /* תואם למיקום הפס לאחר הגדלת הקנבס ל-260 */
             left: 50%;
-            margin-left: -9px; /* Absolute horizontal center */
-            margin-top: -9px;  /* Absolute vertical center on the line */
-            width: 18px;
-            height: 18px;
-            background: #fff;
+            margin-left: -4px; /* בדיוק חצי מעובי הקו (8px) כדי לשבת במרכז המושלם */
+            margin-top: -4px;  
+            width: 8px; /* בדיוק ברוחב הפס עצמו */
+            height: 8px;
             border-radius: 50%;
-            animation: pulse-ring-spark 1s infinite alternate;
+            /* אנימציית שקיפות וצבע במקום Scale */
+            animation: pulse-tip-glow 1.5s infinite alternate ease-in-out;
         }
 
-        @keyframes pulse-ring-spark {
-            0% { transform: scale(0.7); opacity: 0.8; }
-            100% { transform: scale(1.3); opacity: 1; }
+        @keyframes pulse-tip-glow {
+            0% { 
+                background: #ffffff;
+                box-shadow: 0 0 6px #fff, 0 0 12px #39ff14; 
+                opacity: 1; 
+            }
+            100% { 
+                background: #a7ff99;
+                box-shadow: 0 0 2px #a7ff99, 0 0 6px #047857; 
+                opacity: 0.4; 
+            }
         }
-
-        .spark-green { box-shadow: 0 0 8px #fff, 0 0 15px #39ff14; }
 
         .btn-main-circle {
             position: relative;
@@ -507,7 +542,7 @@
 
         .btn-main-timer {
             position: absolute;
-            bottom: 35px; /* הצף בתחתית מבלי לדחוף טקסט */
+            bottom: 35px; 
             font-size: 1.15rem;
             font-weight: 700;
             font-family: 'Inter', monospace;
@@ -517,7 +552,7 @@
             z-index: 2;
         }
 
-        /* Idle State (Elegant Emerald Green Theme) */
+        /* Idle State */
         .btn-main-circle.state-idle {
             border: 2px solid #047857; 
             box-shadow: 0 0 20px rgba(4, 120, 87, 0.15), inset 0 0 15px rgba(4, 120, 87, 0.05);
@@ -532,7 +567,7 @@
             100% { box-shadow: 0 0 35px rgba(4, 120, 87, 0.35), inset 0 0 20px rgba(4, 120, 87, 0.15); }
         }
 
-        /* Active State (Elegant Burgundy/Red Theme) */
+        /* Active State */
         .btn-main-circle.state-active {
             border: 2px solid #be123c; 
             box-shadow: 0 0 20px rgba(190, 18, 60, 0.15), inset 0 0 15px rgba(190, 18, 60, 0.05);
@@ -1632,7 +1667,6 @@
             <div class="header-live-timer" id="headerShiftDuration">00:00:00</div>
         </div>
 
-        <!-- NEW: Energy Flow Progress Bar located inside the Header -->
         <div class="header-progress-container" id="headerProgressWrap">
             <div class="header-progress-fill fill-green" id="headerProgressFill"></div>
         </div>
@@ -1677,25 +1711,19 @@
 
             <!-- Main Circular Action Button -->
             <div class="main-action-wrapper">
-                <svg class="progress-ring" viewBox="0 0 240 240">
+                <svg class="progress-ring" viewBox="0 0 260 260">
                     <defs>
-                        <!-- הגרדיאנט הדינמי לטבעת ה-SVG -->
-                        <linearGradient id="ringEnergyGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-                            <stop offset="0%" stop-color="#39ff14">
-                                <animate attributeName="stop-color" values="rgba(16,185,129,0.3); #39ff14; rgba(16,185,129,0.3)" dur="1.5s" repeatCount="indefinite" />
-                            </stop>
-                            <stop offset="50%" stop-color="rgba(16,185,129,0.3)">
-                                <animate attributeName="stop-color" values="rgba(16,185,129,0.3); #39ff14; rgba(16,185,129,0.3)" dur="1.5s" repeatCount="indefinite" />
-                            </stop>
-                            <stop offset="100%" stop-color="#39ff14">
-                                <animate attributeName="stop-color" values="#39ff14; rgba(16,185,129,0.3); #39ff14" dur="1.5s" repeatCount="indefinite" />
-                            </stop>
-                        </linearGradient>
+                        <filter id="glowBlur" x="-50%" y="-50%" width="200%" height="200%">
+                            <feGaussianBlur stdDeviation="5" result="blur" />
+                        </filter>
                     </defs>
-                    <circle class="progress-ring-bg" cx="120" cy="120" r="110"></circle>
-                    <circle id="circleProgressFill" cx="120" cy="120" r="110"></circle>
+                    <circle class="progress-ring-bg" cx="130" cy="130" r="110"></circle>
+                    <!-- שכבת הילה פועמת מאחור -->
+                    <circle id="circleProgressGlow" class="progress-ring-glow" cx="130" cy="130" r="110" filter="url(#glowBlur)"></circle>
+                    <!-- הפס הראשי -->
+                    <circle id="circleProgressFill" class="progress-ring-fill" cx="130" cy="130" r="110"></circle>
                 </svg>
-                <!-- Rotating Spark for the Ring (Fixed Positioning) -->
+                <!-- Rotating Spark for the Ring -->
                 <div class="ring-spark-container" id="ringSparkContainer">
                     <div class="ring-spark spark-green" id="ringSpark"></div>
                 </div>
@@ -1813,7 +1841,7 @@
                     <div class="form-group">
                         <label class="form-label">שעת כניסה</label>
                         <div class="input-wrapper">
-                            <input type="time" id="fieldStartTime" class="form-control" onchange="validateModalRealtime(); handleModalTimeChangeForFullPrem();" oninput="handleModalTimeChangeForFullPrem();">
+                            <input type="time" id="fieldStartTime" class="form-control" onchange="validateModalRealtime(true); handleModalTimeChangeForFullPrem();" oninput="validateModalRealtime(false); handleModalTimeChangeForFullPrem();">
                             <svg class="field-error-icon" viewBox="0 0 24 24">
                                 <path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
                             </svg>
@@ -1823,7 +1851,7 @@
                     <div class="form-group">
                         <label class="form-label">שעת יציאה</label>
                         <div class="input-wrapper">
-                            <input type="time" id="fieldEndTime" class="form-control" onchange="validateModalRealtime(); handleModalTimeChangeForFullPrem();" oninput="handleModalTimeChangeForFullPrem();">
+                            <input type="time" id="fieldEndTime" class="form-control" onchange="validateModalRealtime(true); handleModalTimeChangeForFullPrem();" oninput="validateModalRealtime(false); handleModalTimeChangeForFullPrem();">
                             <svg class="field-error-icon" viewBox="0 0 24 24">
                                 <path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
                             </svg>
@@ -1887,7 +1915,7 @@
                     <div class="form-group">
                         <label class="form-label">משעה</label>
                         <div class="input-wrapper">
-                            <input type="time" id="fieldPremStart" class="form-control" onchange="validateModalRealtime()" oninput="validateModalRealtime()">
+                            <input type="time" id="fieldPremStart" class="form-control" onchange="validateModalRealtime(true)" oninput="validateModalRealtime(false)">
                             <svg class="field-error-icon" viewBox="0 0 24 24">
                                 <path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
                             </svg>
@@ -1897,7 +1925,7 @@
                     <div class="form-group">
                         <label class="form-label">עד שעה</label>
                         <div class="input-wrapper">
-                            <input type="time" id="fieldPremEnd" class="form-control" onchange="validateModalRealtime()" oninput="validateModalRealtime()">
+                            <input type="time" id="fieldPremEnd" class="form-control" onchange="validateModalRealtime(true)" oninput="validateModalRealtime(false)">
                             <svg class="field-error-icon" viewBox="0 0 24 24">
                                 <path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
                             </svg>
@@ -2126,11 +2154,14 @@
         const mainActionText = document.getElementById('mainActionText');
         const mainActionTimer = document.getElementById('mainActionTimer');
         const circleProgressFill = document.getElementById('circleProgressFill');
+        const circleProgressGlow = document.getElementById('circleProgressGlow');
         const ringSparkContainer = document.getElementById('ringSparkContainer');
 
         const radius = 110;
         const circumference = 2 * Math.PI * radius; 
+        
         circleProgressFill.style.strokeDasharray = `${circumference} ${circumference}`;
+        circleProgressGlow.style.strokeDasharray = `${circumference} ${circumference}`;
 
         if (active) {
             statusIndicator.className = 'status-badge active';
@@ -2166,12 +2197,19 @@
 
             const offset = circumference - (pct * circumference);
             circleProgressFill.style.strokeDashoffset = offset;
+            circleProgressGlow.style.strokeDashoffset = offset;
             
             const deg = pct * 360;
             ringSparkContainer.style.transform = `rotate(${deg}deg)`;
-            ringSparkContainer.style.display = 'block';
+            
+            if (pct >= 1) {
+                ringSparkContainer.style.display = 'none';
+            } else {
+                ringSparkContainer.style.display = 'block';
+            }
 
             circleProgressFill.setAttribute('class', 'progress-ring-fill ring-green');
+            circleProgressGlow.setAttribute('class', 'progress-ring-glow ring-green-glow');
 
         } else {
             statusIndicator.className = 'status-badge idle';
@@ -2185,7 +2223,10 @@
             mainActionTimer.style.display = 'none';
 
             circleProgressFill.style.strokeDashoffset = circumference;
+            circleProgressGlow.style.strokeDashoffset = circumference;
+            
             circleProgressFill.setAttribute('class', 'progress-ring-fill ring-green');
+            circleProgressGlow.setAttribute('class', 'progress-ring-glow ring-green-glow');
             ringSparkContainer.style.display = 'none';
         }
     }
@@ -2309,6 +2350,7 @@
         };
 
         shifts.unshift(newShift);
+        activeMonthKey = dateStr.substring(0, 7); 
         autoSortShiftsArray(shifts);
         saveShifts();
         renderRecentShifts();
@@ -2598,7 +2640,7 @@
 
     function toggleMonthAccordion(mk) {
         if (activeMonthKey === mk) {
-            activeMonthKey = ''; 
+            activeMonthKey = 'NONE'; 
         } else {
             activeMonthKey = mk; 
         }
@@ -2761,7 +2803,6 @@
         renderShifts();
     }
 
-    // חלונית חכמה למחיקת קבוצת משמרות (מצב בחירה)
     function deleteSelectedShifts() {
         if (selectedShiftIds.size === 0) return;
         
@@ -2936,7 +2977,7 @@
             document.getElementById('fieldPremStart').value = '';
             document.getElementById('fieldPremEnd').value = '';
         }
-        validateModalRealtime();
+        validateModalRealtime(true);
     }
 
     function handleModalTimeChangeForFullPrem() {
@@ -3216,7 +3257,6 @@
 
                         <div class="card-actions-bar">
                             <button class="btn-secondary" onclick="event.stopPropagation(); openShiftModal('${shiftIdStr}')">עריכה / השלמת חוסר</button>
-                            <!-- דיאלוג חכם ומוגן למחיקה -->
                             <button class="btn-secondary btn-danger-outline" onclick="event.stopPropagation(); deleteShift('${shiftIdStr}')">מחיקה</button>
                         </div>
                     </div>
@@ -3253,8 +3293,8 @@
         
         const monthKeys = Object.keys(grouped).sort((a,b) => b.localeCompare(a));
         
-        if (!activeMonthKey || !monthKeys.includes(activeMonthKey)) {
-            activeMonthKey = monthKeys[0];
+        if (activeMonthKey !== 'NONE' && (!activeMonthKey || !monthKeys.includes(activeMonthKey))) {
+            activeMonthKey = monthKeys[0] || '';
         }
 
         let html = '';
@@ -3384,7 +3424,7 @@
         }
 
         modal.classList.add('open');
-        validateModalRealtime();
+        validateModalRealtime(false);
     }
 
     function closeModal() {
@@ -3399,9 +3439,26 @@
 
         let startInvalid = false;
         let endInvalid = false;
+        let bothEmptyInvalid = false;
         let premStartInvalid = false;
         let premEndInvalid = false;
         let errorMsg = '';
+
+        if (!shiftStart && !shiftEnd) {
+            startInvalid = true;
+            endInvalid = true;
+            bothEmptyInvalid = true;
+            errorMsg = 'יש למלא לפחות שעת כניסה או יציאה.';
+            return {
+                valid: false,
+                startInvalid,
+                endInvalid,
+                bothEmptyInvalid,
+                premStartInvalid,
+                premEndInvalid,
+                error: errorMsg
+            };
+        }
 
         if (shiftStart && shiftEnd && shiftStart === shiftEnd) {
             startInvalid = true;
@@ -3411,6 +3468,7 @@
                 valid: false,
                 startInvalid,
                 endInvalid,
+                bothEmptyInvalid: false,
                 premStartInvalid,
                 premEndInvalid,
                 error: errorMsg
@@ -3431,33 +3489,37 @@
                 startInvalid = true;
                 endInvalid = true;
                 errorMsg = 'משך המשמרת חורג מהמותר (מעל 13 שעות).';
-                return { valid: false, startInvalid, endInvalid, premStartInvalid, premEndInvalid, error: errorMsg };
+                return { valid: false, startInvalid, endInvalid, bothEmptyInvalid: false, premStartInvalid, premEndInvalid, error: errorMsg };
             }
         } else if (shiftStart) {
             sStartMins = timeToMinutes(shiftStart);
             sEndMins = sStartMins + 1440;
+        } else if (shiftEnd) {
+            sEndMins = timeToMinutes(shiftEnd);
+            sStartMins = sEndMins - 1440; 
         }
 
         let adjustedSStart = sStartMins;
         let adjustedSEnd = sEndMins;
 
-        if (premStart && shiftStart) {
+        if (premStart && (shiftStart || shiftEnd)) {
             let pStartMins = timeToMinutes(premStart);
             let adjustedPStart = pStartMins;
-            if (adjustedPStart < adjustedSStart) {
+            
+            while (adjustedPStart < adjustedSStart) {
                 adjustedPStart += 1440;
             }
-
+            
             if (adjustedPStart < adjustedSStart || adjustedPStart > adjustedSEnd) {
                 premStartInvalid = true;
                 errorMsg = 'שעת תחילת הפרמיה קודמת לשעת תחילת המשמרת או חורגת ממנה.';
             }
         }
 
-        if (premEnd && shiftEnd && shiftStart) {
+        if (premEnd && (shiftEnd || shiftStart)) {
             let pEndMins = timeToMinutes(premEnd);
             let adjustedPEnd = pEndMins;
-            if (adjustedPEnd < adjustedSStart) {
+            while (adjustedPEnd < adjustedSStart) {
                 adjustedPEnd += 1440;
             }
 
@@ -3470,13 +3532,13 @@
         if (premStart && premEnd) {
             let pStartMins = timeToMinutes(premStart);
             let adjustedPStart = pStartMins;
-            if (adjustedPStart < adjustedSStart) {
+            while (adjustedPStart < adjustedSStart) {
                 adjustedPStart += 1440;
             }
 
             let pEndMins = timeToMinutes(premEnd);
             let adjustedPEnd = pEndMins;
-            if (adjustedPEnd < adjustedSStart) {
+            while (adjustedPEnd < adjustedSStart) {
                 adjustedPEnd += 1440;
             }
 
@@ -3495,13 +3557,14 @@
             valid: !startInvalid && !endInvalid && !premStartInvalid && !premEndInvalid,
             startInvalid,
             endInvalid,
+            bothEmptyInvalid: false,
             premStartInvalid,
             premEndInvalid,
             error: errorMsg
         };
     }
 
-    function validateModalRealtime() {
+    function validateModalRealtime(isSubmit = false) {
         const startInput = document.getElementById('fieldStartTime');
         const endInput = document.getElementById('fieldEndTime');
         const premStartInput = document.getElementById('fieldPremStart');
@@ -3514,22 +3577,29 @@
 
         const state = getValidationState();
 
-        if (state.startInvalid) {
-            startInput.classList.add('input-error');
-            startErr.textContent = state.error.includes('13 שעות') ? 'משך המשמרת חורג מהמותר (מעל 13 שעות)' : 'שעת כניסה ויציאה זהות';
-            startErr.classList.add('visible');
-        } else {
+        if (state.bothEmptyInvalid && !isSubmit) {
             startInput.classList.remove('input-error');
             startErr.classList.remove('visible');
-        }
-
-        if (state.endInvalid) {
-            endInput.classList.add('input-error');
-            endErr.textContent = state.error.includes('13 שעות') ? 'משך המשמרת חורג מהמותר (מעל 13 שעות)' : 'שעת כניסה ויציאה זהות';
-            endErr.classList.add('visible');
-        } else {
             endInput.classList.remove('input-error');
             endErr.classList.remove('visible');
+        } else {
+            if (state.startInvalid) {
+                startInput.classList.add('input-error');
+                startErr.textContent = state.error;
+                startErr.classList.add('visible');
+            } else {
+                startInput.classList.remove('input-error');
+                startErr.classList.remove('visible');
+            }
+
+            if (state.endInvalid) {
+                endInput.classList.add('input-error');
+                endErr.textContent = state.error;
+                endErr.classList.add('visible');
+            } else {
+                endInput.classList.remove('input-error');
+                endErr.classList.remove('visible');
+            }
         }
 
         if (state.premStartInvalid) {
@@ -3575,9 +3645,14 @@
         const validation = getValidationState();
         
         if (!validation.valid) {
-            validateModalRealtime();
+            validateModalRealtime(true);
             const errorMsg = validation.error || 'לא ניתן לשמור את המשמרת – קיימת שגיאה בנתונים שטרם תוקנה. יש לתקן את השדות המסומנים באדום.';
-            const errorTitle = (startVal && endVal && startVal === endVal) ? 'שגיאה בשעות המשמרת' : (validation.error.includes('13 שעות') ? 'חריגת משך משמרת' : 'שגיאה בשמירת נתוני הפרמיה');
+            
+            let errorTitle = 'שגיאה בנתוני המשמרת';
+            if (validation.bothEmptyInvalid) errorTitle = 'נתונים חסרים';
+            else if (errorMsg.includes('13 שעות')) errorTitle = 'חריגת משך משמרת';
+            else if (validation.premStartInvalid || validation.premEndInvalid) errorTitle = 'שגיאה בשמירת נתוני הפרמיה';
+            
             showErrorDialog(errorMsg, errorTitle);
             return;
         }
@@ -3631,7 +3706,6 @@
         closeModal();
     }
     
-    // מנגנון מחיקה חכם לפאנל המשני - מתקן את באג ההתעלמות באייפון/מכשירים מסוימים
     function deleteShift(id) {
         showSmartAlertDialog(
             'מחיקת משמרת',
@@ -3652,3 +3726,4 @@
 </script>
 </body>
 </html>
+
