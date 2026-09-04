@@ -444,18 +444,18 @@
         }
 
         .progress-ring-glow {
-            stroke-width: 10; /* הילה בעובי ביניים לתחושת זוהר מורגשת אך עדינה */
+            stroke-width: 10; 
         }
 
-        /* אנימציית צבע ושקיפות במקום גרדיאנט, כדי ליצור זוהר ונשימה */
+        /* 0% = חשוך לגמרי, 100% = שיא הפעימה */
         @keyframes pulse-ring-color {
-            0% { stroke: #39ff14; }
-            100% { stroke: #047857; }
+            0% { stroke: #047857; }
+            100% { stroke: #39ff14; }
         }
 
         @keyframes pulse-ring-glow-combo {
-            0% { stroke: #39ff14; opacity: 0.8; }
-            100% { stroke: #047857; opacity: 0.15; }
+            0% { stroke: #047857; opacity: 0.15; }
+            100% { stroke: #39ff14; opacity: 0.8; }
         }
 
         .ring-green { 
@@ -466,7 +466,7 @@
             animation: pulse-ring-glow-combo 1.5s infinite alternate ease-in-out;
         }
 
-        /* Rotating Spark on the Ring */
+        /* Rotating Spark Container */
         .ring-spark-container {
             position: absolute;
             top: 0; left: 0; right: 0; bottom: 0;
@@ -476,30 +476,30 @@
             display: none;
         }
 
-        /* הנקודה המאירה בקצה הפס (תואמת בדיוק לרוחב הקו ומסתיימת יחד איתו) */
+        /* הקצה הלוהט בראש הפס - שטוח מאחור ומעוגל מלפנים */
         .ring-spark {
             position: absolute;
-            top: 20px; /* תואם למיקום הפס לאחר הגדלת הקנבס ל-260 */
+            top: 20px; 
             left: 50%;
-            margin-left: -4px; /* בדיוק חצי מעובי הקו (8px) כדי לשבת במרכז המושלם */
+            margin-left: -4px; 
             margin-top: -4px;  
-            width: 8px; /* בדיוק ברוחב הפס עצמו */
-            height: 8px;
-            border-radius: 50%;
-            /* אנימציית שקיפות וצבע במקום Scale */
+            width: 8px; 
+            height: 8px; 
+            border-radius: 0 4px 4px 0; 
+        }
+
+        .ring-spark-active {
             animation: pulse-tip-glow 1.5s infinite alternate ease-in-out;
         }
 
         @keyframes pulse-tip-glow {
             0% { 
-                background: #ffffff;
-                box-shadow: 0 0 6px #fff, 0 0 12px #39ff14; 
-                opacity: 1; 
+                background: #047857; 
+                box-shadow: 0 0 0 transparent; 
             }
             100% { 
-                background: #a7ff99;
-                box-shadow: 0 0 2px #a7ff99, 0 0 6px #047857; 
-                opacity: 0.4; 
+                background: #facc15; 
+                box-shadow: 2px 0 10px rgba(250, 204, 21, 0.9); 
             }
         }
 
@@ -1712,14 +1712,12 @@
                         </filter>
                     </defs>
                     <circle class="progress-ring-bg" cx="130" cy="130" r="110"></circle>
-                    <!-- שכבת הילה פועמת מאחור -->
                     <circle id="circleProgressGlow" class="progress-ring-glow" cx="130" cy="130" r="110" filter="url(#glowBlur)"></circle>
-                    <!-- הפס הראשי -->
                     <circle id="circleProgressFill" class="progress-ring-fill" cx="130" cy="130" r="110"></circle>
                 </svg>
-                <!-- Rotating Spark for the Ring -->
+                <!-- Rotating Spark Container -->
                 <div class="ring-spark-container" id="ringSparkContainer">
-                    <div class="ring-spark spark-green" id="ringSpark"></div>
+                    <div id="ringSpark" class="ring-spark"></div>
                 </div>
                 
                 <button id="btnMainAction" class="btn-main-circle state-idle" onclick="handleMainAction()">
@@ -2150,6 +2148,7 @@
         const circleProgressFill = document.getElementById('circleProgressFill');
         const circleProgressGlow = document.getElementById('circleProgressGlow');
         const ringSparkContainer = document.getElementById('ringSparkContainer');
+        const ringSpark = document.getElementById('ringSpark');
 
         const radius = 110;
         const circumference = 2 * Math.PI * radius; 
@@ -2202,8 +2201,9 @@
                 ringSparkContainer.style.display = 'block';
             }
 
-            circleProgressFill.setAttribute('class', 'progress-ring-fill ring-green');
-            circleProgressGlow.setAttribute('class', 'progress-ring-glow ring-green-glow');
+            circleProgressFill.classList.add('ring-green');
+            circleProgressGlow.classList.add('ring-green-glow');
+            ringSpark.classList.add('ring-spark-active');
 
         } else {
             statusIndicator.className = 'status-badge idle';
@@ -2219,8 +2219,10 @@
             circleProgressFill.style.strokeDashoffset = circumference;
             circleProgressGlow.style.strokeDashoffset = circumference;
             
-            circleProgressFill.setAttribute('class', 'progress-ring-fill ring-green');
-            circleProgressGlow.setAttribute('class', 'progress-ring-glow ring-green-glow');
+            circleProgressFill.classList.remove('ring-green');
+            circleProgressGlow.classList.remove('ring-green-glow');
+            ringSpark.classList.remove('ring-spark-active');
+            
             ringSparkContainer.style.display = 'none';
         }
     }
@@ -3720,4 +3722,3 @@
 </script>
 </body>
 </html>
-
