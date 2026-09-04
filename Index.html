@@ -66,7 +66,8 @@
             display: flex;
             flex-direction: column;
             gap: 16px;
-            padding-bottom: 40px;
+            /* מרווח תחתון מוגדל כדי שהתוכן לא יוסתר מאחורי הסרגל הניווט החדש */
+            padding-bottom: 100px;
             position: relative;
         }
 
@@ -147,24 +148,6 @@
             display: flex;
             align-items: center;
             gap: 10px;
-        }
-
-        .menu-trigger-btn {
-            background: rgba(255, 255, 255, 0.06);
-            border: 1px solid var(--border-color);
-            color: var(--text-main);
-            width: 38px;
-            height: 38px;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: background 0.15s;
-        }
-
-        .menu-trigger-btn:active {
-            background: rgba(0, 210, 255, 0.15);
         }
 
         .logo-area {
@@ -253,90 +236,72 @@
             width: 100%;
         }
 
-        /* Top Dropdown Menu */
-        .dropdown-menu-overlay {
+        /* Bottom Navigation Bar */
+        .bottom-nav-wrapper {
             position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.6);
-            z-index: 550;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.2s ease;
+            bottom: 0; left: 0; right: 0;
+            padding: 12px 16px 20px;
+            background: linear-gradient(180deg, transparent 0%, rgba(11, 19, 41, 0.9) 30%, var(--bg-primary) 100%);
+            z-index: 900;
+            pointer-events: none; /* מאפשר לחיצה על אזורים שקופים שמתחת */
         }
 
-        .dropdown-menu-overlay.open {
-            opacity: 1;
-            pointer-events: auto;
-        }
-
-        .dropdown-menu {
-            position: absolute;
-            top: 70px;
-            right: 12px;
-            left: 12px;
+        .bottom-nav {
+            display: flex;
+            position: relative;
             background: var(--bg-card);
+            border-radius: 20px;
             border: 1px solid var(--border-color);
-            border-radius: 16px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.5);
-            padding: 8px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+            padding: 6px;
+            pointer-events: auto;
+            touch-action: none; /* מונע גלילת מסך בזמן החלקת אצבע על הסרגל */
+            user-select: none;
+        }
+
+        .nav-indicator {
+            position: absolute;
+            top: 6px; bottom: 6px;
+            width: 50%; /* מותאם דינמית ב-JS */
+            background: rgba(0, 210, 255, 0.12);
+            border: 1px solid rgba(0, 210, 255, 0.2);
+            border-radius: 14px;
+            z-index: 1;
+            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), width 0.3s;
+            pointer-events: none; /* חובה כדי שהאצבע "תראה" את הכפתורים שתחתיו */
+        }
+
+        .nav-tab {
+            flex: 1;
             display: flex;
             flex-direction: column;
-            gap: 6px;
-            transform: translateY(-20px);
-            opacity: 0;
-            pointer-events: none;
-            transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s ease;
-            z-index: 560;
-        }
-
-        .dropdown-menu.open {
-            transform: translateY(0);
-            opacity: 1;
-            pointer-events: auto;
-        }
-
-        .menu-item {
-            display: flex;
             align-items: center;
-            gap: 12px;
-            padding: 12px 14px;
-            border-radius: 10px;
-            background: transparent;
-            border: none;
-            color: var(--text-main);
-            font-size: 0.95rem;
-            font-weight: 700;
-            cursor: pointer;
-            text-align: right;
-            width: 100%;
-        }
-
-        .menu-item:active {
-            background: rgba(255, 255, 255, 0.06);
-        }
-
-        .menu-item.active {
-            background: rgba(0, 210, 255, 0.12);
-            color: var(--accent-cyan);
-        }
-
-        .menu-divider {
-            height: 1px;
-            background: var(--border-color);
-            margin: 4px 6px;
-        }
-
-        .btn-reload-app {
-            background: rgba(255, 255, 255, 0.04);
+            justify-content: center;
+            gap: 4px;
+            padding: 10px 0;
             color: var(--text-muted);
+            font-size: 0.8rem;
+            font-weight: 700;
+            z-index: 2;
+            cursor: pointer;
+            transition: color 0.2s;
+            -webkit-tap-highlight-color: transparent;
         }
 
-        .btn-reload-app:active {
-            background: rgba(245, 158, 11, 0.15);
-            color: var(--accent-orange);
+        .nav-tab.active {
+            color: #fff;
+        }
+
+        .nav-tab svg {
+            fill: currentColor;
+            width: 22px;
+            height: 22px;
+            transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), fill 0.2s;
+        }
+
+        .nav-tab.active svg {
+            fill: var(--accent-cyan);
+            transform: scale(1.15);
         }
 
         /* View Container */
@@ -409,7 +374,7 @@
         /* Main Circular Action Button */
         .main-action-wrapper {
             position: relative;
-            width: 260px; /* מורחב מ-240 כדי לתת להילה מקום לנשום */
+            width: 260px;
             height: 260px;
             margin: 10px auto;
             display: flex;
@@ -432,7 +397,6 @@
             stroke-width: 8;
         }
 
-        /* תכונות משותפות לפס הקדמי ולהילה האחורית */
         .progress-ring-fill, .progress-ring-glow {
             fill: none;
             stroke-linecap: round;
@@ -447,7 +411,6 @@
             stroke-width: 10; 
         }
 
-        /* 0% = חשוך לגמרי, 100% = שיא הפעימה */
         @keyframes pulse-ring-color {
             0% { stroke: #047857; }
             100% { stroke: #39ff14; }
@@ -466,7 +429,6 @@
             animation: pulse-ring-glow-combo 1.5s infinite alternate ease-in-out;
         }
 
-        /* Rotating Spark Container */
         .ring-spark-container {
             position: absolute;
             top: 0; left: 0; right: 0; bottom: 0;
@@ -476,14 +438,13 @@
             display: none;
         }
 
-        /* הקצה הלוהט בראש הפס - מוארך ישר מאחור, מעוגל מלפנים. */
         .ring-spark {
             position: absolute;
             top: 20px; 
             left: 50%;
             margin-left: -4px; 
             margin-top: -4px;  
-            width: 8px; /* קוצר בשליש - כעת מהווה מכסה מושלם שאינו בולט מגבולות הפס */
+            width: 8px; 
             height: 8px; 
             border-radius: 0 4px 4px 0; 
         }
@@ -494,11 +455,11 @@
 
         @keyframes pulse-tip-glow {
             0% { 
-                background: #047857; /* מתמזג לחלוטין עם הצבע הכהה של הפס */
+                background: #047857; 
                 box-shadow: 0 0 0 transparent; 
             }
             100% { 
-                background: #facc15; /* זהב בשיא הפעימה */
+                background: #facc15; 
                 box-shadow: 2px 0 10px rgba(250, 204, 21, 0.9); 
             }
         }
@@ -546,7 +507,6 @@
             z-index: 2;
         }
 
-        /* Idle State */
         .btn-main-circle.state-idle {
             border: 2px solid #047857; 
             box-shadow: 0 0 20px rgba(4, 120, 87, 0.15), inset 0 0 15px rgba(4, 120, 87, 0.05);
@@ -561,7 +521,6 @@
             100% { box-shadow: 0 0 35px rgba(4, 120, 87, 0.35), inset 0 0 20px rgba(4, 120, 87, 0.15); }
         }
 
-        /* Active State */
         .btn-main-circle.state-active {
             border: 2px solid #be123c; 
             box-shadow: 0 0 20px rgba(190, 18, 60, 0.15), inset 0 0 15px rgba(190, 18, 60, 0.05);
@@ -1561,6 +1520,7 @@
                 padding: 0; margin: 0;
             }
             .app-container { display: none !important; }
+            .bottom-nav-wrapper { display: none !important; }
             #printArea { 
                 display: block !important; 
                 position: absolute; left: 0; top: 0; 
@@ -1595,13 +1555,20 @@
 <div class="app-container">
     <!-- Header -->
     <header>
+        <div class="header-status-box">
+            <div id="statusIndicator" class="status-badge idle">
+                <span class="pulse-dot"></span>
+                <span id="statusText">במנוחה</span>
+            </div>
+            <div class="header-live-timer" id="headerShiftDuration">00:00:00</div>
+        </div>
+
         <div class="header-right">
-            <button class="menu-trigger-btn" onclick="toggleTopMenu()" aria-label="תפריט">
-                <svg class="svg-icon" width="22" height="22" viewBox="0 0 24 24">
-                    <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/>
-                </svg>
-            </button>
             <div class="logo-area">
+                <div class="logo-text" style="text-align: left;">
+                    <h1>יומן משמרות</h1>
+                    <span>רכבת ישראל</span>
+                </div>
                 <svg class="rail-icon-svg" viewBox="0 0 512 512">
                     <defs>
                         <linearGradient id="hdrBg" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -1645,49 +1612,13 @@
                     <polyline points="365,315 365,365 408,365" fill="none" stroke="#ffffff" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
                     <circle cx="365" cy="365" r="6.5" fill="#00d2ff"/>
                 </svg>
-                <div class="logo-text">
-                    <h1>יומן משמרות</h1>
-                    <span>רכבת ישראל</span>
-                </div>
             </div>
-        </div>
-
-        <div class="header-status-box">
-            <div id="statusIndicator" class="status-badge idle">
-                <span class="pulse-dot"></span>
-                <span id="statusText">במנוחה</span>
-            </div>
-            <div class="header-live-timer" id="headerShiftDuration">00:00:00</div>
         </div>
 
         <div class="header-progress-container" id="headerProgressWrap">
             <div class="header-progress-fill fill-green" id="headerProgressFill"></div>
         </div>
     </header>
-
-    <!-- Dropdown Menu -->
-    <div class="dropdown-menu-overlay" id="dropdownMenuOverlay" onclick="toggleTopMenu()"></div>
-    <div class="dropdown-menu" id="topMenu">
-        <button class="menu-item active" id="menuBtnPunch" onclick="navigateTo('clock')">
-            <svg class="svg-icon" width="20" height="20" viewBox="0 0 24 24">
-                <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/>
-            </svg>
-            הדפסת נוכחות
-        </button>
-        <button class="menu-item" id="menuBtnHistory" onclick="navigateTo('history')">
-            <svg class="svg-icon" width="20" height="20" viewBox="0 0 24 24">
-                <path d="M19 3h-4.18C14.4 1.84 13.3 1 12 1c-1.3 0-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm2 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/>
-            </svg>
-            היסטוריית משמרות
-        </button>
-        <div class="menu-divider"></div>
-        <button class="menu-item btn-reload-app" onclick="reloadApp()">
-            <svg class="svg-icon" width="18" height="18" viewBox="0 0 24 24">
-                <path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/>
-            </svg>
-            רענון
-        </button>
-    </div>
 
     <!-- VIEW 1: Clock Screen -->
     <div id="viewClock" class="app-view">
@@ -1739,9 +1670,6 @@
             <div class="section-title">משמרות אחרונות</div>
         </div>
         <div id="recentShiftsContainer" class="shifts-list"></div>
-        <button class="manual-entry-btn" onclick="navigateTo('history')" style="background: rgba(0, 136, 255, 0.1); border-style: solid; margin-top: 2px;">
-            מעבר לכל המשמרות
-        </button>
     </div>
 
     <!-- VIEW 2: History Screen -->
@@ -1786,6 +1714,25 @@
         </div>
 
         <div id="shiftsContainer" class="shifts-list"></div>
+    </div>
+</div>
+
+<!-- Bottom Navigation Bar -->
+<div class="bottom-nav-wrapper">
+    <div class="bottom-nav" id="bottomNav">
+        <div class="nav-indicator" id="navIndicator"></div>
+        <div class="nav-tab active" data-target="clock" onclick="navigateTo('clock')">
+            <svg viewBox="0 0 24 24">
+                <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+            </svg>
+            <span>ראשי</span>
+        </div>
+        <div class="nav-tab" data-target="history" onclick="navigateTo('history')">
+            <svg viewBox="0 0 24 24">
+                <path d="M19 3h-4.18C14.4 1.84 13.3 1 12 1c-1.3 0-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm2 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/>
+            </svg>
+            <span>משמרות</span>
+        </div>
     </div>
 </div>
 
@@ -2089,12 +2036,80 @@
         }, delay);
     }
 
-    function toggleTopMenu() {
-        const menu = document.getElementById('topMenu');
-        const overlay = document.getElementById('dropdownMenuOverlay');
-        menu.classList.toggle('open');
-        overlay.classList.toggle('open');
+    // הגדרת סרגל הניווט התחתון ומנגנון ההחלקה (Swipe)
+    const bottomNav = document.getElementById('bottomNav');
+    const navIndicator = document.getElementById('navIndicator');
+    let isNavDragging = false;
+    let navStartX = 0;
+    let navBaseRight = 0;
+
+    if (bottomNav) {
+        bottomNav.addEventListener('touchstart', (e) => {
+            isNavDragging = true;
+            navStartX = e.touches[0].clientX;
+            navIndicator.style.transition = 'none';
+            
+            const activeTab = document.querySelector(`.nav-tab[data-target="${currentView}"]`);
+            if (activeTab) {
+                const navRect = bottomNav.getBoundingClientRect();
+                const tabRect = activeTab.getBoundingClientRect();
+                navBaseRight = navRect.right - tabRect.right;
+            }
+        }, { passive: true });
+
+        bottomNav.addEventListener('touchmove', (e) => {
+            if (!isNavDragging) return;
+            
+            const deltaX = e.touches[0].clientX - navStartX;
+            let currentOffsetRight = navBaseRight - deltaX; 
+            
+            const navRect = bottomNav.getBoundingClientRect();
+            const maxOffset = navRect.width - navIndicator.offsetWidth - 12; // קיזוז פדינג
+            
+            currentOffsetRight = Math.max(0, Math.min(maxOffset, currentOffsetRight));
+            navIndicator.style.transform = `translateX(-${currentOffsetRight}px)`;
+        }, { passive: true });
+
+        bottomNav.addEventListener('touchend', (e) => {
+            if (!isNavDragging) return;
+            isNavDragging = false;
+            
+            const touch = e.changedTouches[0];
+            const elem = document.elementFromPoint(touch.clientX, touch.clientY);
+            const tab = elem ? elem.closest('.nav-tab') : null;
+            
+            if (tab) {
+                // אם האצבע שוחררה ישירות על אחד הטאבים
+                navigateTo(tab.getAttribute('data-target'));
+            } else {
+                // אם שוחררה מחוץ לטאב ספציפי, החלפה לפי מיקום הסמן
+                const navRect = bottomNav.getBoundingClientRect();
+                const currentOffsetRight = navBaseRight - (touch.clientX - navStartX);
+                if (currentOffsetRight > navRect.width / 3) {
+                    navigateTo('history');
+                } else {
+                    navigateTo('clock');
+                }
+            }
+        });
     }
+
+    function updateIndicatorPosition(animate = true) {
+        const activeTab = document.querySelector(`.nav-tab[data-target="${currentView}"]`);
+        if (!activeTab || !navIndicator || !bottomNav) return;
+        
+        navIndicator.style.transition = animate ? 'transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), width 0.3s' : 'none';
+        
+        const navRect = bottomNav.getBoundingClientRect();
+        const tabRect = activeTab.getBoundingClientRect();
+        
+        const offsetRight = navRect.right - tabRect.right;
+        navIndicator.style.transform = `translateX(-${offsetRight}px)`;
+        navIndicator.style.width = `${tabRect.width}px`;
+    }
+
+    // מאזין לשינויי חלון כדי לשמור על מיקום מדוייק של הסמן
+    window.addEventListener('resize', () => updateIndicatorPosition(false));
 
     function navigateTo(viewName, closeMenu = true) {
         currentView = viewName;
@@ -2103,15 +2118,13 @@
         document.getElementById('viewClock').style.display = (viewName === 'clock') ? 'flex' : 'none';
         document.getElementById('viewHistory').style.display = (viewName === 'history') ? 'flex' : 'none';
 
-        document.getElementById('menuBtnPunch').classList.toggle('active', viewName === 'clock');
-        document.getElementById('menuBtnHistory').classList.toggle('active', viewName === 'history');
+        // עדכון סטטוס הטאבים
+        document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+        const targetTab = document.querySelector(`.nav-tab[data-target="${viewName}"]`);
+        if (targetTab) targetTab.classList.add('active');
 
-        if (closeMenu) {
-            const menu = document.getElementById('topMenu');
-            const overlay = document.getElementById('dropdownMenuOverlay');
-            menu.classList.remove('open');
-            overlay.classList.remove('open');
-        }
+        // הזזת סמן הרקע (האינדיקטור) של הטאב באופן חלק
+        requestAnimationFrame(() => updateIndicatorPosition(true));
 
         updateActiveShiftUI(); 
 
@@ -2120,10 +2133,6 @@
         } else if (viewName === 'clock') {
             renderRecentShifts();
         }
-    }
-
-    function reloadApp() {
-        window.location.reload(true);
     }
 
     function updateLiveClock() {
@@ -2657,7 +2666,6 @@
         }
         renderShifts();
         
-        // גלילה חכמה לאקורדיון שנפתח
         if (activeMonthKey !== 'NONE') {
             const openAcc = document.querySelector('.month-accordion.open');
             smoothScrollToReveal(openAcc, 100); 
@@ -2803,9 +2811,8 @@
 
             detailsEl.classList.toggle('expanded');
             
-            // הפעלת גלילה חכמה למשמרת שנפתחה
             if (detailsEl.classList.contains('expanded')) {
-                smoothScrollToReveal(cardEl, 400); // 400ms תואם בדיוק לזמן אנימציית הפתיחה של ה-CSS
+                smoothScrollToReveal(cardEl, 400);
             }
         }
     }
@@ -3748,4 +3755,3 @@
 </script>
 </body>
 </html>
-
