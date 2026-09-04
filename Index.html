@@ -476,14 +476,14 @@
             display: none;
         }
 
-        /* הקצה הלוהט בראש הפס - שטוח מאחור ומעוגל מלפנים */
+        /* הקצה הלוהט בראש הפס - מוארך ישר מאחור, מעוגל מלפנים. */
         .ring-spark {
             position: absolute;
             top: 20px; 
             left: 50%;
             margin-left: -4px; 
             margin-top: -4px;  
-            width: 8px; 
+            width: 8px; /* קוצר בשליש - כעת מהווה מכסה מושלם שאינו בולט מגבולות הפס */
             height: 8px; 
             border-radius: 0 4px 4px 0; 
         }
@@ -494,11 +494,11 @@
 
         @keyframes pulse-tip-glow {
             0% { 
-                background: #047857; 
+                background: #047857; /* מתמזג לחלוטין עם הצבע הכהה של הפס */
                 box-shadow: 0 0 0 transparent; 
             }
             100% { 
-                background: #facc15; 
+                background: #facc15; /* זהב בשיא הפעימה */
                 box-shadow: 2px 0 10px rgba(250, 204, 21, 0.9); 
             }
         }
@@ -1068,14 +1068,13 @@
         .shift-details {
             max-height: 0;
             overflow: hidden;
-            transition: max-height 0.3s ease-out;
+            transition: max-height 0.4s ease-in-out;
             background: var(--bg-card-inner);
             border-top: 1px solid var(--border-color);
         }
 
         .shift-details.expanded {
             max-height: 1500px;
-            transition: max-height 0.4s ease-in;
         }
 
         .details-inner {
@@ -2074,6 +2073,22 @@
 
     const PRESET_NALT_MINUTES = [0, 30, 40, 45, 60, 90, 150, 270];
 
+    // פונקציית עזר חדשה להחלקת המסך (Smooth Auto-Scroll)
+    function smoothScrollToReveal(el, delay = 400) {
+        setTimeout(() => {
+            if (!el) return;
+            const rect = el.getBoundingClientRect();
+            const viewHeight = Math.max(document.documentElement.clientHeight, window.innerHeight);
+            
+            // בודק אם התחתית של האלמנט חורגת מהמסך או שהחלק העליון מוסתר
+            if (rect.bottom > viewHeight || rect.top < 0) {
+                // אם האלמנט ארוך יותר מהמסך עצמו, ניישר אותו לחלק העליון (start). אחרת, נביא אותו פנימה (nearest)
+                const alignBlock = rect.height > viewHeight ? 'start' : 'nearest';
+                el.scrollIntoView({ behavior: 'smooth', block: alignBlock });
+            }
+        }, delay);
+    }
+
     function toggleTopMenu() {
         const menu = document.getElementById('topMenu');
         const overlay = document.getElementById('dropdownMenuOverlay');
@@ -2641,6 +2656,12 @@
             activeMonthKey = mk; 
         }
         renderShifts();
+        
+        // גלילה חכמה לאקורדיון שנפתח
+        if (activeMonthKey !== 'NONE') {
+            const openAcc = document.querySelector('.month-accordion.open');
+            smoothScrollToReveal(openAcc, 100); 
+        }
     }
 
     function printMonthReport(mk) {
@@ -2781,6 +2802,11 @@
             }
 
             detailsEl.classList.toggle('expanded');
+            
+            // הפעלת גלילה חכמה למשמרת שנפתחה
+            if (detailsEl.classList.contains('expanded')) {
+                smoothScrollToReveal(cardEl, 400); // 400ms תואם בדיוק לזמן אנימציית הפתיחה של ה-CSS
+            }
         }
     }
 
@@ -3722,3 +3748,4 @@
 </script>
 </body>
 </html>
+
