@@ -1206,7 +1206,7 @@
             max-width: 440px;
             border-radius: 20px; 
             border: 1px solid var(--border-color);
-            padding: 14px 16px 16px; /* ריווח פנימי מעודן */
+            padding: 10px 16px 16px; /* ריווח עליון צומצם */
             transform: scale(0.95) translateY(20px); 
             transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s ease;
             max-height: 88vh; 
@@ -1221,13 +1221,13 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 10px; /* צומצם עבור כותרת דקה יותר */
+            margin-bottom: 6px; /* צומצם משמעותית */
             border-bottom: 1px solid var(--border-color);
-            padding-bottom: 8px; /* צומצם עבור כותרת דקה יותר */
+            padding-bottom: 6px; /* צומצם משמעותית */
         }
 
         .modal-title {
-            font-size: 1.1rem; /* גודל פונט מעודן יותר */
+            font-size: 1.1rem; 
             font-weight: 700;
             color: #fff;
         }
@@ -1248,7 +1248,7 @@
             border-radius: 12px;
             padding: 10px; 
             margin-top: 4px; 
-            margin-bottom: 10px; 
+            margin-bottom: 8px; /* צומצם מעט מהקודם (היה 10px) */
             border: 1px solid rgba(255, 255, 255, 0.05);
         }
 
@@ -1356,13 +1356,13 @@
             margin-top: 8px;
         }
 
-        /* מחלקה מיוחדת לשורת שגיאה מאוחדת וממורכזת */
+        /* שורת שגיאה מאוחדת - צומצמה מעט */
         .row-error-msg {
             font-size: 0.8rem;
             color: #fca5a5;
             text-align: center;
             margin-top: 2px;
-            margin-bottom: 8px;
+            margin-bottom: 4px; /* צומצם כדי לחסוך גובה כשיש שגיאה */
             display: none;
             font-weight: 600;
         }
