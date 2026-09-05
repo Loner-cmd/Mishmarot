@@ -2039,30 +2039,39 @@
         }, delay);
     }
 
-    // הגדרת סרגל הניווט התחתון - מנגנון החלקה המבוסס על אחוזים (100% שמאלה ל"ראשי", 0 ל"משמרות" בגלל ה-RTL)
+    // הגדרת סרגל הניווט התחתון - מנגנון החלקה חכם (50% מרחק)
     const bottomNav = document.getElementById('bottomNav');
     const navIndicator = document.getElementById('navIndicator');
     let isNavDragging = false;
     let navStartX = 0;
     let navCurrentOffsetPercent = 0;
+    let navHasMoved = false;
 
     if (bottomNav) {
         bottomNav.addEventListener('touchstart', (e) => {
             isNavDragging = true;
+            navHasMoved = false;
             navStartX = e.touches[0].clientX;
             navIndicator.style.transition = 'none';
-            navCurrentOffsetPercent = (currentView === 'history') ? 0 : 100;
+            // ראשי = 0% אופסט (ימין), משמרות = 100% אופסט (שמאל)
+            navCurrentOffsetPercent = (currentView === 'history') ? 100 : 0;
         }, { passive: true });
 
         bottomNav.addEventListener('touchmove', (e) => {
             if (!isNavDragging) return;
             
             const deltaX = e.touches[0].clientX - navStartX;
-            const navRect = bottomNav.getBoundingClientRect();
-            // חישוב התזוזה באחוזים מתוך חצי רוחב הסרגל כדי שזה יתאים בדיוק למרחק שבין שני המצבים
-            const movePercent = (deltaX / (navRect.width / 2)) * 100;
             
-            let newOffset = navCurrentOffsetPercent - movePercent;
+            // מונע מלחיצה פשוטה להיחשב כגרירה
+            if (Math.abs(deltaX) > 5) {
+                navHasMoved = true;
+            }
+
+            const navRect = bottomNav.getBoundingClientRect();
+            // ב-RTL גרירה שמאלה נותנת deltaX שלילי - אנחנו רוצים שזה יגדיל את האופסט לכיוון ה-100%
+            const movePercent = (-deltaX / (navRect.width / 2)) * 100;
+            
+            let newOffset = navCurrentOffsetPercent + movePercent;
             newOffset = Math.max(0, Math.min(100, newOffset));
             
             navIndicator.style.transform = `translateX(-${newOffset}%)`;
@@ -2072,23 +2081,31 @@
             if (!isNavDragging) return;
             isNavDragging = false;
             
-            const touch = e.changedTouches[0];
-            const elem = document.elementFromPoint(touch.clientX, touch.clientY);
-            const tab = elem ? elem.closest('.nav-tab') : null;
-            
-            if (tab) {
-                navigateTo(tab.getAttribute('data-target'), false);
-            } else {
-                const deltaX = touch.clientX - navStartX;
-                const navRect = bottomNav.getBoundingClientRect();
-                const movePercent = (deltaX / (navRect.width / 2)) * 100;
-                let finalOffset = navCurrentOffsetPercent - movePercent;
-                
-                if (finalOffset < 50) {
-                    navigateTo('history', false); // 0% מיושר ימינה = משמרות
+            // אם לא הייתה באמת תזוזה פיזית - מדובר בלחיצה רגילה
+            if (!navHasMoved) {
+                const touch = e.changedTouches[0];
+                const elem = document.elementFromPoint(touch.clientX, touch.clientY);
+                const tab = elem ? elem.closest('.nav-tab') : null;
+                if (tab) {
+                    navigateTo(tab.getAttribute('data-target'), false);
                 } else {
-                    navigateTo('clock', false); // 100% מיושר שמאלה = ראשי
+                    updateIndicatorPosition(true); // מחזיר למקום אם לחץ בשטח מת
                 }
+                return;
+            }
+
+            // חישוב המרחק הסופי עם שחרור האצבע (בלי מהירות)
+            const touch = e.changedTouches[0];
+            const deltaX = touch.clientX - navStartX;
+            const navRect = bottomNav.getBoundingClientRect();
+            const movePercent = (-deltaX / (navRect.width / 2)) * 100;
+            let finalOffset = navCurrentOffsetPercent + movePercent;
+
+            // בדיקת סף מדויקת של 50%
+            if (finalOffset > 50) {
+                navigateTo('history', false); // 100% (שמאל) = משמרות
+            } else {
+                navigateTo('clock', false); // 0% (ימין) = ראשי
             }
         });
     }
@@ -2097,11 +2114,11 @@
         if (!navIndicator) return;
         navIndicator.style.transition = animate ? 'transform 0.3s cubic-bezier(0.16, 1, 0.3, 1)' : 'none';
         
-        // ב-RTL, הזזה שמאלה מוגדרת במינוס
+        // ב-RTL 0% זה ימין (ראשי) ו- -100% זה שמאל (משמרות)
         if (currentView === 'history') {
-            navIndicator.style.transform = 'translateX(0%)'; // מיושר לימין - טאב משמרות
+            navIndicator.style.transform = 'translateX(-100%)'; 
         } else {
-            navIndicator.style.transform = 'translateX(-100%)'; // מיושר לשמאל - טאב ראשי
+            navIndicator.style.transform = 'translateX(0%)'; 
         }
     }
 
