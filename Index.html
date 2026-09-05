@@ -66,6 +66,7 @@
             display: flex;
             flex-direction: column;
             gap: 16px;
+            /* מרווח תחתון כדי שהתוכן לא יוסתר מאחורי סרגל הניווט */
             padding-bottom: 100px;
             position: relative;
         }
@@ -92,6 +93,23 @@
             position: relative;
             z-index: 600;
             overflow: hidden; 
+        }
+
+        /* הגדרות קבועות למיקום פריטי הכותרת - מונע החלפת צדדים */
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            order: 1; /* תמיד יישאר ראשון מצד ימין */
+        }
+
+        .header-status-box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-width: 85px;
+            order: 2; /* תמיד יישאר שני מצד שמאל */
         }
 
         .header-progress-container {
@@ -142,12 +160,6 @@
             100% { background-position: -100% 0; }
         }
 
-        .header-right {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
         .logo-area {
             display: flex;
             align-items: center;
@@ -172,14 +184,6 @@
             font-size: 0.7rem;
             color: var(--accent-cyan);
             font-weight: 600;
-        }
-
-        .header-status-box {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-width: 85px;
         }
 
         .status-badge {
@@ -217,6 +221,7 @@
         }
 
         .status-badge.active .pulse-dot {
+            /* הוספת alternate לנשימה רכה */
             animation: pulse-live 1.2s infinite alternate ease-in-out;
         }
 
@@ -269,7 +274,7 @@
             top: 5px; 
             bottom: 5px;
             right: 5px;
-            width: calc(50% - 5px); /* יישור סימטרי מדויק בהפחתת הריווח הפנימי */
+            width: calc(50% - 5px); /* יישור סימטרי מדויק */
             background: rgba(0, 210, 255, 0.12);
             border: 1px solid rgba(0, 210, 255, 0.2);
             border-radius: 40px; 
@@ -1562,20 +1567,8 @@
 <div class="app-container">
     <!-- Header -->
     <header>
-        <div class="header-status-box">
-            <div id="statusIndicator" class="status-badge idle">
-                <span class="pulse-dot"></span>
-                <span id="statusText">במנוחה</span>
-            </div>
-            <div class="header-live-timer" id="headerShiftDuration">00:00:00</div>
-        </div>
-
         <div class="header-right">
             <div class="logo-area">
-                <div class="logo-text" style="text-align: left;">
-                    <h1>יומן משמרות</h1>
-                    <span>רכבת ישראל</span>
-                </div>
                 <svg class="rail-icon-svg" viewBox="0 0 512 512">
                     <defs>
                         <linearGradient id="hdrBg" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -1619,7 +1612,19 @@
                     <polyline points="365,315 365,365 408,365" fill="none" stroke="#ffffff" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
                     <circle cx="365" cy="365" r="6.5" fill="#00d2ff"/>
                 </svg>
+                <div class="logo-text" style="text-align: right;">
+                    <h1>יומן משמרות</h1>
+                    <span>רכבת ישראל</span>
+                </div>
             </div>
+        </div>
+
+        <div class="header-status-box">
+            <div id="statusIndicator" class="status-badge idle">
+                <span class="pulse-dot"></span>
+                <span id="statusText">במנוחה</span>
+            </div>
+            <div class="header-live-timer" id="headerShiftDuration">00:00:00</div>
         </div>
 
         <div class="header-progress-container" id="headerProgressWrap">
@@ -2034,29 +2039,33 @@
         }, delay);
     }
 
-    // הגדרת סרגל הניווט התחתון ומנגנון ההחלקה (Swipe) מבוסס אחוזים למניעת חריגות
+    // הגדרת סרגל הניווט התחתון - מנגנון החלקה המבוסס על אחוזים (100% שמאלה ל"ראשי", 0 ל"משמרות" בגלל ה-RTL)
     const bottomNav = document.getElementById('bottomNav');
     const navIndicator = document.getElementById('navIndicator');
     let isNavDragging = false;
     let navStartX = 0;
-    let navBaseOffset = 0;
-    let indicatorWidth = 0;
+    let navCurrentOffsetPercent = 0;
 
     if (bottomNav) {
         bottomNav.addEventListener('touchstart', (e) => {
             isNavDragging = true;
             navStartX = e.touches[0].clientX;
             navIndicator.style.transition = 'none';
-            indicatorWidth = navIndicator.offsetWidth;
-            navBaseOffset = (currentView === 'history') ? indicatorWidth : 0;
+            navCurrentOffsetPercent = (currentView === 'history') ? 0 : 100;
         }, { passive: true });
 
         bottomNav.addEventListener('touchmove', (e) => {
             if (!isNavDragging) return;
-            const deltaX = e.touches[0].clientX - navStartX; 
-            let offset = navBaseOffset - deltaX; 
-            offset = Math.max(0, Math.min(indicatorWidth, offset));
-            navIndicator.style.transform = `translateX(-${offset}px)`;
+            
+            const deltaX = e.touches[0].clientX - navStartX;
+            const navRect = bottomNav.getBoundingClientRect();
+            // חישוב התזוזה באחוזים מתוך חצי רוחב הסרגל כדי שזה יתאים בדיוק למרחק שבין שני המצבים
+            const movePercent = (deltaX / (navRect.width / 2)) * 100;
+            
+            let newOffset = navCurrentOffsetPercent - movePercent;
+            newOffset = Math.max(0, Math.min(100, newOffset));
+            
+            navIndicator.style.transform = `translateX(-${newOffset}%)`;
         }, { passive: true });
 
         bottomNav.addEventListener('touchend', (e) => {
@@ -2064,19 +2073,21 @@
             isNavDragging = false;
             
             const touch = e.changedTouches[0];
-            const deltaX = touch.clientX - navStartX;
-            let finalOffset = navBaseOffset - deltaX;
-            
             const elem = document.elementFromPoint(touch.clientX, touch.clientY);
             const tab = elem ? elem.closest('.nav-tab') : null;
             
             if (tab) {
                 navigateTo(tab.getAttribute('data-target'), false);
             } else {
-                if (finalOffset > indicatorWidth / 2) {
-                    navigateTo('history', false);
+                const deltaX = touch.clientX - navStartX;
+                const navRect = bottomNav.getBoundingClientRect();
+                const movePercent = (deltaX / (navRect.width / 2)) * 100;
+                let finalOffset = navCurrentOffsetPercent - movePercent;
+                
+                if (finalOffset < 50) {
+                    navigateTo('history', false); // 0% מיושר ימינה = משמרות
                 } else {
-                    navigateTo('clock', false);
+                    navigateTo('clock', false); // 100% מיושר שמאלה = ראשי
                 }
             }
         });
@@ -2085,10 +2096,12 @@
     function updateIndicatorPosition(animate = true) {
         if (!navIndicator) return;
         navIndicator.style.transition = animate ? 'transform 0.3s cubic-bezier(0.16, 1, 0.3, 1)' : 'none';
+        
+        // ב-RTL, הזזה שמאלה מוגדרת במינוס
         if (currentView === 'history') {
-            navIndicator.style.transform = 'translateX(-100%)';
+            navIndicator.style.transform = 'translateX(0%)'; // מיושר לימין - טאב משמרות
         } else {
-            navIndicator.style.transform = 'translateX(0)';
+            navIndicator.style.transform = 'translateX(-100%)'; // מיושר לשמאל - טאב ראשי
         }
     }
 
