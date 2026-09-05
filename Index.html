@@ -95,12 +95,11 @@
             overflow: hidden; 
         }
 
-        /* הגדרות קבועות למיקום פריטי הכותרת - מונע החלפת צדדים */
         .header-right {
             display: flex;
             align-items: center;
             gap: 10px;
-            order: 1; /* תמיד יישאר ראשון מצד ימין */
+            order: 1;
         }
 
         .header-status-box {
@@ -109,7 +108,7 @@
             align-items: center;
             justify-content: center;
             min-width: 85px;
-            order: 2; /* תמיד יישאר שני מצד שמאל */
+            order: 2;
         }
 
         .header-progress-container {
@@ -221,7 +220,6 @@
         }
 
         .status-badge.active .pulse-dot {
-            /* הוספת alternate לנשימה רכה */
             animation: pulse-live 1.2s infinite alternate ease-in-out;
         }
 
@@ -274,7 +272,7 @@
             top: 5px; 
             bottom: 5px;
             right: 5px;
-            width: calc(50% - 5px); /* יישור סימטרי מדויק */
+            width: calc(50% - 5px);
             background: rgba(0, 210, 255, 0.12);
             border: 1px solid rgba(0, 210, 255, 0.2);
             border-radius: 40px; 
@@ -1188,12 +1186,13 @@
             bottom: 0;
             background: rgba(0, 0, 0, 0.75);
             display: flex;
-            align-items: flex-end;
+            align-items: center; /* שונה מ- flex-end ל- center למרכוז החלון */
             justify-content: center;
             z-index: 1000;
             opacity: 0;
             pointer-events: none;
             transition: opacity 0.2s ease;
+            padding: 20px; /* תוספת ריווח מסביב לחלון */
         }
 
         .modal-overlay.open {
@@ -1204,28 +1203,27 @@
         .modal-sheet {
             background: var(--bg-card);
             width: 100%;
-            max-width: 500px;
-            border-top-left-radius: 24px;
-            border-top-right-radius: 24px;
+            max-width: 440px;
+            border-radius: 20px; /* פינות מעוגלות מכל הכיוונים */
             border: 1px solid var(--border-color);
-            padding: 20px 18px 30px;
-            transform: translateY(100%);
-            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-            max-height: 90vh;
+            padding: 16px 16px 20px; /* צמצום ריווח פנימי */
+            transform: scale(0.95) translateY(20px); /* אפקט כניסה מרכזי */
+            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s ease;
+            max-height: 88vh; /* מאפשר יותר מקום למסכים קטנים */
             overflow-y: auto;
         }
 
         .modal-overlay.open .modal-sheet {
-            transform: translateY(0);
+            transform: scale(1) translateY(0);
         }
 
         .modal-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 18px;
+            margin-bottom: 12px; /* צומצם מ-18px */
             border-bottom: 1px solid var(--border-color);
-            padding-bottom: 12px;
+            padding-bottom: 10px; /* צומצם מ-12px */
         }
 
         .modal-title {
@@ -1248,9 +1246,9 @@
         .card-sub-section {
             background: rgba(0, 0, 0, 0.15);
             border-radius: 12px;
-            padding: 12px;
-            margin-top: 6px;
-            margin-bottom: 14px;
+            padding: 10px; /* צומצם מ-12px */
+            margin-top: 4px; /* צומצם מ-6px */
+            margin-bottom: 10px; /* צומצם מ-14px */
             border: 1px solid rgba(255, 255, 255, 0.05);
         }
 
@@ -1258,17 +1256,17 @@
             font-size: 0.85rem;
             font-weight: 700;
             color: var(--accent-cyan);
-            margin-bottom: 10px;
+            margin-bottom: 8px; /* צומצם מ-10px */
             display: flex;
             align-items: center;
             gap: 6px;
         }
 
         .form-group {
-            margin-bottom: 12px;
+            margin-bottom: 8px; /* צומצם מ-12px */
             display: flex;
             flex-direction: column;
-            gap: 6px;
+            gap: 4px; /* צומצם מ-6px */
             min-width: 0;
             width: 100%;
         }
@@ -1294,9 +1292,9 @@
             background: var(--bg-card-inner);
             border: 1px solid var(--border-color);
             border-radius: 12px;
-            padding: 10px 12px;
+            padding: 8px 10px; /* צומצם מ-10px 12px */
             color: #fff;
-            font-size: 0.95rem;
+            font-size: 0.92rem; /* צומצם מעט */
             outline: none;
             width: 100%;
             min-width: 0;
@@ -1304,7 +1302,7 @@
             -webkit-appearance: none;
             -moz-appearance: none;
             appearance: none;
-            height: 46px;
+            height: 40px; /* צומצם מ-46px */
             text-align: center;
             font-family: 'Inter', 'Assistant', sans-serif;
             font-variant-numeric: tabular-nums;
@@ -1373,13 +1371,13 @@
             width: 100%;
             background: linear-gradient(135deg, var(--accent-blue), #0066cc);
             color: white;
-            padding: 14px;
+            padding: 12px; /* צומצם מ-14px */
             border-radius: 14px;
-            font-size: 1rem;
+            font-size: 0.95rem; /* צומצם מ-1rem */
             font-weight: 700;
             border: none;
             cursor: pointer;
-            margin-top: 10px;
+            margin-top: 4px; /* צומצם מ-10px */
         }
 
         .empty-state {
