@@ -552,8 +552,8 @@
         }
         
         .plus-pressed-effect {
-            transform: scale(0.75) !important;
-            opacity: 0.5 !important;
+            transform: scale(0.85) !important;
+            opacity: 0.7 !important;
         }
 
         /* Custom Floating Plus Button */
@@ -577,26 +577,6 @@
             opacity: 0.5;
         }
 
-        .manual-entry-btn {
-            background: var(--bg-card);
-            border: 1px dashed var(--accent-blue);
-            color: var(--accent-cyan);
-            padding: 14px;
-            border-radius: 14px;
-            font-size: 0.95rem;
-            font-weight: 700;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            box-shadow: var(--shadow);
-        }
-
-        .manual-entry-btn:active {
-            background: rgba(0, 136, 255, 0.1);
-        }
-
         .section-header {
             display: flex;
             justify-content: space-between;
@@ -615,28 +595,38 @@
 
         .header-actions-group {
             display: flex;
-            gap: 6px;
+            gap: 8px;
             flex-wrap: wrap;
         }
 
-        .btn-text-action {
-            background: rgba(255, 255, 255, 0.08);
+        /* כפתורי הפעולה החדשים (אייקונים) */
+        .btn-icon-action {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.05);
             border: 1px solid var(--border-color);
             color: var(--accent-cyan);
-            font-weight: 700;
-            font-size: 0.8rem;
-            padding: 6px 10px;
-            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             cursor: pointer;
+            transition: background 0.2s, border-color 0.2s, color 0.2s, transform 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+            -webkit-tap-highlight-color: transparent;
         }
 
-        .btn-text-action:active {
-            background: rgba(0, 136, 255, 0.2);
+        .btn-icon-action svg {
+            width: 18px;
+            height: 18px;
+            fill: currentColor;
         }
 
-        .btn-text-action.active-mode {
+        /* מצב דולק/פעיל לכפתורי הפעולה */
+        .btn-icon-action.active-mode {
             background: rgba(0, 210, 255, 0.2);
             border-color: var(--accent-cyan);
+            color: #fff;
+            box-shadow: 0 0 10px rgba(0, 210, 255, 0.3);
         }
 
         .selection-toolbar {
@@ -734,46 +724,72 @@
             display: block;
         }
 
+        /* Premium Dashboard Summary Bar */
         .month-summary-bar {
             display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            background: rgba(255, 255, 255, 0.03);
-            padding: 12px;
-            border-radius: 12px;
+            gap: 12px;
+            background: rgba(255, 255, 255, 0.04);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            padding: 14px;
+            border-radius: 16px;
             margin-bottom: 14px;
             align-items: center;
-            border: 1px solid rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
         }
 
-        .summary-stat {
-            font-size: 0.82rem;
-            font-weight: 600;
-            color: #e2e8f0;
-            background: rgba(0, 0, 0, 0.4);
-            padding: 6px 10px;
-            border-radius: 8px;
-            border: 1px solid rgba(255, 255, 255, 0.05);
+        .summary-stats-grid {
+            display: flex;
+            flex: 1;
+            gap: 8px;
         }
 
-        .btn-export {
-            margin-right: auto;
-            background: rgba(16, 185, 129, 0.15);
-            color: var(--accent-green);
-            border: 1px solid rgba(16, 185, 129, 0.3);
-            padding: 6px 12px;
-            border-radius: 8px;
+        .summary-stat-block {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0, 0, 0, 0.25);
+            border-radius: 12px;
+            padding: 8px 4px;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+        }
+
+        .stat-label {
+            font-size: 0.75rem;
             font-weight: 700;
-            font-size: 0.85rem;
-            cursor: pointer;
+            margin-bottom: 4px;
+        }
+
+        .stat-val {
+            font-size: 1rem;
+            font-weight: 800;
+            font-family: 'Inter', sans-serif;
+            font-variant-numeric: tabular-nums;
+            color: #fff;
+        }
+
+        .stat-work .stat-label { color: var(--accent-cyan); }
+        .stat-prem .stat-label { color: var(--accent-purple); }
+        .stat-nalt .stat-label { color: var(--accent-taxi); }
+
+        /* Compact Export/Share Button */
+        .btn-export-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: rgba(0, 136, 255, 0.15);
+            color: var(--accent-cyan);
+            border: 1px solid rgba(0, 136, 255, 0.3);
             display: flex;
             align-items: center;
-            gap: 6px;
-            transition: background 0.15s;
-        }
-
-        .btn-export:active {
-            background: rgba(16, 185, 129, 0.3);
+            justify-content: center;
+            cursor: pointer;
+            flex-shrink: 0;
+            transition: transform 0.15s cubic-bezier(0.4, 0, 0.2, 1), background 0.15s;
+            -webkit-tap-highlight-color: transparent;
         }
 
         .shifts-list {
@@ -1711,13 +1727,6 @@
 
     <!-- VIEW 2: History Screen -->
     <div id="viewHistory" class="app-view" style="display: none;">
-        <button class="manual-entry-btn" onclick="openShiftModal(null)">
-            <svg class="svg-icon" width="16" height="16" viewBox="0 0 24 24">
-                <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
-            </svg>
-            הוספת משמרת ידנית
-        </button>
-
         <div class="section-header">
             <div class="section-title">
                 <svg class="svg-icon" width="18" height="18" viewBox="0 0 24 24">
@@ -1726,9 +1735,21 @@
                 היסטוריית משמרות
             </div>
             <div class="header-actions-group">
-                <button id="btnToggleMultiPanel" class="btn-text-action" onclick="toggleMultiPanelMode()">ריבוי פאנלים</button>
-                <button id="btnToggleSorting" class="btn-text-action" onclick="toggleSortingMode()">מיון</button>
-                <button id="btnToggleSelection" class="btn-text-action" onclick="toggleSelectionMode()">בחירה</button>
+                <button id="btnToggleMultiPanel" class="btn-icon-action" onclick="toggleMultiPanelMode()" title="ריבוי פאנלים">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M11.99 18.54l-7.37-5.73L3 14.07l9 7 9-7-1.63-1.27-7.38 5.74zM12 16l7.36-5.73L21 9l-9-7-9 7 1.63 1.27L12 16z"/>
+                    </svg>
+                </button>
+                <button id="btnToggleSorting" class="btn-icon-action" onclick="toggleSortingMode()" title="מיון">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M9 3L5 6.99h3V14h2V6.99h3L9 3zm7 14.01V10h-2v7.01h-3L15 21l4-3.99h-3z"/>
+                    </svg>
+                </button>
+                <button id="btnToggleSelection" class="btn-icon-action" onclick="toggleSelectionMode()" title="בחירה">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-9 14l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                    </svg>
+                </button>
             </div>
         </div>
 
@@ -2069,11 +2090,14 @@
         el.addEventListener('mouseleave', unpress);
     }
 
-    // הפעלת האפקט: 
-    // הכפתור הראשי מתכווץ קצת (0.92) כי הוא ענק
-    // הפלוס מתכווץ המון ונהיה שקוף (0.75, opacity 0.5) כי הוא קטן
+    // הפעלת האפקט על הכפתור המרכזי והפלוס הראשי
     addPressEffect(document.getElementById('btnMainAction'), 'pressed-effect');
     addPressEffect(document.getElementById('btnPlusManual'), 'plus-pressed-effect');
+    
+    // הפעלת האפקט על כפתורי הפעולות העליונים
+    addPressEffect(document.getElementById('btnToggleMultiPanel'), 'plus-pressed-effect');
+    addPressEffect(document.getElementById('btnToggleSorting'), 'plus-pressed-effect');
+    addPressEffect(document.getElementById('btnToggleSelection'), 'plus-pressed-effect');
 
     function smoothScrollToReveal(el, delay = 400) {
         setTimeout(() => {
@@ -2657,11 +2681,11 @@
         const container = document.getElementById('shiftsContainer');
 
         if (isSelectionMode) {
-            btn.textContent = 'ביטול';
+            btn.classList.add('active-mode');
             toolbar.classList.add('active');
             container.classList.add('mode-selection');
         } else {
-            btn.textContent = 'בחירה';
+            btn.classList.remove('active-mode');
             toolbar.classList.remove('active');
             container.classList.remove('mode-selection');
         }
@@ -2679,11 +2703,11 @@
         const container = document.getElementById('shiftsContainer');
 
         if (isSortingMode) {
-            btn.textContent = 'ביטול';
+            btn.classList.add('active-mode');
             toolbar.classList.add('active');
             container.classList.add('mode-sorting');
         } else {
-            btn.textContent = 'מיון';
+            btn.classList.remove('active-mode');
             toolbar.classList.remove('active');
             container.classList.remove('mode-sorting');
         }
@@ -3398,12 +3422,24 @@
                 </div>
                 <div class="month-accordion-body">
                     <div class="month-summary-bar">
-                        <div class="summary-stat">עבודה: ${formatMinutesToHM(totWorkMins)}</div>
-                        <div class="summary-stat">פרמיה: ${formatMinutesToHM(totPremMins)}</div>
-                        <div class="summary-stat">נל״ת: ${formatMinutesToHM(totNaltMins)}</div>
-                        <button class="btn-export" onclick="printMonthReport('${mk}')">
-                            <svg class="svg-icon" width="16" height="16" viewBox="0 0 24 24"><path d="M19 8H5c-1.66 0-3 1.34-3 3v6h4v4h12v-4h4v-6c0-1.66-1.34-3-3-3zm-3 11H8v-5h8v5zm3-7c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm-1-9H6v4h12V3z"/></svg>
-                            הפק דוח (PDF)
+                        <div class="summary-stats-grid">
+                            <div class="summary-stat-block stat-work">
+                                <span class="stat-label">עבודה</span>
+                                <span class="stat-val">${formatMinutesToHM(totWorkMins)}</span>
+                            </div>
+                            <div class="summary-stat-block stat-prem">
+                                <span class="stat-label">פרמיה</span>
+                                <span class="stat-val">${formatMinutesToHM(totPremMins)}</span>
+                            </div>
+                            <div class="summary-stat-block stat-nalt">
+                                <span class="stat-label">נל״ת</span>
+                                <span class="stat-val">${formatMinutesToHM(totNaltMins)}</span>
+                            </div>
+                        </div>
+                        <button class="btn-export-icon" onclick="printMonthReport('${mk}')" title="שתף / הפק דוח">
+                            <svg class="svg-icon" width="20" height="20" viewBox="0 0 24 24">
+                                <path d="M16 5l-4-4-4 4h3v8h2V5h3zm4 4v11c0 1.1-.9 2-2 2H6c-1.1 0-2-.9-2-2V9c0-1.1.9-2 2-2h3v2H6v11h12V9h-3V7h3c1.1 0 2 .9 2 2z" fill="currentColor"/>
+                            </svg>
                         </button>
                     </div>
                     <div class="shifts-list-inner">
@@ -3424,6 +3460,11 @@
         });
 
         setupDragAndDrop();
+
+        // מחבר את אפקט הלחיצה לכפתורי הייצוא שנוצרו הרגע
+        container.querySelectorAll('.btn-export-icon').forEach(btn => {
+            addPressEffect(btn, 'plus-pressed-effect');
+        });
     }
 
     function openShiftModal(shiftId) {
