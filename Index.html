@@ -102,12 +102,15 @@
             order: 1;
         }
 
+        /* מניעת קפיצות בהדר - גובה קבוע לסטטוס */
         .header-status-box {
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
+            justify-content: flex-start;
             min-width: 85px;
+            height: 44px; /* גובה קבוע שמונע תזוזות */
+            position: relative;
             order: 2;
         }
 
@@ -197,6 +200,7 @@
             background: rgba(255, 255, 255, 0.05);
             border: 1px solid var(--border-color);
             width: 100%;
+            margin-top: 2px; /* יישור ויזואלי */
         }
 
         .status-badge.active {
@@ -228,13 +232,15 @@
             100% { transform: scale(1.2); opacity: 1; box-shadow: 0 0 8px rgba(16, 185, 129, 0.8); }
         }
 
+        /* הטיימר ממוקם ב-Absolute כדי לא לדחוף אלמנטים */
         .header-live-timer {
+            position: absolute;
+            bottom: -2px;
             font-size: 0.75rem;
             font-weight: 700;
             color: var(--accent-cyan);
             font-family: 'Inter', monospace;
             font-variant-numeric: tabular-nums;
-            margin-top: 4px;
             display: none;
             text-align: center;
             direction: ltr;
@@ -381,7 +387,7 @@
             direction: rtl;
         }
 
-        /* Main Circular Action Button */
+        /* Main Circular Action Button & Wrapper */
         .main-action-wrapper {
             position: relative;
             width: 260px;
@@ -464,16 +470,11 @@
         }
 
         @keyframes pulse-tip-glow {
-            0% { 
-                background: #047857; 
-                box-shadow: 0 0 0 transparent; 
-            }
-            100% { 
-                background: #facc15; 
-                box-shadow: 2px 0 10px rgba(250, 204, 21, 0.9); 
-            }
+            0% { background: #047857; box-shadow: 0 0 0 transparent; }
+            100% { background: #facc15; box-shadow: 2px 0 10px rgba(250, 204, 21, 0.9); }
         }
 
+        /* העיצוב השטוח המקורי והנקי */
         .btn-main-circle {
             position: relative;
             width: 190px;
@@ -487,21 +488,17 @@
             align-items: center;
             justify-content: center;
             box-shadow: 0 10px 25px rgba(0,0,0,0.5);
-            transition: transform 0.15s, border-color 0.3s, box-shadow 0.3s;
+            transition: transform 0.15s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s, border-color 0.3s;
             z-index: 5;
             outline: none;
             -webkit-tap-highlight-color: transparent;
-        }
-
-        .btn-main-circle:active {
-            transform: scale(0.95);
         }
 
         .btn-main-text {
             font-size: 1.45rem;
             font-weight: 800;
             font-family: 'Assistant', sans-serif;
-            transition: color 0.3s;
+            transition: color 0.3s, text-shadow 0.3s;
             z-index: 2;
         }
 
@@ -517,13 +514,15 @@
             z-index: 2;
         }
 
+        /* מצב מנוחה (כניסה למשמרת) - טקסט וזוהר ירוק */
         .btn-main-circle.state-idle {
             border: 2px solid #047857; 
             box-shadow: 0 0 20px rgba(4, 120, 87, 0.15), inset 0 0 15px rgba(4, 120, 87, 0.05);
             animation: breathe-idle 3s infinite alternate ease-in-out;
         }
         .btn-main-circle.state-idle .btn-main-text {
-            color: #34d399; 
+            color: #34d399; /* חזר לירוק */
+            text-shadow: 0 0 8px rgba(52, 211, 153, 0.2);
         }
 
         @keyframes breathe-idle {
@@ -531,18 +530,51 @@
             100% { box-shadow: 0 0 35px rgba(4, 120, 87, 0.35), inset 0 0 20px rgba(4, 120, 87, 0.15); }
         }
 
+        /* מצב פעיל (יציאה ממשמרת) - טקסט וזוהר אדום */
         .btn-main-circle.state-active {
             border: 2px solid #be123c; 
             box-shadow: 0 0 20px rgba(190, 18, 60, 0.15), inset 0 0 15px rgba(190, 18, 60, 0.05);
             animation: breathe-active 3s infinite alternate ease-in-out;
         }
         .btn-main-circle.state-active .btn-main-text {
-            color: #fb7185; 
+            color: #fb7185; /* חזר לאדום */
+            text-shadow: 0 0 8px rgba(251, 113, 133, 0.2);
         }
 
         @keyframes breathe-active {
             0% { box-shadow: 0 0 15px rgba(190, 18, 60, 0.1), inset 0 0 10px rgba(190, 18, 60, 0.05); }
             100% { box-shadow: 0 0 35px rgba(190, 18, 60, 0.35), inset 0 0 20px rgba(190, 18, 60, 0.15); }
+        }
+
+        /* מחלקות JS לאפקט כיווץ אמין באייפון */
+        .pressed-effect {
+            transform: scale(0.92) !important;
+        }
+        
+        .plus-pressed-effect {
+            transform: scale(0.75) !important;
+            opacity: 0.5 !important;
+        }
+
+        /* Custom Floating Plus Button */
+        .svg-plus-btn {
+            position: absolute;
+            top: 35px; /* מיושר פלס עם החלק העליון של הכפתור המרכזי */
+            left: 0px; 
+            width: 38px;
+            height: 38px;
+            cursor: pointer;
+            /* הילה ירוקה עדינה שתקפיץ אותו */
+            filter: drop-shadow(0 0 6px rgba(52, 211, 153, 0.4));
+            transition: transform 0.15s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.15s ease, filter 0.15s ease;
+            -webkit-tap-highlight-color: transparent;
+            z-index: 15;
+        }
+
+        /* Fallback active ל-CSS (למקרה שה-JS מתעכב במילישנייה) */
+        .svg-plus-btn:active {
+            transform: scale(0.75);
+            opacity: 0.5;
         }
 
         .manual-entry-btn {
@@ -1246,9 +1278,9 @@
         .card-sub-section {
             background: rgba(0, 0, 0, 0.15);
             border-radius: 12px;
-            padding: 8px 10px; /* הוקטן מ-10px */
+            padding: 8px 10px; 
             margin-top: 4px; 
-            margin-bottom: 6px; /* הוקטן מ-8px */
+            margin-bottom: 6px; 
             border: 1px solid rgba(255, 255, 255, 0.05);
         }
 
@@ -1256,14 +1288,14 @@
             font-size: 0.85rem;
             font-weight: 700;
             color: var(--accent-cyan);
-            margin-bottom: 6px; /* הוקטן מ-8px */
+            margin-bottom: 6px; 
             display: flex;
             align-items: center;
             gap: 6px;
         }
 
         .form-group {
-            margin-bottom: 6px; /* הוקטן מ-8px */
+            margin-bottom: 6px; 
             display: flex;
             flex-direction: column;
             gap: 4px; 
@@ -1646,7 +1678,7 @@
                 </div>
             </div>
 
-            <!-- Main Circular Action Button -->
+            <!-- Main Circular Action Button & Wrapper -->
             <div class="main-action-wrapper">
                 <svg class="progress-ring" viewBox="0 0 260 260">
                     <defs>
@@ -1667,16 +1699,14 @@
                     <span class="btn-main-text" id="mainActionText">כניסה למשמרת</span>
                     <span class="btn-main-timer" id="mainActionTimer">00:00:00</span>
                 </button>
+
+                <!-- Floating Plus Button for Manual Entry (Flat & Vibrant) -->
+                <svg id="btnPlusManual" class="svg-plus-btn" viewBox="0 0 36 36" onclick="openShiftModal(null)">
+                    <line x1="18" y1="4" x2="18" y2="32" stroke="#34d399" stroke-width="4.5" stroke-linecap="round"/>
+                    <line x1="4" y1="18" x2="32" y2="18" stroke="#34d399" stroke-width="4.5" stroke-linecap="round"/>
+                </svg>
             </div>
         </div>
-
-        <!-- Manual Entry Button on Clock Screen -->
-        <button class="manual-entry-btn" onclick="openShiftModal(null)">
-            <svg class="svg-icon" width="16" height="16" viewBox="0 0 24 24">
-                <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
-            </svg>
-            הוספת משמרת ידנית
-        </button>
     </div>
 
     <!-- VIEW 2: History Screen -->
@@ -2024,6 +2054,26 @@
     let activeMonthKey = ''; 
 
     const PRESET_NALT_MINUTES = [0, 30, 40, 45, 60, 90, 150, 270];
+
+    // הוספת אפקט לחיצה אמין למכשירי מגע - עם תמיכה במחלקות שונות
+    function addPressEffect(el, className = 'pressed-effect') {
+        if(!el) return;
+        const press = () => el.classList.add(className);
+        const unpress = () => el.classList.remove(className);
+        
+        el.addEventListener('touchstart', press, {passive: true});
+        el.addEventListener('touchend', unpress);
+        el.addEventListener('touchcancel', unpress);
+        el.addEventListener('mousedown', press);
+        el.addEventListener('mouseup', unpress);
+        el.addEventListener('mouseleave', unpress);
+    }
+
+    // הפעלת האפקט: 
+    // הכפתור הראשי מתכווץ קצת (0.92) כי הוא ענק
+    // הפלוס מתכווץ המון ונהיה שקוף (0.75, opacity 0.5) כי הוא קטן
+    addPressEffect(document.getElementById('btnMainAction'), 'pressed-effect');
+    addPressEffect(document.getElementById('btnPlusManual'), 'plus-pressed-effect');
 
     function smoothScrollToReveal(el, delay = 400) {
         setTimeout(() => {
