@@ -1186,13 +1186,13 @@
             bottom: 0;
             background: rgba(0, 0, 0, 0.75);
             display: flex;
-            align-items: center; /* שונה מ- flex-end ל- center למרכוז החלון */
+            align-items: center; 
             justify-content: center;
             z-index: 1000;
             opacity: 0;
             pointer-events: none;
             transition: opacity 0.2s ease;
-            padding: 20px; /* תוספת ריווח מסביב לחלון */
+            padding: 20px; 
         }
 
         .modal-overlay.open {
@@ -1204,12 +1204,12 @@
             background: var(--bg-card);
             width: 100%;
             max-width: 440px;
-            border-radius: 20px; /* פינות מעוגלות מכל הכיוונים */
+            border-radius: 20px; 
             border: 1px solid var(--border-color);
-            padding: 16px 16px 20px; /* צמצום ריווח פנימי */
-            transform: scale(0.95) translateY(20px); /* אפקט כניסה מרכזי */
+            padding: 14px 16px 16px; /* ריווח פנימי מעודן */
+            transform: scale(0.95) translateY(20px); 
             transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s ease;
-            max-height: 88vh; /* מאפשר יותר מקום למסכים קטנים */
+            max-height: 88vh; 
             overflow-y: auto;
         }
 
@@ -1221,13 +1221,13 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 12px; /* צומצם מ-18px */
+            margin-bottom: 10px; /* צומצם עבור כותרת דקה יותר */
             border-bottom: 1px solid var(--border-color);
-            padding-bottom: 10px; /* צומצם מ-12px */
+            padding-bottom: 8px; /* צומצם עבור כותרת דקה יותר */
         }
 
         .modal-title {
-            font-size: 1.15rem;
+            font-size: 1.1rem; /* גודל פונט מעודן יותר */
             font-weight: 700;
             color: #fff;
         }
@@ -1246,9 +1246,9 @@
         .card-sub-section {
             background: rgba(0, 0, 0, 0.15);
             border-radius: 12px;
-            padding: 10px; /* צומצם מ-12px */
-            margin-top: 4px; /* צומצם מ-6px */
-            margin-bottom: 10px; /* צומצם מ-14px */
+            padding: 10px; 
+            margin-top: 4px; 
+            margin-bottom: 10px; 
             border: 1px solid rgba(255, 255, 255, 0.05);
         }
 
@@ -1256,17 +1256,17 @@
             font-size: 0.85rem;
             font-weight: 700;
             color: var(--accent-cyan);
-            margin-bottom: 8px; /* צומצם מ-10px */
+            margin-bottom: 8px; 
             display: flex;
             align-items: center;
             gap: 6px;
         }
 
         .form-group {
-            margin-bottom: 8px; /* צומצם מ-12px */
+            margin-bottom: 8px; 
             display: flex;
             flex-direction: column;
-            gap: 4px; /* צומצם מ-6px */
+            gap: 4px; 
             min-width: 0;
             width: 100%;
         }
@@ -1292,9 +1292,9 @@
             background: var(--bg-card-inner);
             border: 1px solid var(--border-color);
             border-radius: 12px;
-            padding: 8px 10px; /* צומצם מ-10px 12px */
+            padding: 8px 10px; 
             color: #fff;
-            font-size: 0.92rem; /* צומצם מעט */
+            font-size: 0.92rem; 
             outline: none;
             width: 100%;
             min-width: 0;
@@ -1302,7 +1302,7 @@
             -webkit-appearance: none;
             -moz-appearance: none;
             appearance: none;
-            height: 40px; /* צומצם מ-46px */
+            height: 40px; 
             text-align: center;
             font-family: 'Inter', 'Assistant', sans-serif;
             font-variant-numeric: tabular-nums;
@@ -1356,14 +1356,18 @@
             margin-top: 8px;
         }
 
-        .field-error-msg {
-            font-size: 0.75rem;
+        /* מחלקה מיוחדת לשורת שגיאה מאוחדת וממורכזת */
+        .row-error-msg {
+            font-size: 0.8rem;
             color: #fca5a5;
-            margin-top: 4px;
+            text-align: center;
+            margin-top: 2px;
+            margin-bottom: 8px;
             display: none;
+            font-weight: 600;
         }
 
-        .field-error-msg.visible {
+        .row-error-msg.visible {
             display: block;
         }
 
@@ -1371,13 +1375,13 @@
             width: 100%;
             background: linear-gradient(135deg, var(--accent-blue), #0066cc);
             color: white;
-            padding: 12px; /* צומצם מ-14px */
+            padding: 12px; 
             border-radius: 14px;
-            font-size: 0.95rem; /* צומצם מ-1rem */
+            font-size: 0.95rem; 
             font-weight: 700;
             border: none;
             cursor: pointer;
-            margin-top: 4px; /* צומצם מ-10px */
+            margin-top: 4px; 
         }
 
         .empty-state {
@@ -1788,7 +1792,6 @@
                                 <path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
                             </svg>
                         </div>
-                        <div id="startTimeError" class="field-error-msg">שעת כניסה ויציאה זהות</div>
                     </div>
                     <div class="form-group">
                         <label class="form-label">שעת יציאה</label>
@@ -1798,9 +1801,9 @@
                                 <path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
                             </svg>
                         </div>
-                        <div id="endTimeError" class="field-error-msg">שעת כניסה ויציאה זהות</div>
                     </div>
                 </div>
+                <div id="shiftTimeError" class="row-error-msg"></div>
             </div>
 
             <div class="card-sub-section">
@@ -1862,7 +1865,6 @@
                                 <path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
                             </svg>
                         </div>
-                        <div id="premStartError" class="field-error-msg">שעות הפרמיה חורגות מגבולות המשמרת</div>
                     </div>
                     <div class="form-group">
                         <label class="form-label">עד שעה</label>
@@ -1872,9 +1874,9 @@
                                 <path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
                             </svg>
                         </div>
-                        <div id="premEndError" class="field-error-msg">שעות הפרמיה חורגות מגבולות המשמרת</div>
                     </div>
                 </div>
+                <div id="premTimeError" class="row-error-msg"></div>
             </div>
 
             <div class="card-sub-section">
@@ -2037,7 +2039,6 @@
         }, delay);
     }
 
-    // הגדרת סרגל הניווט התחתון - מנגנון החלקה חכם (50% מרחק)
     const bottomNav = document.getElementById('bottomNav');
     const navIndicator = document.getElementById('navIndicator');
     let isNavDragging = false;
@@ -2051,7 +2052,6 @@
             navHasMoved = false;
             navStartX = e.touches[0].clientX;
             navIndicator.style.transition = 'none';
-            // ראשי = 0% אופסט (ימין), משמרות = 100% אופסט (שמאל)
             navCurrentOffsetPercent = (currentView === 'history') ? 100 : 0;
         }, { passive: true });
 
@@ -2060,13 +2060,11 @@
             
             const deltaX = e.touches[0].clientX - navStartX;
             
-            // מונע מלחיצה פשוטה להיחשב כגרירה
             if (Math.abs(deltaX) > 5) {
                 navHasMoved = true;
             }
 
             const navRect = bottomNav.getBoundingClientRect();
-            // ב-RTL גרירה שמאלה נותנת deltaX שלילי - אנחנו רוצים שזה יגדיל את האופסט לכיוון ה-100%
             const movePercent = (-deltaX / (navRect.width / 2)) * 100;
             
             let newOffset = navCurrentOffsetPercent + movePercent;
@@ -2079,7 +2077,6 @@
             if (!isNavDragging) return;
             isNavDragging = false;
             
-            // אם לא הייתה באמת תזוזה פיזית - מדובר בלחיצה רגילה
             if (!navHasMoved) {
                 const touch = e.changedTouches[0];
                 const elem = document.elementFromPoint(touch.clientX, touch.clientY);
@@ -2087,23 +2084,21 @@
                 if (tab) {
                     navigateTo(tab.getAttribute('data-target'), false);
                 } else {
-                    updateIndicatorPosition(true); // מחזיר למקום אם לחץ בשטח מת
+                    updateIndicatorPosition(true); 
                 }
                 return;
             }
 
-            // חישוב המרחק הסופי עם שחרור האצבע (בלי מהירות)
             const touch = e.changedTouches[0];
             const deltaX = touch.clientX - navStartX;
             const navRect = bottomNav.getBoundingClientRect();
             const movePercent = (-deltaX / (navRect.width / 2)) * 100;
             let finalOffset = navCurrentOffsetPercent + movePercent;
 
-            // בדיקת סף מדויקת של 50%
             if (finalOffset > 50) {
-                navigateTo('history', false); // 100% (שמאל) = משמרות
+                navigateTo('history', false); 
             } else {
-                navigateTo('clock', false); // 0% (ימין) = ראשי
+                navigateTo('clock', false); 
             }
         });
     }
@@ -2112,7 +2107,6 @@
         if (!navIndicator) return;
         navIndicator.style.transition = animate ? 'transform 0.3s cubic-bezier(0.16, 1, 0.3, 1)' : 'none';
         
-        // ב-RTL 0% זה ימין (ראשי) ו- -100% זה שמאל (משמרות)
         if (currentView === 'history') {
             navIndicator.style.transform = 'translateX(-100%)'; 
         } else {
@@ -3443,114 +3437,69 @@
         let bothEmptyInvalid = false;
         let premStartInvalid = false;
         let premEndInvalid = false;
-        let errorMsg = '';
+        let shiftErrorMsg = '';
+        let premErrorMsg = '';
 
         if (!shiftStart && !shiftEnd) {
             startInvalid = true;
             endInvalid = true;
             bothEmptyInvalid = true;
-            errorMsg = 'יש למלא לפחות שעת כניסה או יציאה.';
-            return {
-                valid: false,
-                startInvalid,
-                endInvalid,
-                bothEmptyInvalid,
-                premStartInvalid,
-                premEndInvalid,
-                error: errorMsg
-            };
-        }
-
-        if (shiftStart && shiftEnd && shiftStart === shiftEnd) {
+            shiftErrorMsg = 'חסרה שעת כניסה או יציאה';
+        } else if (shiftStart && shiftEnd && shiftStart === shiftEnd) {
             startInvalid = true;
             endInvalid = true;
-            errorMsg = 'שעת כניסה ושעת יציאה למשמרת אינן יכולות להיות זהות.';
-            return {
-                valid: false,
-                startInvalid,
-                endInvalid,
-                bothEmptyInvalid: false,
-                premStartInvalid,
-                premEndInvalid,
-                error: errorMsg
-            };
-        }
-
-        let sStartMins = 0;
-        let sEndMins = 0;
-
-        if (shiftStart && shiftEnd) {
-            sStartMins = timeToMinutes(shiftStart);
-            sEndMins = timeToMinutes(shiftEnd);
-            if (sEndMins <= sStartMins) {
-                sEndMins += 1440;
-            }
-            const shiftDuration = sEndMins - sStartMins;
-            if (shiftDuration > 780) { 
+            shiftErrorMsg = 'שעות כניסה ויציאה זהות';
+        } else if (shiftStart && shiftEnd) {
+            let sStartMins = timeToMinutes(shiftStart);
+            let sEndMins = timeToMinutes(shiftEnd);
+            if (sEndMins <= sStartMins) sEndMins += 1440;
+            if (sEndMins - sStartMins > 780) {
                 startInvalid = true;
                 endInvalid = true;
-                errorMsg = 'משך המשמרת חורג מהמותר (מעל 13 שעות).';
-                return { valid: false, startInvalid, endInvalid, bothEmptyInvalid: false, premStartInvalid, premEndInvalid, error: errorMsg };
+                shiftErrorMsg = 'חריגה מ-13 שעות';
             }
-        } else if (shiftStart) {
-            sStartMins = timeToMinutes(shiftStart);
-            sEndMins = sStartMins + 1440;
-        } else if (shiftEnd) {
-            sEndMins = timeToMinutes(shiftEnd);
-            sStartMins = sEndMins - 1440; 
         }
 
+        let sStartMins = timeToMinutes(shiftStart);
+        let sEndMins = shiftEnd ? timeToMinutes(shiftEnd) : sStartMins + 1440;
+        if (shiftStart && shiftEnd && sEndMins <= sStartMins) sEndMins += 1440;
+        if (!shiftStart && shiftEnd) sStartMins = sEndMins - 1440;
+        
         let adjustedSStart = sStartMins;
         let adjustedSEnd = sEndMins;
 
         if (premStart && (shiftStart || shiftEnd)) {
             let pStartMins = timeToMinutes(premStart);
-            let adjustedPStart = pStartMins;
-            
-            while (adjustedPStart < adjustedSStart) {
-                adjustedPStart += 1440;
-            }
-            
-            if (adjustedPStart < adjustedSStart || adjustedPStart > adjustedSEnd) {
+            while (pStartMins < adjustedSStart) pStartMins += 1440;
+            if (pStartMins < adjustedSStart || pStartMins > adjustedSEnd) {
                 premStartInvalid = true;
-                errorMsg = 'שעת תחילת הפרמיה קודמת לשעת תחילת המשמרת או חורגת ממנה.';
+                premErrorMsg = 'תחילת הפרמיה חורגת מהמשמרת';
             }
         }
 
         if (premEnd && (shiftEnd || shiftStart)) {
             let pEndMins = timeToMinutes(premEnd);
-            let adjustedPEnd = pEndMins;
-            while (adjustedPEnd < adjustedSStart) {
-                adjustedPEnd += 1440;
-            }
-
-            if (adjustedPEnd > adjustedSEnd) {
+            while (pEndMins < adjustedSStart) pEndMins += 1440;
+            if (pEndMins > adjustedSEnd) {
                 premEndInvalid = true;
-                errorMsg = 'שעת סיום הפרמיה חורגת משעת סיום המשמרת.';
+                premErrorMsg = 'סיום הפרמיה חורג מהמשמרת';
             }
         }
 
         if (premStart && premEnd) {
             let pStartMins = timeToMinutes(premStart);
-            let adjustedPStart = pStartMins;
-            while (adjustedPStart < adjustedSStart) {
-                adjustedPStart += 1440;
-            }
-
+            while (pStartMins < adjustedSStart) pStartMins += 1440;
             let pEndMins = timeToMinutes(premEnd);
-            let adjustedPEnd = pEndMins;
-            while (adjustedPEnd < adjustedSStart) {
-                adjustedPEnd += 1440;
-            }
-
-            let premDuration = adjustedPEnd - adjustedPStart;
+            while (pEndMins < adjustedSStart) pEndMins += 1440;
+            
+            let premDuration = pEndMins - pStartMins;
             if (premDuration < 0) premDuration += 1440;
-
             let shiftDuration = adjustedSEnd - adjustedSStart;
+            
             if (premDuration > shiftDuration + 2 || premDuration === 0) {
                 premStartInvalid = true;
                 premEndInvalid = true;
-                errorMsg = 'משך הפרמיה חורג ממשך המשמרת או שגוי.';
+                premErrorMsg = 'זמני הפרמיה שגויים';
             }
         }
 
@@ -3558,10 +3507,11 @@
             valid: !startInvalid && !endInvalid && !premStartInvalid && !premEndInvalid,
             startInvalid,
             endInvalid,
-            bothEmptyInvalid: false,
+            bothEmptyInvalid,
             premStartInvalid,
             premEndInvalid,
-            error: errorMsg
+            shiftError: shiftErrorMsg,
+            premError: premErrorMsg
         };
     }
 
@@ -3571,54 +3521,41 @@
         const premStartInput = document.getElementById('fieldPremStart');
         const premEndInput = document.getElementById('fieldPremEnd');
         
-        const startErr = document.getElementById('startTimeError');
-        const endErr = document.getElementById('endTimeError');
-        const premStartErr = document.getElementById('premStartError');
-        const premEndErr = document.getElementById('premEndError');
+        const shiftErr = document.getElementById('shiftTimeError');
+        const premErr = document.getElementById('premTimeError');
 
         const state = getValidationState();
 
         if (state.bothEmptyInvalid && !isSubmit) {
             startInput.classList.remove('input-error');
-            startErr.classList.remove('visible');
             endInput.classList.remove('input-error');
-            endErr.classList.remove('visible');
+            shiftErr.classList.remove('visible');
         } else {
-            if (state.startInvalid) {
-                startInput.classList.add('input-error');
-                startErr.textContent = state.error;
-                startErr.classList.add('visible');
-            } else {
-                startInput.classList.remove('input-error');
-                startErr.classList.remove('visible');
-            }
+            if (state.startInvalid) startInput.classList.add('input-error');
+            else startInput.classList.remove('input-error');
 
-            if (state.endInvalid) {
-                endInput.classList.add('input-error');
-                endErr.textContent = state.error;
-                endErr.classList.add('visible');
+            if (state.endInvalid) endInput.classList.add('input-error');
+            else endInput.classList.remove('input-error');
+
+            if (state.startInvalid || state.endInvalid) {
+                shiftErr.textContent = state.shiftError;
+                shiftErr.classList.add('visible');
             } else {
-                endInput.classList.remove('input-error');
-                endErr.classList.remove('visible');
+                shiftErr.classList.remove('visible');
             }
         }
 
-        if (state.premStartInvalid) {
-            premStartInput.classList.add('input-error');
-            premStartErr.textContent = state.error || 'שעות הפרמיה חורגות מגבולות המשמרת';
-            premStartErr.classList.add('visible');
-        } else {
-            premStartInput.classList.remove('input-error');
-            premStartErr.classList.remove('visible');
-        }
+        if (state.premStartInvalid) premStartInput.classList.add('input-error');
+        else premStartInput.classList.remove('input-error');
 
-        if (state.premEndInvalid) {
-            premEndInput.classList.add('input-error');
-            premEndErr.textContent = state.error || 'שעות הפרמיה חורגות מגבולות המשמרת';
-            premEndErr.classList.add('visible');
+        if (state.premEndInvalid) premEndInput.classList.add('input-error');
+        else premEndInput.classList.remove('input-error');
+
+        if (state.premStartInvalid || state.premEndInvalid) {
+            premErr.textContent = state.premError || 'הפרמיה מחוץ לזמני המשמרת';
+            premErr.classList.add('visible');
         } else {
-            premEndInput.classList.remove('input-error');
-            premEndErr.classList.remove('visible');
+            premErr.classList.remove('visible');
         }
     }
 
@@ -3647,11 +3584,11 @@
         
         if (!validation.valid) {
             validateModalRealtime(true);
-            const errorMsg = validation.error || 'לא ניתן לשמור את המשמרת – קיימת שגיאה בנתונים שטרם תוקנה. יש לתקן את השדות המסומנים באדום.';
-            
+            let errorMsg = 'לא ניתן לשמור את המשמרת – יש לתקן את השדות המסומנים באדום.';
             let errorTitle = 'שגיאה בנתוני המשמרת';
+            
             if (validation.bothEmptyInvalid) errorTitle = 'נתונים חסרים';
-            else if (errorMsg.includes('13 שעות')) errorTitle = 'חריגת משך משמרת';
+            else if (validation.shiftError && validation.shiftError.includes('13')) errorTitle = 'חריגת משך משמרת';
             else if (validation.premStartInvalid || validation.premEndInvalid) errorTitle = 'שגיאה בשמירת נתוני הפרמיה';
             
             showErrorDialog(errorMsg, errorTitle);
