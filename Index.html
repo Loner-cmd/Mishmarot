@@ -552,26 +552,24 @@
         }
         
         .plus-pressed-effect {
-            transform: scale(0.85) !important;
+            transform: scale(0.75) !important;
             opacity: 0.7 !important;
         }
 
         /* Custom Floating Plus Button */
         .svg-plus-btn {
             position: absolute;
-            top: 35px; /* מיושר פלס עם החלק העליון של הכפתור המרכזי */
+            top: 35px; 
             left: 0px; 
             width: 38px;
             height: 38px;
             cursor: pointer;
-            /* הילה ירוקה עדינה שתקפיץ אותו */
             filter: drop-shadow(0 0 6px rgba(52, 211, 153, 0.4));
             transition: transform 0.15s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.15s ease, filter 0.15s ease;
             -webkit-tap-highlight-color: transparent;
             z-index: 15;
         }
 
-        /* Fallback active ל-CSS (למקרה שה-JS מתעכב במילישנייה) */
         .svg-plus-btn:active {
             transform: scale(0.75);
             opacity: 0.5;
@@ -599,19 +597,19 @@
             flex-wrap: wrap;
         }
 
-        /* כפתורי הפעולה החדשים (אייקונים) */
+        /* כפתורי הפעולה (אייקונים) - מצב כבוי/ברירת מחדל */
         .btn-icon-action {
             width: 36px;
             height: 36px;
             border-radius: 50%;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid var(--border-color);
-            color: var(--accent-cyan);
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            color: var(--text-muted); /* אפרפר-כחלחל עדין */
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            transition: background 0.2s, border-color 0.2s, color 0.2s, transform 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
             -webkit-tap-highlight-color: transparent;
         }
 
@@ -619,14 +617,15 @@
             width: 18px;
             height: 18px;
             fill: currentColor;
+            transition: fill 0.2s;
         }
 
-        /* מצב דולק/פעיל לכפתורי הפעולה */
+        /* מצב דולק/פעיל לכפתורי הפעולה - ציאן זורח */
         .btn-icon-action.active-mode {
-            background: rgba(0, 210, 255, 0.2);
+            background: rgba(0, 210, 255, 0.15);
             border-color: var(--accent-cyan);
-            color: #fff;
-            box-shadow: 0 0 10px rgba(0, 210, 255, 0.3);
+            color: var(--accent-cyan);
+            box-shadow: 0 0 12px rgba(0, 210, 255, 0.4);
         }
 
         .selection-toolbar {
@@ -1716,7 +1715,7 @@
                     <span class="btn-main-timer" id="mainActionTimer">00:00:00</span>
                 </button>
 
-                <!-- Floating Plus Button for Manual Entry (Flat & Vibrant) -->
+                <!-- Floating Plus Button for Manual Entry -->
                 <svg id="btnPlusManual" class="svg-plus-btn" viewBox="0 0 36 36" onclick="openShiftModal(null)">
                     <line x1="18" y1="4" x2="18" y2="32" stroke="#34d399" stroke-width="4.5" stroke-linecap="round"/>
                     <line x1="4" y1="18" x2="32" y2="18" stroke="#34d399" stroke-width="4.5" stroke-linecap="round"/>
@@ -2076,7 +2075,7 @@
 
     const PRESET_NALT_MINUTES = [0, 30, 40, 45, 60, 90, 150, 270];
 
-    // הוספת אפקט לחיצה אמין למכשירי מגע - עם תמיכה במחלקות שונות
+    // הוספת אפקט לחיצה אמין למכשירי מגע
     function addPressEffect(el, className = 'pressed-effect') {
         if(!el) return;
         const press = () => el.classList.add(className);
@@ -2090,11 +2089,8 @@
         el.addEventListener('mouseleave', unpress);
     }
 
-    // הפעלת האפקט על הכפתור המרכזי והפלוס הראשי
     addPressEffect(document.getElementById('btnMainAction'), 'pressed-effect');
     addPressEffect(document.getElementById('btnPlusManual'), 'plus-pressed-effect');
-    
-    // הפעלת האפקט על כפתורי הפעולות העליונים
     addPressEffect(document.getElementById('btnToggleMultiPanel'), 'plus-pressed-effect');
     addPressEffect(document.getElementById('btnToggleSorting'), 'plus-pressed-effect');
     addPressEffect(document.getElementById('btnToggleSelection'), 'plus-pressed-effect');
