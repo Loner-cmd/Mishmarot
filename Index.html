@@ -66,6 +66,7 @@
             display: flex;
             flex-direction: column;
             gap: 16px;
+            /* מרווח תחתון כדי שהתוכן לא יוסתר מאחורי סרגל הניווט */
             padding-bottom: 100px;
             position: relative;
         }
@@ -97,7 +98,7 @@
         /* Top Header - Sticky mode (applied dynamically via JS only on History view) */
         header.sticky-mode {
             position: sticky;
-            top: 12px; 
+            top: 8px; 
         }
 
         .header-right {
@@ -576,44 +577,46 @@
         /* Smart Actions Header (Scroll-Aware) */
         .smart-actions-wrapper {
             position: relative;
-            z-index: 800; /* Moves naturally under the 1000 z-index header */
-            padding: 8px 4px 12px 4px;
-            margin: 0 -4px; 
+            z-index: 800; 
+            padding: 12px 16px;
+            margin: 0; 
             border-radius: 16px;
-            transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.35s ease, box-shadow 0.35s;
+            transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.35s ease, background 0.35s, box-shadow 0.35s, border-color 0.35s;
             display: flex;
             flex-direction: column;
             gap: 12px;
+            width: 100%;
+            box-sizing: border-box;
+            border: 1px solid transparent;
+            background: transparent;
         }
 
         /* Fixed state when scrolling UP from far below */
         .smart-actions-wrapper.fixed-mode {
             position: fixed;
-            top: 84px; /* Matches perfectly below the sticky header */
-            left: 12px;
-            right: 12px;
-            max-width: 456px; 
-            margin: 0 auto;
-            padding: 12px 16px;
+            top: 84px; /* מתחת להדר הראשי הדביק */
+            left: 50%;
+            width: calc(100% - 24px); /* רוחב מדויק לחלוטין כמו הסטטי */
+            max-width: 480px; 
             background: rgba(11, 19, 41, 0.85);
             backdrop-filter: blur(15px);
             -webkit-backdrop-filter: blur(15px);
             border: 1px solid rgba(255, 255, 255, 0.08);
             box-shadow: 0 10px 25px rgba(0,0,0,0.6);
-            /* Hide initially when transitioning to fixed */
-            transform: translateY(-150%);
+            /* מוסתר בהתחלה מעל גבול המסך */
+            transform: translateX(-50%) translateY(-150%);
             opacity: 0;
             pointer-events: none;
         }
 
         .smart-actions-wrapper.fixed-mode.slide-in {
-            transform: translateY(0);
+            transform: translateX(-50%) translateY(0);
             opacity: 1;
             pointer-events: auto;
         }
 
         .smart-actions-wrapper.fixed-mode.slide-out {
-            transform: translateY(-150%);
+            transform: translateX(-50%) translateY(-150%);
             opacity: 0;
             pointer-events: none;
         }
@@ -2132,13 +2135,16 @@
         
         const currentScrollY = window.scrollY;
         
-        // הנקודה בה הפאנל המקורי יצא לגמרי מטווח הראייה, כך שנוכל לשנות אותו לצף בחשאי
+        // חישוב הגבול העליון והתחתון כדי להתעלם מהקפיצה (Rubber-band) באייפון
+        const maxScroll = Math.max(document.body.scrollHeight, document.documentElement.scrollHeight) - window.innerHeight;
+        if (currentScrollY < 0 || currentScrollY > maxScroll) {
+            return;
+        }
+        
         const stealthThreshold = 120; 
-        // הנקודה שבה הוא חוזר למקומו המקורי, כדי למנוע קפיצה כשמגיעים בחזרה למעלה
         const releaseThreshold = 10; 
 
         if (currentScrollY > stealthThreshold && !isActionsFixed) {
-            // הפאנל מחוץ למסך. נשנה למצב צף אבל נשמור אותו מוסתר למעלה
             placeholder.style.height = wrapper.offsetHeight + 'px';
             placeholder.style.display = 'block';
             wrapper.classList.add('fixed-mode', 'slide-out');
@@ -2147,7 +2153,6 @@
             isActionsVisible = false;
         } 
         else if (currentScrollY <= releaseThreshold && isActionsFixed) {
-            // חזרנו מספיק למעלה, אפשר להחזיר את הפאנל למיקום הטבעי שלו בצורה חלקה
             wrapper.classList.remove('fixed-mode', 'slide-in', 'slide-out');
             placeholder.style.display = 'none';
             placeholder.style.height = '0px';
@@ -2155,17 +2160,14 @@
             isActionsVisible = true; 
         }
 
-        // שליטה בהופעה והיעלמות בעת הגלילה (רק כשהפאנל במצב הצף)
         if (isActionsFixed) {
             if (currentScrollY < lastScrollY - 3) {
-                // גלילה למעלה -> הראה פאנל
                 if (!isActionsVisible) {
                     wrapper.classList.add('slide-in');
                     wrapper.classList.remove('slide-out');
                     isActionsVisible = true;
                 }
             } else if (currentScrollY > lastScrollY + 3) {
-                // גלילה למטה -> הסתר פאנל
                 if (isActionsVisible) {
                     wrapper.classList.add('slide-out');
                     wrapper.classList.remove('slide-in');
@@ -2179,7 +2181,6 @@
 
     const PRESET_NALT_MINUTES = [0, 30, 40, 45, 60, 90, 150, 270];
 
-    // הוספת אפקט לחיצה אמין למכשירי מגע
     function addPressEffect(el, className = 'pressed-effect') {
         if(!el) return;
         const press = () => el.classList.add(className);
@@ -2300,14 +2301,13 @@
         const targetTab = document.querySelector(`.nav-tab[data-target="${viewName}"]`);
         if (targetTab) targetTab.classList.add('active');
 
-        // עדכון ההדר הראשי (שיהיה דביק רק במסך היסטוריה)
+        // ההדר הראשי יהיה דביק אך ורק במסך ההיסטוריה
         const mainHeader = document.getElementById('mainHeader');
         if (viewName === 'history') {
             mainHeader.classList.add('sticky-mode');
         } else {
             mainHeader.classList.remove('sticky-mode');
             
-            // איפוס של הפאנל הצף כשיוצאים מהמסך
             const wrapper = document.getElementById('smartActionsWrapper');
             const placeholder = document.getElementById('smartActionsPlaceholder');
             if(wrapper) {
@@ -2326,6 +2326,11 @@
         updateActiveShiftUI(); 
 
         if (viewName === 'history') {
+            const wrapper = document.getElementById('smartActionsWrapper');
+            if (wrapper) {
+                wrapper.classList.remove('slide-out');
+                wrapper.classList.remove('slide-in');
+            }
             renderShifts();
         }
     }
