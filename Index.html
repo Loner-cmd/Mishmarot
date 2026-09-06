@@ -1573,6 +1573,29 @@
             border-radius: 4px;
         }
 
+        /* Toast Notification Styles */
+        .toast-notification {
+            position: fixed;
+            bottom: 110px;
+            left: 50%;
+            transform: translateX(-50%) translateY(20px);
+            color: #ffffff;
+            font-size: 1.05rem;
+            font-weight: 700;
+            text-align: center;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8), 0 0 10px rgba(0, 210, 255, 0.5);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            z-index: 1000;
+            white-space: nowrap;
+        }
+
+        .toast-notification.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
         @media print {
             body { 
                 background: #ffffff !important; 
@@ -1773,6 +1796,9 @@
         <div id="shiftsContainer" class="shifts-list"></div>
     </div>
 </div>
+
+<!-- Toast Notification -->
+<div id="toastNotification" class="toast-notification"></div>
 
 <!-- Bottom Navigation Bar -->
 <div class="bottom-nav-wrapper">
@@ -2074,6 +2100,21 @@
     let activeMonthKey = ''; 
 
     const PRESET_NALT_MINUTES = [0, 30, 40, 45, 60, 90, 150, 270];
+
+    // פונקציית הודעה צפה (Toast)
+    let toastTimeout;
+    function showToast(message) {
+        const toast = document.getElementById('toastNotification');
+        if (!toast) return;
+        
+        toast.textContent = message;
+        toast.classList.add('show');
+        
+        clearTimeout(toastTimeout);
+        toastTimeout = setTimeout(() => {
+            toast.classList.remove('show');
+        }, 2000);
+    }
 
     // הוספת אפקט לחיצה אמין למכשירי מגע
     function addPressEffect(el, className = 'pressed-effect') {
@@ -2680,10 +2721,12 @@
             btn.classList.add('active-mode');
             toolbar.classList.add('active');
             container.classList.add('mode-selection');
+            showToast('מצב בחירת משמרות הופעל');
         } else {
             btn.classList.remove('active-mode');
             toolbar.classList.remove('active');
             container.classList.remove('mode-selection');
+            showToast('מצב בחירת משמרות כובה');
         }
         
         updateSelectionUI();
@@ -2702,10 +2745,12 @@
             btn.classList.add('active-mode');
             toolbar.classList.add('active');
             container.classList.add('mode-sorting');
+            showToast('מצב מיון משמרות הופעל');
         } else {
             btn.classList.remove('active-mode');
             toolbar.classList.remove('active');
             container.classList.remove('mode-sorting');
+            showToast('מצב מיון משמרות כובה');
         }
 
         renderShifts();
@@ -2722,6 +2767,9 @@
             document.querySelectorAll('.shift-details.expanded').forEach(el => {
                 el.classList.remove('expanded');
             });
+            showToast('מצב ריבוי פאנלים כובה');
+        } else {
+            showToast('מצב ריבוי פאנלים הופעל');
         }
     }
 
@@ -3266,7 +3314,7 @@
                                 ${hasStart && hasEnd ? `
                                 <span class="tag tag-complete">
                                     <svg class="svg-icon" width="13" height="13" viewBox="0 0 24 24">
-                                        <path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/>
+                                        <path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 19 21 7l-1.4-1.4L9 16.2z"/>
                                     </svg>
                                     סגור
                                 </span>` : `
