@@ -586,7 +586,7 @@
         .smart-actions-wrapper {
             position: relative;
             z-index: 800; /* יושב מתחת ל-z-index: 1000 של ההדר הראשי */
-            padding: 30px 14px 10px 14px; /* פדינג עליון עמוק שיוצר רווח נשימה לכפתורים מתחת להדר */
+            padding: 34px 14px 10px 14px; /* ריפוד מדויק ליצירת 10 פיקסלים גלויים למעלה */
             margin: -40px 0 -10px 0; /* נשאב למעלה כדי להיכנס מתחת להדר ולסגור רווחים למטה */
             border-radius: 0 0 16px 16px; /* רק פינות תחתונות עגולות */
             background: rgba(11, 19, 41, 0.85); /* הקפסולה פעילה ומעוצבת תמיד */
@@ -2149,10 +2149,25 @@
         if (!wrapper || !placeholder) return;
         
         const currentScrollY = window.scrollY;
-        
-        // מניעת הפעלה שגויה באפקט הגומי (Rubber-banding)
         const maxScroll = Math.max(document.body.scrollHeight, document.documentElement.scrollHeight) - window.innerHeight;
-        if (currentScrollY <= 0 || currentScrollY >= maxScroll - 10) {
+        
+        // --- 1. טיפול בקפיצה מהירה למעלה (Rubber-banding עליון) ---
+        if (currentScrollY <= 0) {
+            if (isActionsFixed) {
+                wrapper.classList.remove('fixed-mode', 'slide-in', 'slide-out');
+                placeholder.style.display = 'none';
+                placeholder.style.height = '0px';
+                placeholder.style.marginTop = '0';
+                placeholder.style.marginBottom = '0';
+                isActionsFixed = false;
+                isActionsVisible = true; 
+            }
+            lastScrollY = currentScrollY;
+            return; // מניעת המשך הפעולה
+        }
+        
+        // --- 2. מניעת הפעלה שגויה באפקט הגומי (Rubber-banding) תחתון ---
+        if (currentScrollY >= maxScroll - 10) {
             lastScrollY = currentScrollY;
             return;
         }
