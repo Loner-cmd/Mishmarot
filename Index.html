@@ -43,6 +43,10 @@
             font-family: 'Assistant', sans-serif;
         }
 
+        html, body {
+            width: 100%;
+        }
+
         .num-font {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
             font-variant-numeric: tabular-nums;
@@ -66,7 +70,6 @@
             display: flex;
             flex-direction: column;
             gap: 16px;
-            /* מרווח תחתון כדי שהתוכן לא יוסתר מאחורי סרגל הניווט */
             padding-bottom: 100px;
             position: relative;
         }
@@ -91,11 +94,11 @@
             border: 1px solid var(--border-color);
             box-shadow: 0 10px 25px rgba(0,0,0,0.6);
             position: relative;
-            z-index: 1000;
+            z-index: 1000; /* חשוב מאוד! גורם להדר לשבת מעל הכל ולכסות את החלק העליון של המגירה */
             overflow: hidden; 
         }
 
-        /* Top Header - Sticky mode (applied dynamically via JS only on History view) */
+        /* Top Header - Sticky mode */
         header.sticky-mode {
             position: sticky;
             top: 8px; 
@@ -317,6 +320,11 @@
             width: 20px;
             height: 20px;
             transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), fill 0.2s;
+            pointer-events: none;
+        }
+
+        .nav-tab span {
+            pointer-events: none;
         }
 
         .nav-tab.active svg {
@@ -574,49 +582,49 @@
             opacity: 0.5;
         }
 
-        /* Smart Actions Header (Scroll-Aware) */
+        /* Smart Actions Header (Drawer Effect) */
         .smart-actions-wrapper {
             position: relative;
-            z-index: 800; 
-            padding: 12px 16px;
-            margin: 0; 
-            border-radius: 16px;
-            transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.35s ease, background 0.35s, box-shadow 0.35s, border-color 0.35s;
+            z-index: 800; /* יושב מתחת ל-z-index: 1000 של ההדר הראשי */
+            padding: 30px 14px 10px 14px; /* פדינג עליון עמוק שיוצר רווח נשימה לכפתורים מתחת להדר */
+            margin: -40px 0 -10px 0; /* נשאב למעלה כדי להיכנס מתחת להדר ולסגור רווחים למטה */
+            border-radius: 0 0 16px 16px; /* רק פינות תחתונות עגולות */
+            background: rgba(11, 19, 41, 0.85); /* הקפסולה פעילה ומעוצבת תמיד */
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-top: none; /* הסרת הגבול העליון מחזקת את אשליית המגירה */
+            box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+            transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.35s ease;
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 8px; 
             width: 100%;
             box-sizing: border-box;
-            border: 1px solid transparent;
-            background: transparent;
         }
 
         /* Fixed state when scrolling UP from far below */
         .smart-actions-wrapper.fixed-mode {
             position: fixed;
-            top: 84px; /* מתחת להדר הראשי הדביק */
-            left: 50%;
-            width: calc(100% - 24px); /* רוחב מדויק לחלוטין כמו הסטטי */
-            max-width: 480px; 
-            background: rgba(11, 19, 41, 0.85);
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.6);
-            /* מוסתר בהתחלה מעל גבול המסך */
-            transform: translateX(-50%) translateY(-150%);
+            top: 52px; /* חישוב מדויק שמציב את המגירה בדיוק מאחורי השוליים התחתונים של ההדר המקובע */
+            left: 0;
+            right: 0;
+            margin: 0 auto; 
+            width: calc(100% - 24px); 
+            max-width: 456px; 
+            transform: translateY(-150%);
             opacity: 0;
             pointer-events: none;
         }
 
         .smart-actions-wrapper.fixed-mode.slide-in {
-            transform: translateX(-50%) translateY(0);
+            transform: translateY(0);
             opacity: 1;
             pointer-events: auto;
         }
 
         .smart-actions-wrapper.fixed-mode.slide-out {
-            transform: translateX(-50%) translateY(-150%);
+            transform: translateY(-150%);
             opacity: 0;
             pointer-events: none;
         }
@@ -630,7 +638,7 @@
         .section-title {
             font-size: 1rem;
             font-weight: 700;
-            color: var(--text-muted);
+            color: var(--text-main); 
             display: flex;
             align-items: center;
             gap: 8px;
@@ -817,19 +825,26 @@
         .stat-nalt .stat-label { color: var(--accent-taxi); }
 
         .btn-export-icon {
-            width: 44px;
-            height: 44px;
+            width: 36px;
+            height: 36px;
             border-radius: 50%;
-            background: rgba(0, 136, 255, 0.15);
-            color: var(--accent-cyan);
-            border: 1px solid rgba(0, 136, 255, 0.3);
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            color: var(--text-muted);
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            flex-shrink: 0;
-            transition: transform 0.15s cubic-bezier(0.4, 0, 0.2, 1), background 0.15s;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
             -webkit-tap-highlight-color: transparent;
+            flex-shrink: 0;
+        }
+        
+        .btn-export-icon svg {
+            width: 18px;
+            height: 18px;
+            fill: currentColor;
+            transition: fill 0.2s;
         }
 
         .shifts-list {
@@ -1770,7 +1785,7 @@
         <!-- Placeholder to prevent layout jumps when the header switches to fixed mode -->
         <div id="smartActionsPlaceholder" style="display: none;"></div>
         
-        <!-- Smart Actions Header (Scroll-Aware) -->
+        <!-- Smart Actions Header (Drawer Effect) -->
         <div class="smart-actions-wrapper" id="smartActionsWrapper">
             <div class="section-header">
                 <div class="section-title">
@@ -1826,13 +1841,13 @@
 <div class="bottom-nav-wrapper">
     <div class="bottom-nav" id="bottomNav">
         <div class="nav-indicator" id="navIndicator"></div>
-        <div class="nav-tab active" data-target="clock" onclick="navigateTo('clock')">
+        <div class="nav-tab active" data-target="clock" onclick="handleNavClick('clock')">
             <svg viewBox="0 0 24 24">
                 <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
             </svg>
             <span>ראשי</span>
         </div>
-        <div class="nav-tab" data-target="history" onclick="navigateTo('history')">
+        <div class="nav-tab" data-target="history" onclick="handleNavClick('history')">
             <svg viewBox="0 0 24 24">
                 <path d="M19 3h-4.18C14.4 1.84 13.3 1 12 1c-1.3 0-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm2 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/>
             </svg>
@@ -2121,7 +2136,7 @@
     let draggedElement = null;
     let activeMonthKey = ''; 
 
-    // הגדרת האזנה לגלילה עבור שורת הפעולות החכמה
+    // הגדרת האזנה לגלילה עבור שורת הפעולות החכמה כולל חסימת Rubber-banding
     let lastScrollY = window.scrollY;
     let isActionsFixed = false;
     let isActionsVisible = false;
@@ -2135,9 +2150,10 @@
         
         const currentScrollY = window.scrollY;
         
-        // חישוב הגבול העליון והתחתון כדי להתעלם מהקפיצה (Rubber-band) באייפון
+        // מניעת הפעלה שגויה באפקט הגומי (Rubber-banding)
         const maxScroll = Math.max(document.body.scrollHeight, document.documentElement.scrollHeight) - window.innerHeight;
-        if (currentScrollY < 0 || currentScrollY > maxScroll) {
+        if (currentScrollY <= 0 || currentScrollY >= maxScroll - 10) {
+            lastScrollY = currentScrollY;
             return;
         }
         
@@ -2146,6 +2162,8 @@
 
         if (currentScrollY > stealthThreshold && !isActionsFixed) {
             placeholder.style.height = wrapper.offsetHeight + 'px';
+            placeholder.style.marginTop = '-40px';
+            placeholder.style.marginBottom = '-10px';
             placeholder.style.display = 'block';
             wrapper.classList.add('fixed-mode', 'slide-out');
             wrapper.classList.remove('slide-in');
@@ -2156,18 +2174,20 @@
             wrapper.classList.remove('fixed-mode', 'slide-in', 'slide-out');
             placeholder.style.display = 'none';
             placeholder.style.height = '0px';
+            placeholder.style.marginTop = '0';
+            placeholder.style.marginBottom = '0';
             isActionsFixed = false;
             isActionsVisible = true; 
         }
 
         if (isActionsFixed) {
-            if (currentScrollY < lastScrollY - 3) {
+            if (currentScrollY < lastScrollY - 5) {
                 if (!isActionsVisible) {
                     wrapper.classList.add('slide-in');
                     wrapper.classList.remove('slide-out');
                     isActionsVisible = true;
                 }
-            } else if (currentScrollY > lastScrollY + 3) {
+            } else if (currentScrollY > lastScrollY + 5) {
                 if (isActionsVisible) {
                     wrapper.classList.add('slide-out');
                     wrapper.classList.remove('slide-in');
@@ -2216,28 +2236,45 @@
     const bottomNav = document.getElementById('bottomNav');
     const navIndicator = document.getElementById('navIndicator');
     let isNavDragging = false;
+    let navTouchActive = false; 
     let navStartX = 0;
+    let navStartY = 0;
     let navCurrentOffsetPercent = 0;
     let navHasMoved = false;
 
     if (bottomNav) {
         bottomNav.addEventListener('touchstart', (e) => {
-            isNavDragging = true;
+            navTouchActive = true;
             navHasMoved = false;
             navStartX = e.touches[0].clientX;
-            navIndicator.style.transition = 'none';
-            navCurrentOffsetPercent = (currentView === 'history') ? 100 : 0;
+            navStartY = e.touches[0].clientY;
+            
+            const target = e.target;
+            const isValidTouchStart = target.closest('.nav-indicator') || target.closest('.nav-tab');
+            
+            if (isValidTouchStart && bottomNav.contains(target)) {
+                isNavDragging = true;
+                navIndicator.style.transition = 'none';
+                navCurrentOffsetPercent = (currentView === 'history') ? 100 : 0;
+            } else {
+                isNavDragging = false;
+            }
         }, { passive: true });
 
         bottomNav.addEventListener('touchmove', (e) => {
-            if (!isNavDragging) return;
+            if (!navTouchActive) return;
             
             const deltaX = e.touches[0].clientX - navStartX;
+            const deltaY = e.touches[0].clientY - navStartY;
             
-            if (Math.abs(deltaX) > 5) {
+            if (Math.abs(deltaX) > 5 || Math.abs(deltaY) > 5) {
                 navHasMoved = true;
             }
 
+            if (!isNavDragging) return;
+            
+            if (e.cancelable) e.preventDefault();
+            
             const navRect = bottomNav.getBoundingClientRect();
             const movePercent = (-deltaX / (navRect.width / 2)) * 100;
             
@@ -2245,36 +2282,43 @@
             newOffset = Math.max(0, Math.min(100, newOffset));
             
             navIndicator.style.transform = `translateX(-${newOffset}%)`;
-        }, { passive: true });
+        }, { passive: false });
 
         bottomNav.addEventListener('touchend', (e) => {
-            if (!isNavDragging) return;
-            isNavDragging = false;
+            if (!navTouchActive) return;
+            navTouchActive = false;
             
             if (!navHasMoved) {
-                const touch = e.changedTouches[0];
-                const elem = document.elementFromPoint(touch.clientX, touch.clientY);
-                const tab = elem ? elem.closest('.nav-tab') : null;
-                if (tab) {
-                    navigateTo(tab.getAttribute('data-target'), false);
-                } else {
-                    updateIndicatorPosition(true); 
-                }
-                return;
+                isNavDragging = false;
+                return; 
             }
 
-            const touch = e.changedTouches[0];
-            const deltaX = touch.clientX - navStartX;
-            const navRect = bottomNav.getBoundingClientRect();
-            const movePercent = (-deltaX / (navRect.width / 2)) * 100;
-            let finalOffset = navCurrentOffsetPercent + movePercent;
+            if (isNavDragging) {
+                isNavDragging = false;
+                const touch = e.changedTouches[0];
+                const deltaX = touch.clientX - navStartX;
+                const navRect = bottomNav.getBoundingClientRect();
+                const movePercent = (-deltaX / (navRect.width / 2)) * 100;
+                let finalOffset = navCurrentOffsetPercent + movePercent;
 
-            if (finalOffset > 50) {
-                navigateTo('history', false); 
-            } else {
-                navigateTo('clock', false); 
+                if (finalOffset > 50) {
+                    navigateTo('history', false); 
+                } else {
+                    navigateTo('clock', false); 
+                }
             }
         });
+
+        bottomNav.addEventListener('touchcancel', () => {
+            navTouchActive = false;
+            isNavDragging = false;
+            updateIndicatorPosition(true);
+        });
+    }
+
+    function handleNavClick(target) {
+        if (navHasMoved) return; 
+        navigateTo(target);
     }
 
     function updateIndicatorPosition(animate = true) {
@@ -2301,7 +2345,6 @@
         const targetTab = document.querySelector(`.nav-tab[data-target="${viewName}"]`);
         if (targetTab) targetTab.classList.add('active');
 
-        // ההדר הראשי יהיה דביק אך ורק במסך ההיסטוריה
         const mainHeader = document.getElementById('mainHeader');
         if (viewName === 'history') {
             mainHeader.classList.add('sticky-mode');
@@ -2318,6 +2361,8 @@
             if(placeholder) {
                 placeholder.style.display = 'none';
                 placeholder.style.height = '0px';
+                placeholder.style.marginTop = '0';
+                placeholder.style.marginBottom = '0';
             }
         }
 
@@ -3563,8 +3608,8 @@
                             </div>
                         </div>
                         <button class="btn-export-icon" onclick="printMonthReport('${mk}')" title="שתף / הפק דוח">
-                            <svg class="svg-icon" width="20" height="20" viewBox="0 0 24 24">
-                                <path d="M16 5l-4-4-4 4h3v8h2V5h3zm4 4v11c0 1.1-.9 2-2 2H6c-1.1 0-2-.9-2-2V9c0-1.1.9-2 2-2h3v2H6v11h12V9h-3V7h3c1.1 0 2 .9 2 2z" fill="currentColor"/>
+                            <svg class="svg-icon" viewBox="0 0 24 24">
+                                <path d="M16 5l-4-4-4 4h3v8h2V5h3zm4 4v11c0 1.1-.9 2-2 2H6c-1.1 0-2-.9-2-2V9c0-1.1.9-2 2-2h3v2H6v11h12V9h-3V7h3c1.1 0 2 .9 2 2z"/>
                             </svg>
                         </button>
                     </div>
