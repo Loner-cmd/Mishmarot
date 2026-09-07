@@ -277,7 +277,6 @@
 
         .header-auth-container.disabled-profile {
             pointer-events: none;
-            opacity: 0.7;
         }
 
         .header-auth-circle {
@@ -2310,7 +2309,6 @@
                 await signInWithPopup(auth, provider);
             } catch (error) {
                 console.error("Login error:", error);
-                // מתעלמים משגיאות פופאפ פנימיות שאינן משפיעות על ההתחברות בפועל ברקע
                 if (
                     error.code !== 'auth/cancelled-popup-request' && 
                     error.code !== 'auth/popup-closed-by-user' && 
@@ -2322,7 +2320,7 @@
         }
     };
 
-    // טיפול בלחיצות מחוץ לתפריט וסגירתו המלאה כולל מניעת חלחול לאלמנטים ברקע
+    // טיפול בלחיצות מחוץ לתפריט: סגירה ובלימה מוחלטת של האירוע כך שלא יגיע לאלמנטים ברקע
     window.addEventListener('pointerdown', (e) => {
         const authContainer = document.getElementById('headerAuthContainer');
         const dropdown = document.getElementById('userDropdownMenu');
@@ -2331,6 +2329,21 @@
             if (!authContainer.contains(e.target)) {
                 e.preventDefault();
                 e.stopPropagation();
+                e.stopImmediatePropagation();
+                dropdown.classList.remove('open');
+            }
+        }
+    }, { capture: true });
+
+    window.addEventListener('click', (e) => {
+        const authContainer = document.getElementById('headerAuthContainer');
+        const dropdown = document.getElementById('userDropdownMenu');
+        
+        if (dropdown && dropdown.classList.contains('open')) {
+            if (!authContainer.contains(e.target)) {
+                e.preventDefault();
+                e.stopPropagation();
+                e.stopImmediatePropagation();
                 dropdown.classList.remove('open');
             }
         }
@@ -2766,7 +2779,7 @@
         const dropdown = document.getElementById('userDropdownMenu');
         if (dropdown) dropdown.classList.remove('open');
 
-        // טיפול במצב לחיצה של כפתור הפרופיל בראש העמוד במסך פרופיל
+        // טיפול במצב לחיצה של כפתור הפרופיל בראש העמוד במסך פרופיל (ללא שינוי צבע/בהירות)
         const authContainer = document.getElementById('headerAuthContainer');
         if (authContainer) {
             if (viewName === 'profile') {
