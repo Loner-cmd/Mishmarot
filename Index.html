@@ -2,6 +2,7 @@
 <html lang="he" dir="rtl">
 <head>
     <meta charset="UTF-8">
+    <base href="/Mishmarot/">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>יומן משמרות</title>
     
@@ -2323,7 +2324,6 @@
     window.handleAuthClick = async function(event) {
         event.stopPropagation();
         
-        // מניעת פתיחת תפריט אם נמצאים במסך פרופיל
         if (currentView === 'profile') return;
 
         if (window.currentUser) {
@@ -2795,10 +2795,8 @@
         currentView = viewName;
         sessionStorage.setItem('railway_active_view', viewName);
 
-        // סגירת התפריט והרקע בעת מעבר מסכים
         window.closeUserMenu();
 
-        // טיפול במצב לחיצה של כפתור הפרופיל בראש העמוד במסך פרופיל (ללא שינוי צבע/בהירות)
         const authContainer = document.getElementById('headerAuthContainer');
         if (authContainer) {
             if (viewName === 'profile') {
