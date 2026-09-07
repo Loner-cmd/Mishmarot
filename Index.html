@@ -2082,7 +2082,7 @@
 <!-- Firebase SDKs -->
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import { getAuth, GoogleAuthProvider, signInWithRedirect, getRedirectResult, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
     import { getFirestore, collection, doc, setDoc, getDocs, deleteDoc, enableIndexedDbPersistence } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
     const firebaseConfig = {
@@ -2098,12 +2098,17 @@
     const auth = getAuth(app);
     const db = getFirestore(app);
 
-    // הפעלת מצב לא מקוון (שמירה בטלפון גם כשאין קליטה)
     enableIndexedDbPersistence(db).catch((err) => {
         console.log("Offline persistence not available", err);
     });
 
     window.currentUser = null;
+
+    // בדיקת תוצאת החזרה ממעבר העמוד של גוגל
+    getRedirectResult(auth).catch((error) => {
+        console.error("Redirect login error:", error);
+        showErrorDialog('שגיאה בהתחברות לגוגל: ' + error.message);
+    });
 
     onAuthStateChanged(auth, async (user) => {
         window.currentUser = user;
@@ -2133,7 +2138,8 @@
         } else {
             const provider = new GoogleAuthProvider();
             try {
-                await signInWithPopup(auth, provider);
+                // שימוש ב-Redirect שמותאם מושלם ל-PWA ולאייפון
+                await signInWithRedirect(auth, provider);
             } catch (error) {
                 console.error("Login error:", error);
                 showErrorDialog('שגיאה בהתחברות לגוגל. נסה שוב.');
@@ -2153,7 +2159,6 @@
             let localShifts = JSON.parse(localStorage.getItem('railway_shifts') || '[]');
 
             if (cloudShifts.length === 0 && localShifts.length > 0) {
-                // העלאת נתונים מהמכשיר לענן בפתיחה ראשונה
                 for (let shift of localShifts) {
                     await setDoc(doc(db, 'users', uid, 'shifts', String(shift.id)), shift);
                 }
@@ -2187,10 +2192,8 @@
     };
 
     window.saveShiftToCloudAndLocal = async function(shiftObj) {
-        // שמירה מקומית מיידית למהירות ועבודה במנהרות
         localStorage.setItem('railway_shifts', JSON.stringify(shifts));
         
-        // שמירה בענן ברקע אם המשתמש מחובר
         if (window.currentUser) {
             try {
                 await setDoc(doc(db, 'users', window.currentUser.uid, 'shifts', String(shiftObj.id)), shiftObj);
