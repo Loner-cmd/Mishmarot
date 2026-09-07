@@ -95,7 +95,7 @@
             box-shadow: 0 10px 25px rgba(0,0,0,0.6);
             position: relative;
             z-index: 1000;
-            overflow: visible; /* מאפשר לתפריט הנפתח לחרוג בגבול הטעם הטוב */
+            overflow: visible; 
         }
 
         /* Top Header - Sticky mode */
@@ -114,10 +114,11 @@
         .header-center-group {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 8px;
             order: 2;
             margin-right: auto; 
-            padding-right: 14px; /* מרווח עדין שלא ייגע בכפתור ההתחברות */
+            padding-right: 12px; 
+            padding-left: 8px;
         }
 
         .header-status-box {
@@ -1849,7 +1850,7 @@
             </div>
         </div>
 
-        <!-- Header Center Group (Shift Status & Timer with proper spacing) -->
+        <!-- Header Center Group (Shift Status & Timer with clean spacing) -->
         <div class="header-center-group">
             <div class="header-status-box">
                 <div id="statusIndicator" class="status-badge idle">
@@ -1981,7 +1982,12 @@
         <div class="clock-screen-card" style="align-items: stretch; gap: 14px;">
             <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 10px;">
                 <h2 style="font-size: 1.2rem; color: #fff;">פרופיל אישי</h2>
-                <button class="btn-secondary" style="flex: 0 0 auto; width: auto; padding: 6px 14px;" onclick="navigateTo('clock')">חזרה</button>
+                <!-- Rounded X Close Button -->
+                <button class="btn-icon-action" style="background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border-color); color: var(--text-main);" onclick="navigateTo('clock')" title="חזרה">
+                    <svg class="svg-icon" width="18" height="18" viewBox="0 0 24 24">
+                        <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+                    </svg>
+                </button>
             </div>
             
             <div class="card-sub-section">
@@ -2286,8 +2292,11 @@
 
     window.handleAuthClick = async function(event) {
         event.stopPropagation();
+        
+        // מניעת פתיחת תפריט אם נמצאים במסך פרופיל
+        if (currentView === 'profile') return;
+
         if (window.currentUser) {
-            // פתיחה או סגירה של התפריט הנפתח
             const dropdown = document.getElementById('userDropdownMenu');
             dropdown.classList.toggle('open');
         } else {
@@ -2336,7 +2345,7 @@
         document.getElementById('userDropdownMenu').classList.remove('open');
         showSmartAlertDialog(
             'התנתקות מהמערכת',
-            'האם אתה בטוח שברצונך להתנתק מחשבון הציבורי שלך?',
+            'האם אתה בטוח שברצונך להתנתק מחשבון ה-Google שלך?',
             'התנתק',
             'ביטול',
             async () => {
@@ -2347,7 +2356,14 @@
                     console.error(error);
                 }
             },
-            () => {}
+            () => {
+                // אם המשתמש לחץ ביטול, נפתח מחדש את התפריט הנפתח לנוחותו
+                setTimeout(() => {
+                    if (window.currentUser && currentView !== 'profile') {
+                        document.getElementById('userDropdownMenu').classList.add('open');
+                    }
+                }, 100);
+            }
         );
     };
 
@@ -2721,8 +2737,6 @@
         
         if (currentView === 'history') {
             navIndicator.style.transform = 'translateX(-100%)'; 
-        } else if (currentView === 'profile') {
-            navIndicator.style.transform = 'translateX(0%)'; // פרופיל לא שייך לטאבים הראשיים
         } else {
             navIndicator.style.transform = 'translateX(0%)'; 
         }
@@ -2738,10 +2752,9 @@
         document.getElementById('viewHistory').style.display = (viewName === 'history') ? 'flex' : 'none';
         document.getElementById('viewProfile').style.display = (viewName === 'profile') ? 'flex' : 'none';
 
-        // ניהול טאבים תחתונים בהתאם למסך
         const bottomNavEl = document.getElementById('bottomNav').closest('.bottom-nav-wrapper');
         if (viewName === 'profile') {
-            bottomNavEl.style.display = 'none'; // מסתיר את הטאב בר-התחתון בעמוד פרופיל נפרד
+            bottomNavEl.style.display = 'none'; 
         } else {
             bottomNavEl.style.display = 'flex';
             document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
@@ -2824,9 +2837,9 @@
             totNaltMins += (Number(s.naltStartMinutes)||0) + (Number(s.naltEndMinutes)||0);
         });
 
-        document.getElementById('profWorkVal').textContent = formatMinutesToHM(totWorkMins) || '0 דק׳';
-        document.getElementById('profPremVal').textContent = formatMinutesToHM(totPremMins) || '0 דק׳';
-        document.getElementById('profNaltVal').textContent = formatMinutesToHM(totNaltMins) || '0 דק׳';
+        document.getElementById('profWorkVal').textContent = formatMinutesToHM(totWorkMins) || '0 שעות';
+        document.getElementById('profPremVal').textContent = formatMinutesToHM(totPremMins) || '0 שעות';
+        document.getElementById('profNaltVal').textContent = formatMinutesToHM(totNaltMins) || '0 שעות';
     }
 
     function updateLiveClock() {
