@@ -111,6 +111,15 @@
             order: 1;
         }
 
+        .header-center-group {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            order: 2;
+            margin-right: auto; /* דוחף שמאלה בהתאמה */
+            padding-right: 8px;
+        }
+
         .header-status-box {
             display: flex;
             flex-direction: column;
@@ -119,7 +128,6 @@
             min-width: 85px;
             height: 44px;
             position: relative;
-            order: 2;
         }
 
         .header-progress-container {
@@ -254,39 +262,62 @@
             width: 100%;
         }
 
-        /* Auth Button in Header */
-        .header-auth-btn {
+        /* Circular Auth Button in Header */
+        .header-auth-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+            order: 3;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .header-auth-circle {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: rgba(148, 163, 184, 0.08);
+            border: 1px solid rgba(148, 163, 184, 0.2);
+            color: var(--text-muted);
             display: flex;
             align-items: center;
-            gap: 6px;
-            background: var(--bg-card-inner);
-            border: 1px solid var(--border-color);
-            padding: 6px 10px;
-            border-radius: 12px;
-            color: var(--text-main);
-            font-size: 0.78rem;
+            justify-content: center;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+        }
+
+        .header-auth-circle svg {
+            width: 18px;
+            height: 18px;
+            fill: currentColor;
+            transition: fill 0.2s;
+        }
+
+        .header-auth-container.logged-in .header-auth-circle {
+            background: rgba(16, 185, 129, 0.15);
+            border-color: rgba(16, 185, 129, 0.4);
+            color: var(--accent-green);
+            box-shadow: 0 0 10px rgba(16, 185, 129, 0.3);
+        }
+
+        .header-auth-label {
+            font-size: 0.68rem;
             font-weight: 700;
-            cursor: pointer;
-            transition: all 0.2s;
-            order: 3;
-            max-width: 120px;
+            color: var(--text-muted);
+            max-width: 55px;
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
+            text-align: center;
         }
-        .header-auth-btn:active {
-            transform: scale(0.95);
-        }
-        .header-auth-btn svg {
-            width: 14px;
-            height: 14px;
-            fill: currentColor;
-            flex-shrink: 0;
-        }
-        .header-auth-btn.logged-in {
-            border-color: rgba(16, 185, 129, 0.4);
+
+        .header-auth-container.logged-in .header-auth-label {
             color: var(--accent-green);
-            background: rgba(16, 185, 129, 0.08);
+        }
+
+        .header-auth-circle:active {
+            transform: scale(0.9);
         }
 
         /* Bottom Navigation Bar */
@@ -1756,20 +1787,25 @@
             </div>
         </div>
 
-        <!-- Google Auth Button in Header -->
-        <button id="headerAuthBtn" class="header-auth-btn" onclick="handleAuthClick()">
-            <svg viewBox="0 0 24 24">
-                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
-            </svg>
-            <span id="authBtnText">התחברות</span>
-        </button>
-
-        <div class="header-status-box">
-            <div id="statusIndicator" class="status-badge idle">
-                <span class="pulse-dot"></span>
-                <span id="statusText">במנוחה</span>
+        <!-- Header Center Group (Shift Status & Timer shifted left) -->
+        <div class="header-center-group">
+            <div class="header-status-box">
+                <div id="statusIndicator" class="status-badge idle">
+                    <span class="pulse-dot"></span>
+                    <span id="statusText">במנוחה</span>
+                </div>
+                <div class="header-live-timer" id="headerShiftDuration">00:00:00</div>
             </div>
-            <div class="header-live-timer" id="headerShiftDuration">00:00:00</div>
+        </div>
+
+        <!-- Circular Auth Button in Header (Shifted left) -->
+        <div id="headerAuthContainer" class="header-auth-container" onclick="handleAuthClick()">
+            <div id="headerAuthCircle" class="header-auth-circle">
+                <svg viewBox="0 0 24 24">
+                    <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                </svg>
+            </div>
+            <span id="authBtnText" class="header-auth-label">התחברות</span>
         </div>
 
         <div class="header-progress-container" id="headerProgressWrap">
@@ -2048,6 +2084,46 @@
     </div>
 </div>
 
+<!-- User Profile & Menu Modal -->
+<div class="modal-overlay" id="userMenuModal">
+    <div class="modal-sheet" style="max-width: 360px; text-align: center;">
+        <div class="modal-header">
+            <h2 class="modal-title">אזור אישי</h2>
+            <button class="btn-close" onclick="closeUserMenuModal()">
+                <svg class="svg-icon" width="22" height="22" viewBox="0 0 24 24">
+                    <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+                </svg>
+            </button>
+        </div>
+        <div style="padding: 16px 0; display: flex; flex-direction: column; gap: 12px;">
+            <div id="userEmailDisplay" style="font-size: 0.95rem; font-weight: 700; color: var(--accent-cyan);"></div>
+            <button class="btn-secondary" onclick="openProfileDetails()">פרופיל וסיכום חודשי</button>
+            <button class="btn-secondary btn-danger-outline" onclick="confirmSignOut()">התנתקות מהמערכת</button>
+        </div>
+    </div>
+</div>
+
+<!-- Profile Details Sub-Modal -->
+<div class="modal-overlay" id="profileModal">
+    <div class="modal-sheet" style="max-width: 380px;">
+        <div class="modal-header">
+            <h2 class="modal-title">פרופיל משתמש</h2>
+            <button class="btn-close" onclick="closeProfileModal()">
+                <svg class="svg-icon" width="22" height="22" viewBox="0 0 24 24">
+                    <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+                </svg>
+            </button>
+        </div>
+        <div style="padding: 14px 0; display: flex; flex-direction: column; gap: 10px; color: var(--text-muted); font-size: 0.9rem;">
+            <p>שם משתמש: <strong id="profileName" style="color: #fff;"></strong></p>
+            <p>כתובת מייל: <strong id="profileEmail" style="color: #fff;"></strong></p>
+            <div class="card-sub-section" style="margin-top: 10px; text-align: center; padding: 14px;">
+                <span style="font-weight: 700; color: var(--accent-cyan);">סיכום חודשי ונתונים נוספים יתווספו בהמשך החזון!</span>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- Custom Error Dialog -->
 <div class="error-dialog-overlay" id="errorDialog">
     <div class="error-dialog-card">
@@ -2107,38 +2183,70 @@
     onAuthStateChanged(auth, async (user) => {
         window.currentUser = user;
         const btnText = document.getElementById('authBtnText');
-        const authBtn = document.getElementById('headerAuthBtn');
+        const authContainer = document.getElementById('headerAuthContainer');
 
         if (user) {
             const displayName = user.displayName ? user.displayName.split(' ')[0] : 'מחובר';
             btnText.textContent = displayName;
-            authBtn.classList.add('logged-in');
+            authContainer.classList.add('logged-in');
             await syncShiftsWithCloud(user.uid);
         } else {
             btnText.textContent = 'התחברות';
-            authBtn.classList.remove('logged-in');
+            authContainer.classList.remove('logged-in');
             loadLocalShifts();
         }
     });
 
     window.handleAuthClick = async function() {
         if (window.currentUser) {
-            try {
-                await signOut(auth);
-                showSmartAlertDialog('התנתקות', 'התנתקת בהצלחה מהחשבון.', 'הבנתי', '', () => {}, null);
-            } catch (error) {
-                console.error(error);
-            }
+            // פתיחת תפריט משתמש חדש במקום התנתקות מיידית
+            document.getElementById('userEmailDisplay').textContent = window.currentUser.email || '';
+            document.getElementById('userMenuModal').classList.add('open');
         } else {
             const provider = new GoogleAuthProvider();
             try {
-                // חזרה לשימוש ב-Popup רגיל שפותח חלון אישור ישיר
                 await signInWithPopup(auth, provider);
             } catch (error) {
                 console.error("Login error:", error);
                 showErrorDialog('שגיאה בהתחברות לגוגל: ' + (error.message || 'נסה שוב'));
             }
         }
+    };
+
+    window.closeUserMenuModal = function() {
+        document.getElementById('userMenuModal').classList.remove('open');
+    };
+
+    window.openProfileDetails = function() {
+        closeUserMenuModal();
+        if (window.currentUser) {
+            document.getElementById('profileName').textContent = window.currentUser.displayName || 'משתמש רכבת';
+            document.getElementById('profileEmail').textContent = window.currentUser.email || 'לא זמין';
+        }
+        document.getElementById('profileModal').classList.add('open');
+    };
+
+    window.closeProfileModal = function() {
+        document.getElementById('profileModal').classList.remove('open');
+    };
+
+    window.confirmSignOut = function() {
+        closeUserMenuModal();
+        showSmartAlertDialog(
+            'התנתקות מהמערכת',
+            'האם אתה בטוח שברצונך להתנתק מחשבון ה-Google שלך?',
+            'התנתק',
+            'ביטול',
+            async () => {
+                try {
+                    await signOut(auth);
+                    showSmartAlertDialog('התנתקות', 'התנתקת בהצלחה מהחשבון.', 'הבנתי', '', () => {}, null);
+                } catch (error) {
+                    console.error(error);
+                }
+            },
+            () => {}
+        );
     };
 
     window.syncShiftsWithCloud = async function(uid) {
@@ -2402,7 +2510,7 @@
     addPressEffect(document.getElementById('btnToggleMultiPanel'), 'plus-pressed-effect');
     addPressEffect(document.getElementById('btnToggleSorting'), 'plus-pressed-effect');
     addPressEffect(document.getElementById('btnToggleSelection'), 'plus-pressed-effect');
-    addPressEffect(document.getElementById('headerAuthBtn'), 'pressed-effect');
+    addPressEffect(document.getElementById('headerAuthContainer'), 'pressed-effect');
 
     function smoothScrollToReveal(el, delay = 400) {
         setTimeout(() => {
