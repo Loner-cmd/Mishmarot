@@ -95,7 +95,7 @@
             box-shadow: 0 10px 25px rgba(0,0,0,0.6);
             position: relative;
             z-index: 1000;
-            overflow: hidden; 
+            overflow: visible; /* מאפשר לתפריט הנפתח לחרוג בגבול הטעם הטוב */
         }
 
         /* Top Header - Sticky mode */
@@ -116,8 +116,8 @@
             align-items: center;
             gap: 12px;
             order: 2;
-            margin-right: auto; /* דוחף שמאלה בהתאמה */
-            padding-right: 8px;
+            margin-right: auto; 
+            padding-right: 14px; /* מרווח עדין שלא ייגע בכפתור ההתחברות */
         }
 
         .header-status-box {
@@ -271,6 +271,7 @@
             order: 3;
             cursor: pointer;
             user-select: none;
+            position: relative;
         }
 
         .header-auth-circle {
@@ -318,6 +319,67 @@
 
         .header-auth-circle:active {
             transform: scale(0.9);
+        }
+
+        /* Dropdown Menu for User */
+        .user-dropdown-menu {
+            position: absolute;
+            top: 50px;
+            left: 0;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+            width: 160px;
+            display: none;
+            flex-direction: column;
+            z-index: 2000;
+            overflow: hidden;
+            animation: dropdown-fade 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .user-dropdown-menu.open {
+            display: flex;
+        }
+
+        @keyframes dropdown-fade {
+            0% { opacity: 0; transform: translateY(-8px) scale(0.95); }
+            100% { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .dropdown-item {
+            padding: 11px 14px;
+            font-size: 0.88rem;
+            font-weight: 700;
+            color: var(--text-main);
+            background: transparent;
+            border: none;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            text-align: right;
+            cursor: pointer;
+            transition: background 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .dropdown-item:last-child {
+            border-bottom: none;
+        }
+
+        .dropdown-item:active {
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .dropdown-item.danger-item {
+            color: #fca5a5;
+            background: rgba(239, 68, 68, 0.08);
+            border-top: 1px solid rgba(239, 68, 68, 0.2);
+            font-weight: 800;
+        }
+
+        .dropdown-item.danger-item:active {
+            background: rgba(239, 68, 68, 0.2);
         }
 
         /* Bottom Navigation Bar */
@@ -1787,7 +1849,7 @@
             </div>
         </div>
 
-        <!-- Header Center Group (Shift Status & Timer shifted left) -->
+        <!-- Header Center Group (Shift Status & Timer with proper spacing) -->
         <div class="header-center-group">
             <div class="header-status-box">
                 <div id="statusIndicator" class="status-badge idle">
@@ -1798,14 +1860,21 @@
             </div>
         </div>
 
-        <!-- Circular Auth Button in Header (Shifted left) -->
-        <div id="headerAuthContainer" class="header-auth-container" onclick="handleAuthClick()">
+        <!-- Circular Auth Button & Dropdown Menu -->
+        <div id="headerAuthContainer" class="header-auth-container" onclick="handleAuthClick(event)">
             <div id="headerAuthCircle" class="header-auth-circle">
                 <svg viewBox="0 0 24 24">
                     <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
                 </svg>
             </div>
             <span id="authBtnText" class="header-auth-label">התחברות</span>
+
+            <!-- Dropdown Menu -->
+            <div id="userDropdownMenu" class="user-dropdown-menu">
+                <button class="dropdown-item" onclick="goToProfileView()">פרופיל אישי</button>
+                <button class="dropdown-item" onclick="openSettingsModal()">הגדרות</button>
+                <button class="dropdown-item danger-item" onclick="confirmSignOut()">התנתקות</button>
+            </div>
         </div>
 
         <div class="header-progress-container" id="headerProgressWrap">
@@ -1859,11 +1928,7 @@
 
     <!-- VIEW 2: History Screen -->
     <div id="viewHistory" class="app-view" style="display: none;">
-        
-        <!-- Placeholder to prevent layout jumps when the header switches to fixed mode -->
         <div id="smartActionsPlaceholder" style="display: none;"></div>
-        
-        <!-- Smart Actions Header (Drawer Effect) -->
         <div class="smart-actions-wrapper" id="smartActionsWrapper">
             <div class="section-header">
                 <div class="section-title">
@@ -1891,7 +1956,6 @@
                 </div>
             </div>
 
-            <!-- Selection Toolbar -->
             <div id="selectionToolbar" class="selection-toolbar">
                 <span id="selectedCountText" style="font-size: 0.85rem; font-weight: 700; color: var(--accent-cyan);">0 נבחרו</span>
                 <div class="toolbar-buttons">
@@ -1900,7 +1964,6 @@
                 </div>
             </div>
 
-            <!-- Sorting Toolbar -->
             <div id="sortingToolbar" class="selection-toolbar">
                 <span style="font-size: 0.85rem; font-weight: 700; color: var(--accent-cyan);">גרור לסידור מחדש</span>
                 <div class="toolbar-buttons">
@@ -1909,9 +1972,52 @@
                 </div>
             </div>
         </div>
-        <!-- End of Smart Actions Header -->
 
         <div id="shiftsContainer" class="shifts-list"></div>
+    </div>
+
+    <!-- VIEW 3: Profile Screen (New View) -->
+    <div id="viewProfile" class="app-view" style="display: none;">
+        <div class="clock-screen-card" style="align-items: stretch; gap: 14px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 10px;">
+                <h2 style="font-size: 1.2rem; color: #fff;">פרופיל אישי</h2>
+                <button class="btn-secondary" style="flex: 0 0 auto; width: auto; padding: 6px 14px;" onclick="navigateTo('clock')">חזרה</button>
+            </div>
+            
+            <div class="card-sub-section">
+                <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 4px;">שם משתמש:</p>
+                <p id="profileName" style="font-size: 1.1rem; font-weight: 700; color: #fff;"></p>
+            </div>
+            <div class="card-sub-section">
+                <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 4px;">כתובת מייל:</p>
+                <p id="profileEmail" style="font-size: 1rem; font-weight: 600; color: var(--accent-cyan);"></p>
+            </div>
+
+            <!-- Annual & Monthly Summary Section -->
+            <div class="card-sub-section" style="margin-top: 4px;">
+                <div class="card-sub-title" style="justify-content: space-between;">
+                    <span>סיכום נתונים</span>
+                    <select id="profileMonthSelect" class="form-control" style="width: 130px; height: 32px; font-size: 0.8rem;" onchange="updateProfileSummaryData()">
+                        <option value="annual">סיכום שנתי</option>
+                    </select>
+                </div>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-top: 10px;">
+                    <div class="summary-stat-block stat-work">
+                        <span class="stat-label">עבודה</span>
+                        <span class="stat-val" id="profWorkVal">0 שעות</span>
+                    </div>
+                    <div class="summary-stat-block stat-prem">
+                        <span class="stat-label">פרמיה</span>
+                        <span class="stat-val" id="profPremVal">0 שעות</span>
+                    </div>
+                    <div class="summary-stat-block stat-nalt">
+                        <span class="stat-label">נל״ת</span>
+                        <span class="stat-val" id="profNaltVal">0 שעות</span>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -2084,42 +2190,23 @@
     </div>
 </div>
 
-<!-- User Profile & Menu Modal -->
-<div class="modal-overlay" id="userMenuModal">
-    <div class="modal-sheet" style="max-width: 360px; text-align: center;">
+<!-- Settings Modal Sketch -->
+<div class="modal-overlay" id="settingsModal">
+    <div class="modal-sheet">
         <div class="modal-header">
-            <h2 class="modal-title">אזור אישי</h2>
-            <button class="btn-close" onclick="closeUserMenuModal()">
+            <h2 class="modal-title">הגדרות מערכת</h2>
+            <button class="btn-close" onclick="closeSettingsModal()">
                 <svg class="svg-icon" width="22" height="22" viewBox="0 0 24 24">
                     <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
                 </svg>
             </button>
         </div>
-        <div style="padding: 16px 0; display: flex; flex-direction: column; gap: 12px;">
-            <div id="userEmailDisplay" style="font-size: 0.95rem; font-weight: 700; color: var(--accent-cyan);"></div>
-            <button class="btn-secondary" onclick="openProfileDetails()">פרופיל וסיכום חודשי</button>
-            <button class="btn-secondary btn-danger-outline" onclick="confirmSignOut()">התנתקות מהמערכת</button>
-        </div>
-    </div>
-</div>
-
-<!-- Profile Details Sub-Modal -->
-<div class="modal-overlay" id="profileModal">
-    <div class="modal-sheet" style="max-width: 380px;">
-        <div class="modal-header">
-            <h2 class="modal-title">פרופיל משתמש</h2>
-            <button class="btn-close" onclick="closeProfileModal()">
-                <svg class="svg-icon" width="22" height="22" viewBox="0 0 24 24">
-                    <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
-                </svg>
-            </button>
-        </div>
-        <div style="padding: 14px 0; display: flex; flex-direction: column; gap: 10px; color: var(--text-muted); font-size: 0.9rem;">
-            <p>שם משתמש: <strong id="profileName" style="color: #fff;"></strong></p>
-            <p>כתובת מייל: <strong id="profileEmail" style="color: #fff;"></strong></p>
-            <div class="card-sub-section" style="margin-top: 10px; text-align: center; padding: 14px;">
-                <span style="font-weight: 700; color: var(--accent-cyan);">סיכום חודשי ונתונים נוספים יתווספו בהמשך החזון!</span>
+        <div style="padding: 16px 0; display: flex; flex-direction: column; gap: 12px; color: var(--text-muted);">
+            <div class="card-sub-section" style="padding: 14px; text-align: center;">
+                <p style="font-weight: 700; color: var(--accent-cyan); margin-bottom: 6px;">סקיצת הגדרות עתידיות</p>
+                <p style="font-size: 0.85rem;">כאן יופיעו בעתיד הגדרות תצוגה, התראות והעדפות אישיות.</p>
             </div>
+            <button class="btn-secondary" onclick="closeSettingsModal()">סגור</button>
         </div>
     </div>
 </div>
@@ -2197,44 +2284,59 @@
         }
     });
 
-    window.handleAuthClick = async function() {
+    window.handleAuthClick = async function(event) {
+        event.stopPropagation();
         if (window.currentUser) {
-            // פתיחת תפריט משתמש חדש במקום התנתקות מיידית
-            document.getElementById('userEmailDisplay').textContent = window.currentUser.email || '';
-            document.getElementById('userMenuModal').classList.add('open');
+            // פתיחה או סגירה של התפריט הנפתח
+            const dropdown = document.getElementById('userDropdownMenu');
+            dropdown.classList.toggle('open');
         } else {
             const provider = new GoogleAuthProvider();
             try {
                 await signInWithPopup(auth, provider);
             } catch (error) {
                 console.error("Login error:", error);
-                showErrorDialog('שגיאה בהתחברות לגוגל: ' + (error.message || 'נסה שוב'));
+                if (error.code !== 'auth/cancelled-popup-request' && error.code !== 'auth/popup-closed-by-user') {
+                    showErrorDialog('שגיאה בהתחברות לגוגל: ' + (error.message || 'נסה שוב'));
+                }
             }
         }
     };
 
-    window.closeUserMenuModal = function() {
-        document.getElementById('userMenuModal').classList.remove('open');
-    };
+    // סגירת התפריט בלחיצה מחוץ אליו
+    window.addEventListener('click', (e) => {
+        const authContainer = document.getElementById('headerAuthContainer');
+        const dropdown = document.getElementById('userDropdownMenu');
+        if (authContainer && dropdown && !authContainer.contains(e.target)) {
+            dropdown.classList.remove('open');
+        }
+    });
 
-    window.openProfileDetails = function() {
-        closeUserMenuModal();
+    window.goToProfileView = function() {
+        document.getElementById('userDropdownMenu').classList.remove('open');
         if (window.currentUser) {
             document.getElementById('profileName').textContent = window.currentUser.displayName || 'משתמש רכבת';
             document.getElementById('profileEmail').textContent = window.currentUser.email || 'לא זמין';
+            populateProfileMonthSelector();
+            updateProfileSummaryData();
         }
-        document.getElementById('profileModal').classList.add('open');
+        navigateTo('profile');
     };
 
-    window.closeProfileModal = function() {
-        document.getElementById('profileModal').classList.remove('open');
+    window.openSettingsModal = function() {
+        document.getElementById('userDropdownMenu').classList.remove('open');
+        document.getElementById('settingsModal').classList.add('open');
+    };
+
+    window.closeSettingsModal = function() {
+        document.getElementById('settingsModal').classList.remove('open');
     };
 
     window.confirmSignOut = function() {
-        closeUserMenuModal();
+        document.getElementById('userDropdownMenu').classList.remove('open');
         showSmartAlertDialog(
             'התנתקות מהמערכת',
-            'האם אתה בטוח שברצונך להתנתק מחשבון ה-Google שלך?',
+            'האם אתה בטוח שברצונך להתנתק מחשבון הציבורי שלך?',
             'התנתק',
             'ביטול',
             async () => {
@@ -2619,6 +2721,8 @@
         
         if (currentView === 'history') {
             navIndicator.style.transform = 'translateX(-100%)'; 
+        } else if (currentView === 'profile') {
+            navIndicator.style.transform = 'translateX(0%)'; // פרופיל לא שייך לטאבים הראשיים
         } else {
             navIndicator.style.transform = 'translateX(0%)'; 
         }
@@ -2632,10 +2736,18 @@
 
         document.getElementById('viewClock').style.display = (viewName === 'clock') ? 'flex' : 'none';
         document.getElementById('viewHistory').style.display = (viewName === 'history') ? 'flex' : 'none';
+        document.getElementById('viewProfile').style.display = (viewName === 'profile') ? 'flex' : 'none';
 
-        document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
-        const targetTab = document.querySelector(`.nav-tab[data-target="${viewName}"]`);
-        if (targetTab) targetTab.classList.add('active');
+        // ניהול טאבים תחתונים בהתאם למסך
+        const bottomNavEl = document.getElementById('bottomNav').closest('.bottom-nav-wrapper');
+        if (viewName === 'profile') {
+            bottomNavEl.style.display = 'none'; // מסתיר את הטאב בר-התחתון בעמוד פרופיל נפרד
+        } else {
+            bottomNavEl.style.display = 'flex';
+            document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+            const targetTab = document.querySelector(`.nav-tab[data-target="${viewName}"]`);
+            if (targetTab) targetTab.classList.add('active');
+        }
 
         const mainHeader = document.getElementById('mainHeader');
         if (viewName === 'history') {
@@ -2659,7 +2771,6 @@
         }
 
         requestAnimationFrame(() => updateIndicatorPosition(true));
-
         updateActiveShiftUI(); 
 
         if (viewName === 'history') {
@@ -2670,6 +2781,52 @@
             }
             renderShifts();
         }
+    }
+
+    function populateProfileMonthSelector() {
+        const select = document.getElementById('profileMonthSelect');
+        if (!select) return;
+
+        let monthsSet = new Set();
+        shifts.forEach(s => {
+            if (s.date) monthsSet.add(s.date.substring(0, 7));
+        });
+
+        let sortedMonths = Array.from(monthsSet).sort((a,b) => b.localeCompare(a));
+        
+        let optionsHTML = '<option value="annual">סיכום שנתי</option>';
+        sortedMonths.forEach(mk => {
+            optionsHTML += `<option value="${mk}">${formatMonthName(mk)}</option>`;
+        });
+        select.innerHTML = optionsHTML;
+    }
+
+    function updateProfileSummaryData() {
+        const select = document.getElementById('profileMonthSelect');
+        const val = select ? select.value : 'annual';
+
+        let targetShifts = shifts;
+        if (val !== 'annual') {
+            targetShifts = shifts.filter(s => s.date && s.date.startsWith(val));
+        }
+
+        let totWorkMins = 0;
+        let totPremMins = 0;
+        let totNaltMins = 0;
+
+        targetShifts.forEach(s => {
+            if (s.startTime && s.endTime) {
+                totWorkMins += calculateDurationMinutes(s.startTime, s.endTime);
+            }
+            if (s.premStartTime && s.premEndTime) {
+                totPremMins += calculateDurationMinutes(s.premStartTime, s.premEndTime);
+            }
+            totNaltMins += (Number(s.naltStartMinutes)||0) + (Number(s.naltEndMinutes)||0);
+        });
+
+        document.getElementById('profWorkVal').textContent = formatMinutesToHM(totWorkMins) || '0 דק׳';
+        document.getElementById('profPremVal').textContent = formatMinutesToHM(totPremMins) || '0 דק׳';
+        document.getElementById('profNaltVal').textContent = formatMinutesToHM(totNaltMins) || '0 דק׳';
     }
 
     function updateLiveClock() {
@@ -3016,7 +3173,7 @@
     }
 
     function formatMinutesToHM(mins) {
-        if (!mins || mins <= 0) return '';
+        if (!mins || mins <= 0) return '0 שעות';
         const h = Math.floor(mins / 60);
         const m = mins % 60;
         if (h === 0) return `${m} דק׳`;
