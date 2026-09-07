@@ -2082,7 +2082,7 @@
 <!-- Firebase SDKs -->
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getAuth, GoogleAuthProvider, signInWithRedirect, getRedirectResult, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
     import { getFirestore, collection, doc, setDoc, getDocs, deleteDoc, enableIndexedDbPersistence } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
     const firebaseConfig = {
@@ -2103,12 +2103,6 @@
     });
 
     window.currentUser = null;
-
-    // בדיקת תוצאת החזרה ממעבר העמוד של גוגל
-    getRedirectResult(auth).catch((error) => {
-        console.error("Redirect login error:", error);
-        showErrorDialog('שגיאה בהתחברות לגוגל: ' + error.message);
-    });
 
     onAuthStateChanged(auth, async (user) => {
         window.currentUser = user;
@@ -2138,11 +2132,11 @@
         } else {
             const provider = new GoogleAuthProvider();
             try {
-                // שימוש ב-Redirect שמותאם מושלם ל-PWA ולאייפון
-                await signInWithRedirect(auth, provider);
+                // חזרה לשימוש ב-Popup רגיל שפותח חלון אישור ישיר
+                await signInWithPopup(auth, provider);
             } catch (error) {
                 console.error("Login error:", error);
-                showErrorDialog('שגיאה בהתחברות לגוגל. נסה שוב.');
+                showErrorDialog('שגיאה בהתחברות לגוגל: ' + (error.message || 'נסה שוב'));
             }
         }
     };
