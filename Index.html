@@ -94,7 +94,7 @@
             border: 1px solid var(--border-color);
             box-shadow: 0 10px 25px rgba(0,0,0,0.6);
             position: relative;
-            z-index: 1000;
+            z-index: 2500;
             overflow: visible; 
         }
 
@@ -273,6 +273,7 @@
             cursor: pointer;
             user-select: none;
             position: relative;
+            z-index: 2600;
         }
 
         .header-auth-container.disabled-profile {
@@ -330,10 +331,10 @@
         .menu-backdrop {
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(11, 19, 41, 0.4);
-            backdrop-filter: blur(2px);
-            -webkit-backdrop-filter: blur(2px);
-            z-index: 1500;
+            background: rgba(11, 19, 41, 0.5);
+            backdrop-filter: blur(3px);
+            -webkit-backdrop-filter: blur(3px);
+            z-index: 2000;
             display: none;
             opacity: 0;
             transition: opacity 0.2s ease;
@@ -344,7 +345,7 @@
             opacity: 1;
         }
 
-        /* Dropdown Menu for User */
+        /* Dropdown Menu for User - Now sits safely ABOVE the backdrop */
         .user-dropdown-menu {
             position: absolute;
             top: 50px;
@@ -352,11 +353,11 @@
             background: var(--bg-card);
             border: 1px solid var(--border-color);
             border-radius: 14px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
             width: 160px;
             display: none;
             flex-direction: column;
-            z-index: 2000;
+            z-index: 2700;
             overflow: hidden;
             animation: dropdown-fade 0.2s cubic-bezier(0.16, 1, 0.3, 1);
         }
@@ -1655,7 +1656,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            z-index: 2000;
+            z-index: 3000;
             opacity: 0;
             pointer-events: none;
             transition: opacity 0.2s ease;
