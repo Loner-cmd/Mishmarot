@@ -2312,7 +2312,7 @@
             const displayName = user.displayName ? user.displayName.split(' ')[0] : 'מחובר';
             btnText.textContent = displayName;
             authContainer.classList.add('logged-in');
-            await syncShiftsWithCloud(user.uid);
+            await handleUserAuthenticationSync(user.uid);
         } else {
             btnText.textContent = 'התחברות';
             authContainer.classList.remove('logged-in');
@@ -2320,10 +2320,92 @@
         }
     });
 
+    async function handleUserAuthenticationSync(uid) {
+        try {
+            const shiftsRef = collection(db, 'users', uid, 'shifts');
+            const snapshot = await getDocs(shiftsRef);
+            let cloudShifts = [];
+            snapshot.forEach(docSnap => {
+                cloudShifts.push(docSnap.data());
+            });
+
+            let localShifts = JSON.parse(localStorage.getItem('railway_shifts') || '[]');
+
+            // תרחיש א': יש נתונים בענן ואין נתונים מקומיים באורح
+            if (cloudShifts.length > 0 && localShifts.length === 0) {
+                shifts = cloudShifts;
+                autoSortShiftsArray(shifts);
+                localStorage.setItem('railway_shifts', JSON.stringify(shifts));
+                refreshUIAfterSync();
+            } 
+            // תרחיש ב': יש נתונים בענן וגם נתונים מקומיים במכשיר
+            else if (cloudShifts.length > 0 && localShifts.length > 0) {
+                showSmartAlertDialog(
+                    'נמצאו נתונים שמורים בענן',
+                    'זוהו נתונים קודמים המשוייכים לחשבון ה-Google שלך, וגם משמרות חדשות שהוזנו מקומית במכשיר זה. האם ברצונך לטעון את נתוני הענן ולדרוס לצמיתות את המידע המקומי?',
+                    'טען נתוני ענן ודרוס מידע מקומי',
+                    'השאר נתונים מקומיים',
+                    () => {
+                        shifts = cloudShifts;
+                        autoSortShiftsArray(shifts);
+                        localStorage.setItem('railway_shifts', JSON.stringify(shifts));
+                        refreshUIAfterSync();
+                    },
+                    () => {
+                        // העלאת הנתונים המקומיים לענן עבור המשתמש הנוכחי
+                        (async () => {
+                            for (let shift of localShifts) {
+                                await setDoc(doc(db, 'users', uid, 'shifts', String(shift.id)), shift);
+                            }
+                            shifts = localShifts;
+                            refreshUIAfterSync();
+                        })();
+                    }
+                );
+            } 
+            // תרחיש ג': אין נתונים בענן אבל יש נתונים מקומיים במכשיר (אורח מילא ואז התחבר)
+            else if (cloudShifts.length === 0 && localShifts.length > 0) {
+                showSmartAlertDialog(
+                    'שמירת נתונים בענן',
+                    'נמצאו משמרות שהוזנו במכשיר זה. האם ברצונך לשמור ולגבות אותן תחת חשבון ה-Google שלך?',
+                    'שמור בענן',
+                    'דלג',
+                    async () => {
+                        for (let shift of localShifts) {
+                            await setDoc(doc(db, 'users', uid, 'shifts', String(shift.id)), shift);
+                        }
+                        shifts = localShifts;
+                        refreshUIAfterSync();
+                    },
+                    () => {
+                        shifts = localShifts;
+                        refreshUIAfterSync();
+                    }
+                );
+            } 
+            // תרחיש ד': שניהם ריקים
+            else {
+                shifts = [];
+                refreshUIAfterSync();
+            }
+        } catch (e) {
+            console.error("Sync error during auth:", e);
+            loadLocalShifts();
+        }
+    }
+
+    function refreshUIAfterSync() {
+        if (typeof renderShifts === 'function' && currentView === 'history') {
+            renderShifts();
+        }
+        if (typeof updateActiveShiftUI === 'function') {
+            updateActiveShiftUI();
+        }
+    }
+
     window.handleAuthClick = async function(event) {
         event.stopPropagation();
         
-        // מניעת פתיחת תפריט אם נמצאים במסך פרופיל
         if (currentView === 'profile') return;
 
         if (window.currentUser) {
@@ -2412,40 +2494,6 @@
                 }, 100);
             }
         );
-    };
-
-    window.syncShiftsWithCloud = async function(uid) {
-        try {
-            const shiftsRef = collection(db, 'users', uid, 'shifts');
-            const snapshot = await getDocs(shiftsRef);
-            let cloudShifts = [];
-            snapshot.forEach(docSnap => {
-                cloudShifts.push(docSnap.data());
-            });
-
-            let localShifts = JSON.parse(localStorage.getItem('railway_shifts') || '[]');
-
-            if (cloudShifts.length === 0 && localShifts.length > 0) {
-                for (let shift of localShifts) {
-                    await setDoc(doc(db, 'users', uid, 'shifts', String(shift.id)), shift);
-                }
-                shifts = localShifts;
-            } else if (cloudShifts.length > 0) {
-                shifts = cloudShifts;
-                autoSortShiftsArray(shifts);
-                localStorage.setItem('railway_shifts', JSON.stringify(shifts));
-            }
-            
-            if (typeof renderShifts === 'function' && currentView === 'history') {
-                renderShifts();
-            }
-            if (typeof updateActiveShiftUI === 'function') {
-                updateActiveShiftUI();
-            }
-        } catch (e) {
-            console.error("Sync error:", e);
-            loadLocalShifts();
-        }
     };
 
     window.loadLocalShifts = function() {
@@ -2795,10 +2843,8 @@
         currentView = viewName;
         sessionStorage.setItem('railway_active_view', viewName);
 
-        // סגירת התפריט והרקע בעת מעבר מסכים
         window.closeUserMenu();
 
-        // טיפול במצב לחיצה של כפתור הפרופיל בראש העמוד במסך פרופיל (ללא שינוי צבע/בהירות)
         const authContainer = document.getElementById('headerAuthContainer');
         if (authContainer) {
             if (viewName === 'profile') {
