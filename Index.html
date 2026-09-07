@@ -275,6 +275,11 @@
             position: relative;
         }
 
+        .header-auth-container.disabled-profile {
+            pointer-events: none;
+            opacity: 0.7;
+        }
+
         .header-auth-circle {
             width: 36px;
             height: 36px;
@@ -2305,21 +2310,31 @@
                 await signInWithPopup(auth, provider);
             } catch (error) {
                 console.error("Login error:", error);
-                if (error.code !== 'auth/cancelled-popup-request' && error.code !== 'auth/popup-closed-by-user') {
+                // מתעלמים משגיאות פופאפ פנימיות שאינן משפיעות על ההתחברות בפועל ברקע
+                if (
+                    error.code !== 'auth/cancelled-popup-request' && 
+                    error.code !== 'auth/popup-closed-by-user' && 
+                    !String(error.message || '').includes('internal')
+                ) {
                     showErrorDialog('שגיאה בהתחברות לגוגל: ' + (error.message || 'נסה שוב'));
                 }
             }
         }
     };
 
-    // סגירת התפריט בלחיצה מחוץ אליו
-    window.addEventListener('click', (e) => {
+    // טיפול בלחיצות מחוץ לתפריט וסגירתו המלאה כולל מניעת חלחול לאלמנטים ברקע
+    window.addEventListener('pointerdown', (e) => {
         const authContainer = document.getElementById('headerAuthContainer');
         const dropdown = document.getElementById('userDropdownMenu');
-        if (authContainer && dropdown && !authContainer.contains(e.target)) {
-            dropdown.classList.remove('open');
+        
+        if (dropdown && dropdown.classList.contains('open')) {
+            if (!authContainer.contains(e.target)) {
+                e.preventDefault();
+                e.stopPropagation();
+                dropdown.classList.remove('open');
+            }
         }
-    });
+    }, { capture: true });
 
     window.goToProfileView = function() {
         document.getElementById('userDropdownMenu').classList.remove('open');
@@ -2357,7 +2372,6 @@
                 }
             },
             () => {
-                // אם המשתמש לחץ ביטול, נפתח מחדש את התפריט הנפתח לנוחותו
                 setTimeout(() => {
                     if (window.currentUser && currentView !== 'profile') {
                         document.getElementById('userDropdownMenu').classList.add('open');
@@ -2747,6 +2761,20 @@
     function navigateTo(viewName, closeMenu = true) {
         currentView = viewName;
         sessionStorage.setItem('railway_active_view', viewName);
+
+        // סגירת התפריט בעת מעבר מסכים
+        const dropdown = document.getElementById('userDropdownMenu');
+        if (dropdown) dropdown.classList.remove('open');
+
+        // טיפול במצב לחיצה של כפתור הפרופיל בראש העמוד במסך פרופיל
+        const authContainer = document.getElementById('headerAuthContainer');
+        if (authContainer) {
+            if (viewName === 'profile') {
+                authContainer.classList.add('disabled-profile');
+            } else {
+                authContainer.classList.remove('disabled-profile');
+            }
+        }
 
         document.getElementById('viewClock').style.display = (viewName === 'clock') ? 'flex' : 'none';
         document.getElementById('viewHistory').style.display = (viewName === 'history') ? 'flex' : 'none';
