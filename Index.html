@@ -2298,18 +2298,33 @@
             });
 
             let localShifts = JSON.parse(localStorage.getItem('railway_shifts') || '[]');
+            let lastUser = localStorage.getItem('railway_last_user');
+            let isSameUser = (lastUser === uid);
+
+            // אם זה אותו משתמש, אנחנו מדלגים על כל ההתראות המיותרות ומסנכרנים בשקט
+            if (isSameUser) {
+                shifts = cloudShifts.length > 0 ? cloudShifts : localShifts;
+                autoSortShiftsArray(shifts);
+                localStorage.setItem('railway_shifts', JSON.stringify(shifts));
+                localStorage.setItem('railway_last_user', uid);
+                refreshUIAfterSync();
+                return;
+            }
+
+            // --- מכאן: מדובר בכניסה מחשבון חדש, גלישה בסתר, או דפדפן ריק ---
 
             // תרחיש 1: יש נתונים בענן, אך המכשיר/הדפדפן הנוכחי ריק לגמרי
             if (cloudShifts.length > 0 && localShifts.length === 0) {
                 showSmartAlertDialog(
                     'נמצאו נתונים שמורים בענן',
                     'האם ברצונך לטעון את כל המשמרות והמידע השמורים בחשבון ה-Google שלך אל תוך האפליקציה?',
-                    'טעון נתוני ענן',
+                    'טען נתוני ענן',
                     'התחל יומן חדש',
                     () => {
                         shifts = cloudShifts;
                         autoSortShiftsArray(shifts);
                         localStorage.setItem('railway_shifts', JSON.stringify(shifts));
+                        localStorage.setItem('railway_last_user', uid);
                         refreshUIAfterSync();
                     },
                     () => {
@@ -2317,56 +2332,79 @@
                             'אזהרת מחיקת נתונים בענן',
                             'שים לב! פתיחת יומן חדש תמחק לצמיתות את כל המידע שהיה שמור עד כה בחשבון ה-Google שלך. האם אתה בטוח שברצונך להמשיך?',
                             'כן, מחק והתחל חדש',
-                            'חזור לאפשרות טעינה',
+                            'חזור',
                             async () => {
-                                // מחיקת נתוני הענן הישנים ואיפוס המקומי
                                 for (let s of cloudShifts) {
                                     await deleteDoc(doc(db, 'users', uid, 'shifts', String(s.id)));
                                 }
                                 shifts = [];
                                 localStorage.setItem('railway_shifts', JSON.stringify(shifts));
+                                localStorage.setItem('railway_last_user', uid);
                                 refreshUIAfterSync();
                             },
                             () => {
                                 shifts = cloudShifts;
                                 autoSortShiftsArray(shifts);
                                 localStorage.setItem('railway_shifts', JSON.stringify(shifts));
+                                localStorage.setItem('railway_last_user', uid);
                                 refreshUIAfterSync();
                             }
                         );
                     }
                 );
             } 
-            // תרחיש 2: יש נתונים גם בענן וגם נתונים מקומיים חדשים במכשיר
+            // תרחיש 2: יש נתונים גם בענן וגם נתונים מקומיים במכשיר (כאורח) -> חסימת הדריסה האוטומטית!
             else if (cloudShifts.length > 0 && localShifts.length > 0) {
                 showSmartAlertDialog(
-                    'קיימים נתונים מקומיים וגם נתוני ענן',
-                    'נמצאו נתונים מקומיים במכשיר זה וגם נתונים שמורים בענן. האם ברצונך לטעון את נתוני הענן ולדרוס לצמיתות את המידע שנכתב מקומית ללא משתמש?',
-                    'טעון נתוני ענן ודרוס מידע מקומי',
-                    'בטל / השאר נתונים מקומיים',
+                    'התנגשות נתונים',
+                    'נמצאו משמרות מקומיות במכשיר זה (כאורח) וגם משמרות שמורות בענן. האם ברצונך לטעון את נתוני הענן (ולמחוק את המידע המקומי), או להשאיר את המידע המקומי?',
+                    'טען ענן (דרוס מקומי)',
+                    'השאר מידע מקומי',
                     () => {
                         shifts = cloudShifts;
                         autoSortShiftsArray(shifts);
                         localStorage.setItem('railway_shifts', JSON.stringify(shifts));
+                        localStorage.setItem('railway_last_user', uid);
                         refreshUIAfterSync();
                     },
                     () => {
                         shifts = localShifts;
+                        localStorage.setItem('railway_last_user', uid);
+                        (async () => {
+                            for (let shift of localShifts) {
+                                await setDoc(doc(db, 'users', uid, 'shifts', String(shift.id)), shift);
+                            }
+                        })();
                         refreshUIAfterSync();
                     }
                 );
             } 
-            // תרחיש 3: אין נתונים בענן אבל יש נתונים מקומיים (המשתמש מילא כאורח ואז התחבר)
+            // תרחיש 3: אין נתונים בענן אבל יש נתונים מקומיים
             else if (cloudShifts.length === 0 && localShifts.length > 0) {
-                for (let shift of localShifts) {
-                    await setDoc(doc(db, 'users', uid, 'shifts', String(shift.id)), shift);
-                }
-                shifts = localShifts;
-                refreshUIAfterSync();
+                showSmartAlertDialog(
+                    'גיבוי נתונים מקומיים',
+                    'נמצאו משמרות שהוזנו במכשיר זה. האם ברצונך לגבות אותן אל תוך חשבון ה-Google שלך?',
+                    'גבה לענן',
+                    'דלג',
+                    async () => {
+                        for (let shift of localShifts) {
+                            await setDoc(doc(db, 'users', uid, 'shifts', String(shift.id)), shift);
+                        }
+                        shifts = localShifts;
+                        localStorage.setItem('railway_last_user', uid);
+                        refreshUIAfterSync();
+                    },
+                    () => {
+                        shifts = localShifts;
+                        localStorage.setItem('railway_last_user', uid);
+                        refreshUIAfterSync();
+                    }
+                );
             } 
-            // תרחיש 4: שניהם ריקים
+            // תרחיש 4: הכל ריק
             else {
                 shifts = [];
+                localStorage.setItem('railway_last_user', uid);
                 refreshUIAfterSync();
             }
         } catch (e) {
@@ -2453,13 +2491,17 @@
         window.closeUserMenu();
         showSmartAlertDialog(
             'התנתקות מהמערכת',
-            'האם אתה בטוח שברצונך להתנתק מחשבון ה-Google שלך?',
+            'האם אתה בטוח שברצונך להתנתק? (הנתונים במכשיר יאופסו, אך ישארו שמורים בענן).',
             'התנתק',
             'ביטול',
             async () => {
                 try {
                     await signOut(auth);
-                    showSmartAlertDialog('התנתקות', 'התנתקת בהצלחה מהחשבון.', 'הבנתי', '', () => {}, null);
+                    shifts = [];
+                    localStorage.removeItem('railway_shifts');
+                    localStorage.removeItem('railway_last_user');
+                    refreshUIAfterSync();
+                    showSmartAlertDialog('התנתקות', 'התנתקת בהצלחה. הנתונים המקומיים אופסו.', 'הבנתי', '', () => {}, null);
                 } catch (error) {
                     console.error(error);
                 }
@@ -2491,6 +2533,7 @@
         localStorage.setItem('railway_shifts', JSON.stringify(shifts));
         
         if (window.currentUser) {
+            localStorage.setItem('railway_last_user', window.currentUser.uid);
             try {
                 await setDoc(doc(db, 'users', window.currentUser.uid, 'shifts', String(shiftObj.id)), shiftObj);
             } catch (e) {
