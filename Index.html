@@ -1430,18 +1430,20 @@
             color: #fca5a5;
         }
 
-        /* Modal Styles */
+        /* Modal Styles with Universal Dimming / Backdrop */
         .modal-overlay {
             position: fixed;
             top: 0;
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(0, 0, 0, 0.75);
+            background: rgba(11, 19, 41, 0.65);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
             display: flex;
             align-items: center; 
             justify-content: center;
-            z-index: 1000;
+            z-index: 4000;
             opacity: 0;
             pointer-events: none;
             transition: opacity 0.2s ease;
@@ -1645,18 +1647,20 @@
             border: 1px dashed var(--border-color);
         }
 
-        /* Error Dialog */
+        /* Error Dialog & Alert Dialog Overlays with Universal Dimming */
         .error-dialog-overlay {
             position: fixed;
             top: 0;
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(0, 0, 0, 0.8);
+            background: rgba(11, 19, 41, 0.7);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
             display: flex;
             align-items: center;
             justify-content: center;
-            z-index: 3000;
+            z-index: 5000;
             opacity: 0;
             pointer-events: none;
             transition: opacity 0.2s ease;
