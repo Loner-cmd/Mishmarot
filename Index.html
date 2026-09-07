@@ -326,6 +326,24 @@
             transform: scale(0.9);
         }
 
+        /* Menu Backdrop with slight dimming effect */
+        .menu-backdrop {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(11, 19, 41, 0.4);
+            backdrop-filter: blur(2px);
+            -webkit-backdrop-filter: blur(2px);
+            z-index: 1500;
+            display: none;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+
+        .menu-backdrop.open {
+            display: block;
+            opacity: 1;
+        }
+
         /* Dropdown Menu for User */
         .user-dropdown-menu {
             position: absolute;
@@ -1799,6 +1817,9 @@
 </head>
 <body>
 
+<!-- Menu Backdrop / Dimming Overlay -->
+<div id="menuBackdrop" class="menu-backdrop" onclick="closeUserMenu(event)"></div>
+
 <div class="app-container">
     <!-- Header -->
     <header id="mainHeader">
@@ -2302,7 +2323,16 @@
 
         if (window.currentUser) {
             const dropdown = document.getElementById('userDropdownMenu');
-            dropdown.classList.toggle('open');
+            const backdrop = document.getElementById('menuBackdrop');
+            const isOpen = dropdown.classList.contains('open');
+            
+            if (isOpen) {
+                dropdown.classList.remove('open');
+                backdrop.classList.remove('open');
+            } else {
+                dropdown.classList.add('open');
+                backdrop.classList.add('open');
+            }
         } else {
             const provider = new GoogleAuthProvider();
             try {
@@ -2320,37 +2350,19 @@
         }
     };
 
-    // טיפול בלחיצות מחוץ לתפריט: סגירה ובלימה מוחלטת של האירוע כך שלא יגיע לאלמנטים ברקע
-    window.addEventListener('pointerdown', (e) => {
-        const authContainer = document.getElementById('headerAuthContainer');
-        const dropdown = document.getElementById('userDropdownMenu');
-        
-        if (dropdown && dropdown.classList.contains('open')) {
-            if (!authContainer.contains(e.target)) {
-                e.preventDefault();
-                e.stopPropagation();
-                e.stopImmediatePropagation();
-                dropdown.classList.remove('open');
-            }
+    window.closeUserMenu = function(e) {
+        if(e) {
+            e.stopPropagation();
+            e.preventDefault();
         }
-    }, { capture: true });
-
-    window.addEventListener('click', (e) => {
-        const authContainer = document.getElementById('headerAuthContainer');
         const dropdown = document.getElementById('userDropdownMenu');
-        
-        if (dropdown && dropdown.classList.contains('open')) {
-            if (!authContainer.contains(e.target)) {
-                e.preventDefault();
-                e.stopPropagation();
-                e.stopImmediatePropagation();
-                dropdown.classList.remove('open');
-            }
-        }
-    }, { capture: true });
+        const backdrop = document.getElementById('menuBackdrop');
+        if (dropdown) dropdown.classList.remove('open');
+        if (backdrop) backdrop.classList.remove('open');
+    };
 
     window.goToProfileView = function() {
-        document.getElementById('userDropdownMenu').classList.remove('open');
+        window.closeUserMenu();
         if (window.currentUser) {
             document.getElementById('profileName').textContent = window.currentUser.displayName || 'משתמש רכבת';
             document.getElementById('profileEmail').textContent = window.currentUser.email || 'לא זמין';
@@ -2361,7 +2373,7 @@
     };
 
     window.openSettingsModal = function() {
-        document.getElementById('userDropdownMenu').classList.remove('open');
+        window.closeUserMenu();
         document.getElementById('settingsModal').classList.add('open');
     };
 
@@ -2370,7 +2382,7 @@
     };
 
     window.confirmSignOut = function() {
-        document.getElementById('userDropdownMenu').classList.remove('open');
+        window.closeUserMenu();
         showSmartAlertDialog(
             'התנתקות מהמערכת',
             'האם אתה בטוח שברצונך להתנתק מחשבון ה-Google שלך?',
@@ -2387,7 +2399,10 @@
             () => {
                 setTimeout(() => {
                     if (window.currentUser && currentView !== 'profile') {
-                        document.getElementById('userDropdownMenu').classList.add('open');
+                        const dropdown = document.getElementById('userDropdownMenu');
+                        const backdrop = document.getElementById('menuBackdrop');
+                        dropdown.classList.add('open');
+                        backdrop.classList.add('open');
                     }
                 }, 100);
             }
@@ -2775,9 +2790,8 @@
         currentView = viewName;
         sessionStorage.setItem('railway_active_view', viewName);
 
-        // סגירת התפריט בעת מעבר מסכים
-        const dropdown = document.getElementById('userDropdownMenu');
-        if (dropdown) dropdown.classList.remove('open');
+        // סגירת התפריט והרקע בעת מעבר מסכים
+        window.closeUserMenu();
 
         // טיפול במצב לחיצה של כפתור הפרופיל בראש העמוד במסך פרופיל (ללא שינוי צבע/בהירות)
         const authContainer = document.getElementById('headerAuthContainer');
