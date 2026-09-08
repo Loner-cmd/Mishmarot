@@ -35,76 +35,70 @@
             --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4);
         }
 
-        /* Maccabi Tel Aviv Special Theme */
+        /* Maccabi Tel Aviv Special Theme - Full Overhaul */
         body.theme-special {
-            --bg-primary: #070d1d;
-            --bg-card: #0c1a36;
-            --bg-card-inner: #132752;
-            --accent-blue: #004992;
-            --accent-cyan: #f2c100;
-            --accent-cyan-dim: rgba(242, 193, 0, 0.8);
+            --bg-primary: #001533;
+            --bg-card: #00224d;
+            --bg-card-inner: #003366;
+            --accent-blue: #ffcc00;
+            --accent-cyan: #ffcc00;
+            --accent-cyan-dim: rgba(255, 204, 0, 0.8);
             --accent-green: #22c55e;
             --accent-orange: #f97316;
-            --accent-red: #dc2626;
-            --accent-yellow: #facc15;
-            --accent-taxi: #facc15;
-            --accent-purple: #e879f9;
+            --accent-red: #ef4444;
+            --accent-yellow: #ffcc00;
+            --accent-taxi: #ffcc00;
+            --accent-purple: #f472b6;
             --text-main: #ffffff;
-            --text-muted: #cbd5e1;
-            --border-color: rgba(242, 193, 0, 0.35);
-            --shadow: 0 10px 30px -5px rgba(0, 73, 146, 0.7);
+            --text-muted: #e2e8f0;
+            --border-color: rgba(255, 204, 0, 0.6);
+            --shadow: 0 12px 30px rgba(0, 0, 0, 0.7), 0 0 20px rgba(255, 204, 0, 0.3);
             background-image: 
-                linear-gradient(135deg, rgba(7, 13, 29, 0.92) 0%, rgba(12, 26, 54, 0.92) 100%),
-                url('https://images.unsplash.com/photo-1508098682722-e99c43a406b2?q=80&w=1000&auto=format&fit=crop');
+                linear-gradient(rgba(0, 21, 51, 0.92), rgba(0, 34, 77, 0.92)),
+                url('https://images.unsplash.com/photo-1508098682722-e99c43a406b2?q=80&w=1200&auto=format&fit=crop');
             background-size: cover;
             background-position: center;
             background-attachment: fixed;
         }
 
-        body.theme-special header {
-            border: 2px solid #f2c100;
-            box-shadow: 0 0 20px rgba(242, 193, 0, 0.4), inset 0 0 15px rgba(0, 73, 146, 0.6);
-            background: linear-gradient(135deg, #0c1a36 0%, #022054 100%);
-        }
-
-        body.theme-special .bottom-nav {
-            border: 2px solid #f2c100;
-            background: linear-gradient(135deg, #0c1a36 0%, #022054 100%);
-            box-shadow: 0 0 20px rgba(242, 193, 0, 0.4);
-        }
-
-        body.theme-special .nav-indicator {
-            background: rgba(242, 193, 0, 0.25);
-            border: 1px solid #f2c100;
-        }
-
-        body.theme-special .nav-tab.active svg {
-            fill: #f2c100;
-        }
-
+        body.theme-special header,
+        body.theme-special .bottom-nav,
         body.theme-special .clock-screen-card,
         body.theme-special .month-accordion,
         body.theme-special .shift-card,
+        body.theme-special .smart-actions-wrapper,
         body.theme-special .modal-sheet,
-        body.theme-special .error-dialog-card,
-        body.theme-special .smart-actions-wrapper {
-            border: 1px solid rgba(242, 193, 0, 0.4);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.6), 0 0 15px rgba(242, 193, 0, 0.15);
-            background: linear-gradient(140deg, rgba(12, 26, 54, 0.95) 0%, rgba(7, 13, 29, 0.95) 100%);
+        body.theme-special .error-dialog-card {
+            background: linear-gradient(135deg, rgba(0, 34, 77, 0.95) 0%, rgba(0, 15, 38, 0.95) 100%),
+                        url('https://images.unsplash.com/photo-1574629810360-7efbbe195018?q=80&w=800&auto=format&fit=crop');
+            background-blend-mode: overlay;
+            background-size: cover;
+            background-position: center;
+            border: 2px solid #ffcc00 !important;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.8), 0 0 15px rgba(255, 204, 0, 0.3);
         }
 
-        body.theme-special .logo-text span {
-            color: #f2c100;
-            text-shadow: 0 0 5px rgba(242, 193, 0, 0.5);
+        body.theme-special .logo-text span,
+        body.theme-special .section-title,
+        body.theme-special .month-accordion-header,
+        body.theme-special .card-sub-title {
+            color: #ffcc00 !important;
+            text-shadow: 0 0 8px rgba(255, 204, 0, 0.4);
+        }
+
+        body.theme-special .nav-tab.active svg {
+            fill: #ffcc00 !important;
         }
 
         body.theme-special .btn-main-circle.state-idle {
-            border: 3px solid #f2c100;
-            box-shadow: 0 0 25px rgba(242, 193, 0, 0.4), inset 0 0 15px rgba(242, 193, 0, 0.2);
+            border: 4px solid #ffcc00;
+            background: linear-gradient(135deg, #00224d, #ffcc00);
+            box-shadow: 0 0 30px rgba(255, 204, 0, 0.6);
         }
+
         body.theme-special .btn-main-circle.state-idle .btn-main-text {
-            color: #f2c100;
-            text-shadow: 0 0 10px rgba(242, 193, 0, 0.6);
+            color: #ffffff;
+            text-shadow: 0 0 10px rgba(0, 0, 0, 0.9);
         }
 
         * {
