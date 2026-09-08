@@ -35,37 +35,6 @@
             --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4);
         }
 
-        /* עיצוב ספיישל לעידו משה - מכבי תל אביב */
-        [data-theme="maccabi"] {
-            --bg-primary: #02142d;
-            --bg-card: #08224a;
-            --bg-card-inner: #0d326f;
-            --accent-blue: #ffcc00;
-            --accent-cyan: #ffcc00;
-            --accent-cyan-dim: rgba(255, 204, 0, 0.85);
-            --accent-green: #22c55e;
-            --accent-orange: #f59e0b;
-            --accent-red: #ef4444;
-            --accent-yellow: #ffcc00;
-            --accent-taxi: #ffcc00;
-            --accent-purple: #facc15;
-            --text-main: #ffffff;
-            --text-muted: #cbd5e1;
-            --border-color: rgba(255, 204, 0, 0.35);
-            --shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.7), 0 0 20px rgba(255, 204, 0, 0.2);
-        }
-
-        [data-theme="maccabi"] body {
-            background-image: 
-                radial-gradient(circle at 10% 20%, rgba(255, 204, 0, 0.18) 0%, transparent 45%),
-                radial-gradient(circle at 90% 85%, rgba(0, 43, 92, 0.9) 0%, transparent 50%),
-                url('https://ssl.gstatic.com/onebox/media/sports/logos/optimized/WWQCrn2vRt4OI9qgUZKA4g_500x500.png');
-            background-repeat: no-repeat;
-            background-position: center 120px;
-            background-size: 320px;
-            background-blend-mode: overlay;
-        }
-
         * {
             box-sizing: border-box;
             margin: 0;
@@ -2242,11 +2211,8 @@
         </div>
         <div style="padding: 16px 0; display: flex; flex-direction: column; gap: 12px; color: var(--text-muted);">
             <div class="card-sub-section" style="padding: 14px; text-align: center;">
-                <p style="font-weight: 700; color: var(--accent-cyan); margin-bottom: 8px;">בחירת ערכת נושא (עיצוב)</p>
-                <select id="themeSelect" class="form-control" onchange="changeTheme(this.value)" style="height: 42px;">
-                    <option value="default">עיצוב מקורי (כהה)</option>
-                    <option value="maccabi">עיצוב ספיישל לעידו משה</option>
-                </select>
+                <p style="font-weight: 700; color: var(--accent-cyan); margin-bottom: 6px;">סקיצת הגדרות עתידיות</p>
+                <p style="font-size: 0.85rem;">כאן יופיעו בעתיד הגדרות תצוגה, התראות והעדפות אישיות.</p>
             </div>
             <button class="btn-secondary" onclick="closeSettingsModal()">סגור</button>
         </div>
@@ -2335,6 +2301,7 @@
             let lastUser = localStorage.getItem('railway_last_user');
             let isSameUser = (lastUser === uid);
 
+            // אם זה אותו משתמש, מסנכרנים בשקט (למשל סגר ופתח את האפליקציה)
             if (isSameUser) {
                 shifts = cloudShifts.length > 0 ? cloudShifts : localShifts;
                 autoSortShiftsArray(shifts);
@@ -2344,6 +2311,9 @@
                 return;
             }
 
+            // --- משתמש חדש על המכשיר, או כניסה לאחר התנתקות / גלישה בסתר ---
+
+            // תרחיש 1: אפליקציה ריקה לגמרי, יש נתונים בענן -> טעינה שקטה ומידית (כפי שביקשת)
             if (cloudShifts.length > 0 && localShifts.length === 0) {
                 shifts = cloudShifts;
                 autoSortShiftsArray(shifts);
@@ -2351,6 +2321,7 @@
                 localStorage.setItem('railway_last_user', uid);
                 refreshUIAfterSync();
             }
+            // תרחיש 2: יש משמרות מקומיות (אורח) וגם יש נתונים בענן -> עצירה! הקפצת התראה
             else if (cloudShifts.length > 0 && localShifts.length > 0) {
                 showSmartAlertDialog(
                     'התנגשות נתונים',
@@ -2367,6 +2338,7 @@
                     () => {
                         shifts = localShifts;
                         localStorage.setItem('railway_last_user', uid);
+                        // מעלה מיד את הנתונים המקומיים לענן כדי לגבות שם
                         (async () => {
                             for (let shift of localShifts) {
                                 await setDoc(doc(db, 'users', uid, 'shifts', String(shift.id)), shift);
@@ -2376,6 +2348,7 @@
                     }
                 );
             }
+            // תרחיש 3: אין נתונים בענן אבל יש נתונים מקומיים (אורח חדש שמתחבר פעם ראשונה)
             else if (cloudShifts.length === 0 && localShifts.length > 0) {
                 showSmartAlertDialog(
                     'גיבוי נתונים מקומיים',
@@ -2397,6 +2370,7 @@
                     }
                 );
             }
+            // תרחיש 4: הכל ריק
             else {
                 shifts = [];
                 localStorage.setItem('railway_last_user', uid);
@@ -2475,24 +2449,11 @@
 
     window.openSettingsModal = function() {
         window.closeUserMenu();
-        const currentTheme = localStorage.getItem('railway_theme') || 'default';
-        const themeSelect = document.getElementById('themeSelect');
-        if (themeSelect) themeSelect.value = currentTheme;
         document.getElementById('settingsModal').classList.add('open');
     };
 
     window.closeSettingsModal = function() {
         document.getElementById('settingsModal').classList.remove('open');
-    };
-
-    window.changeTheme = function(themeName) {
-        if (themeName === 'maccabi') {
-            document.documentElement.setAttribute('data-theme', 'maccabi');
-            localStorage.setItem('railway_theme', 'maccabi');
-        } else {
-            document.documentElement.removeAttribute('data-theme');
-            localStorage.setItem('railway_theme', 'default');
-        }
     };
 
     window.confirmSignOut = function() {
@@ -2505,6 +2466,7 @@
             async () => {
                 try {
                     await signOut(auth);
+                    // ניקוי מלא של הזיכרון המקומי בעת התנתקות יזומה
                     shifts = [];
                     localStorage.removeItem('railway_shifts');
                     localStorage.removeItem('railway_last_user');
@@ -2564,14 +2526,6 @@
 </script>
 
 <script>
-    // טעינת ערכת הנושא השמורה מיד בעליית הדף
-    (function() {
-        const savedTheme = localStorage.getItem('railway_theme');
-        if (savedTheme === 'maccabi') {
-            document.documentElement.setAttribute('data-theme', 'maccabi');
-        }
-    })();
-
     (function generateAppIcon() {
         const canvas = document.createElement('canvas');
         canvas.width = 512;
