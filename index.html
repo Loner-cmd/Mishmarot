@@ -98,7 +98,6 @@
             overflow: visible; 
         }
 
-        /* Top Header - Sticky mode */
         header.sticky-mode {
             position: sticky;
             top: 8px; 
@@ -263,7 +262,6 @@
             width: 100%;
         }
 
-        /* Circular Auth Button in Header */
         .header-auth-container {
             display: flex;
             flex-direction: column;
@@ -327,7 +325,6 @@
             transform: scale(0.9);
         }
 
-        /* Menu Backdrop with slight dimming effect */
         .menu-backdrop {
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
@@ -345,7 +342,6 @@
             opacity: 1;
         }
 
-        /* Dropdown Menu for User - Now sits safely ABOVE the backdrop */
         .user-dropdown-menu {
             position: absolute;
             top: 50px;
@@ -406,7 +402,6 @@
             background: rgba(239, 68, 68, 0.2);
         }
 
-        /* Bottom Navigation Bar */
         .bottom-nav-wrapper {
             position: fixed;
             bottom: 0; left: 0; right: 0;
@@ -484,14 +479,12 @@
             transform: scale(1.15);
         }
 
-        /* View Container */
         .app-view {
             display: flex;
             flex-direction: column;
             gap: 16px;
         }
 
-        /* Clock View Styles */
         .clock-screen-card {
             background: var(--bg-card);
             border-radius: 20px;
@@ -551,7 +544,6 @@
             direction: rtl;
         }
 
-        /* Main Circular Action Button */
         .main-action-wrapper {
             position: relative;
             width: 260px;
@@ -734,7 +726,6 @@
             opacity: 0.5;
         }
 
-        /* Smart Actions Header (Drawer Effect) */
         .smart-actions-wrapper {
             position: relative;
             z-index: 800;
@@ -874,7 +865,6 @@
             color: #fff;
         }
 
-        /* Monthly Accordion Styles */
         .month-accordion {
             background: var(--bg-card);
             border-radius: 16px;
@@ -1430,7 +1420,6 @@
             color: #fca5a5;
         }
 
-        /* Modal Styles with Universal Dimming / Backdrop */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -1647,7 +1636,6 @@
             border: 1px dashed var(--border-color);
         }
 
-        /* Error Dialog & Alert Dialog Overlays with Universal Dimming */
         .error-dialog-overlay {
             position: fixed;
             top: 0;
@@ -1822,11 +1810,9 @@
 </head>
 <body>
 
-<!-- Menu Backdrop / Dimming Overlay -->
 <div id="menuBackdrop" class="menu-backdrop" onclick="closeUserMenu(event)"></div>
 
 <div class="app-container">
-    <!-- Header -->
     <header id="mainHeader">
         <div class="header-right">
             <div class="logo-area">
@@ -1880,7 +1866,6 @@
             </div>
         </div>
 
-        <!-- Header Center Group (Shift Status & Timer with clean spacing) -->
         <div class="header-center-group">
             <div class="header-status-box">
                 <div id="statusIndicator" class="status-badge idle">
@@ -1891,7 +1876,6 @@
             </div>
         </div>
 
-        <!-- Circular Auth Button & Dropdown Menu -->
         <div id="headerAuthContainer" class="header-auth-container" onclick="handleAuthClick(event)">
             <div id="headerAuthCircle" class="header-auth-circle">
                 <svg viewBox="0 0 24 24">
@@ -1900,7 +1884,6 @@
             </div>
             <span id="authBtnText" class="header-auth-label">התחברות</span>
 
-            <!-- Dropdown Menu -->
             <div id="userDropdownMenu" class="user-dropdown-menu">
                 <button class="dropdown-item" onclick="goToProfileView()">פרופיל אישי</button>
                 <button class="dropdown-item" onclick="openSettingsModal()">הגדרות</button>
@@ -1913,7 +1896,6 @@
         </div>
     </header>
 
-    <!-- VIEW 1: Clock Screen -->
     <div id="viewClock" class="app-view">
         <div class="clock-screen-card">
             <div class="clock-display-wrap">
@@ -1926,7 +1908,6 @@
                 </div>
             </div>
 
-            <!-- Main Circular Action Button & Wrapper -->
             <div class="main-action-wrapper">
                 <svg class="progress-ring" viewBox="0 0 260 260">
                     <defs>
@@ -1938,7 +1919,6 @@
                     <circle id="circleProgressGlow" class="progress-ring-glow" cx="130" cy="130" r="110" filter="url(#glowBlur)"></circle>
                     <circle id="circleProgressFill" class="progress-ring-fill" cx="130" cy="130" r="110"></circle>
                 </svg>
-                <!-- Rotating Spark Container -->
                 <div class="ring-spark-container" id="ringSparkContainer">
                     <div id="ringSpark" class="ring-spark"></div>
                 </div>
@@ -1948,7 +1928,6 @@
                     <span class="btn-main-timer" id="mainActionTimer">00:00:00</span>
                 </button>
 
-                <!-- Floating Plus Button for Manual Entry -->
                 <svg id="btnPlusManual" class="svg-plus-btn" viewBox="0 0 36 36" onclick="openShiftModal(null)">
                     <line x1="18" y1="4" x2="18" y2="32" stroke="#34d399" stroke-width="4.5" stroke-linecap="round"/>
                     <line x1="4" y1="18" x2="32" y2="18" stroke="#34d399" stroke-width="4.5" stroke-linecap="round"/>
@@ -1957,7 +1936,6 @@
         </div>
     </div>
 
-    <!-- VIEW 2: History Screen -->
     <div id="viewHistory" class="app-view" style="display: none;">
         <div id="smartActionsPlaceholder" style="display: none;"></div>
         <div class="smart-actions-wrapper" id="smartActionsWrapper">
@@ -2007,12 +1985,10 @@
         <div id="shiftsContainer" class="shifts-list"></div>
     </div>
 
-    <!-- VIEW 3: Profile Screen (New View) -->
     <div id="viewProfile" class="app-view" style="display: none;">
         <div class="clock-screen-card" style="align-items: stretch; gap: 14px;">
             <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 10px;">
                 <h2 style="font-size: 1.2rem; color: #fff;">פרופיל אישי</h2>
-                <!-- Rounded X Close Button -->
                 <button class="btn-icon-action" style="background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border-color); color: var(--text-main);" onclick="navigateTo('clock')" title="חזרה">
                     <svg class="svg-icon" width="18" height="18" viewBox="0 0 24 24">
                         <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
@@ -2029,7 +2005,6 @@
                 <p id="profileEmail" style="font-size: 1rem; font-weight: 600; color: var(--accent-cyan);"></p>
             </div>
 
-            <!-- Annual & Monthly Summary Section -->
             <div class="card-sub-section" style="margin-top: 4px;">
                 <div class="card-sub-title" style="justify-content: space-between;">
                     <span>סיכום נתונים</span>
@@ -2057,7 +2032,6 @@
     </div>
 </div>
 
-<!-- Bottom Navigation Bar -->
 <div class="bottom-nav-wrapper">
     <div class="bottom-nav" id="bottomNav">
         <div class="nav-indicator" id="navIndicator"></div>
@@ -2076,7 +2050,6 @@
     </div>
 </div>
 
-<!-- Shift Modal Form -->
 <div class="modal-overlay" id="shiftModal">
     <div class="modal-sheet">
         <div class="modal-header">
@@ -2226,7 +2199,6 @@
     </div>
 </div>
 
-<!-- Settings Modal Sketch -->
 <div class="modal-overlay" id="settingsModal">
     <div class="modal-sheet">
         <div class="modal-header">
@@ -2247,7 +2219,6 @@
     </div>
 </div>
 
-<!-- Custom Error Dialog -->
 <div class="error-dialog-overlay" id="errorDialog">
     <div class="error-dialog-card">
         <div class="error-dialog-icon">
@@ -2261,7 +2232,6 @@
     </div>
 </div>
 
-<!-- Smart Action Alert Dialog -->
 <div class="error-dialog-overlay" id="smartAlertDialog">
     <div class="error-dialog-card">
         <div class="error-dialog-icon" id="smartAlertIcon">
@@ -2275,10 +2245,8 @@
     </div>
 </div>
 
-<!-- Print Area -->
 <div id="printArea" style="display: none;"></div>
 
-<!-- Firebase SDKs -->
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
@@ -2312,7 +2280,7 @@
             const displayName = user.displayName ? user.displayName.split(' ')[0] : 'מחובר';
             btnText.textContent = displayName;
             authContainer.classList.add('logged-in');
-            await syncShiftsWithCloud(user.uid);
+            await handleUserAuthenticationSync(user.uid);
         } else {
             btnText.textContent = 'התחברות';
             authContainer.classList.remove('logged-in');
@@ -2320,10 +2288,112 @@
         }
     });
 
+    async function handleUserAuthenticationSync(uid) {
+        try {
+            const shiftsRef = collection(db, 'users', uid, 'shifts');
+            const snapshot = await getDocs(shiftsRef);
+            let cloudShifts = [];
+            snapshot.forEach(docSnap => {
+                cloudShifts.push(docSnap.data());
+            });
+
+            let localShifts = JSON.parse(localStorage.getItem('railway_shifts') || '[]');
+            let lastUser = localStorage.getItem('railway_last_user');
+            let isSameUser = (lastUser === uid);
+
+            // אם זה אותו משתמש, מסנכרנים בשקט (למשל סגר ופתח את האפליקציה)
+            if (isSameUser) {
+                shifts = cloudShifts.length > 0 ? cloudShifts : localShifts;
+                autoSortShiftsArray(shifts);
+                localStorage.setItem('railway_shifts', JSON.stringify(shifts));
+                localStorage.setItem('railway_last_user', uid);
+                refreshUIAfterSync();
+                return;
+            }
+
+            // --- משתמש חדש על המכשיר, או כניסה לאחר התנתקות / גלישה בסתר ---
+
+            // תרחיש 1: אפליקציה ריקה לגמרי, יש נתונים בענן -> טעינה שקטה ומידית (כפי שביקשת)
+            if (cloudShifts.length > 0 && localShifts.length === 0) {
+                shifts = cloudShifts;
+                autoSortShiftsArray(shifts);
+                localStorage.setItem('railway_shifts', JSON.stringify(shifts));
+                localStorage.setItem('railway_last_user', uid);
+                refreshUIAfterSync();
+            }
+            // תרחיש 2: יש משמרות מקומיות (אורח) וגם יש נתונים בענן -> עצירה! הקפצת התראה
+            else if (cloudShifts.length > 0 && localShifts.length > 0) {
+                showSmartAlertDialog(
+                    'התנגשות נתונים',
+                    'נמצאו משמרות מקומיות במכשיר זה וגם משמרות שמורות בענן. האם ברצונך לטעון את נתוני הענן (ולמחוק את המידע המקומי), או להשאיר את המידע המקומי?',
+                    'טען ענן (דרוס מקומי)',
+                    'השאר מידע מקומי',
+                    () => {
+                        shifts = cloudShifts;
+                        autoSortShiftsArray(shifts);
+                        localStorage.setItem('railway_shifts', JSON.stringify(shifts));
+                        localStorage.setItem('railway_last_user', uid);
+                        refreshUIAfterSync();
+                    },
+                    () => {
+                        shifts = localShifts;
+                        localStorage.setItem('railway_last_user', uid);
+                        // מעלה מיד את הנתונים המקומיים לענן כדי לגבות שם
+                        (async () => {
+                            for (let shift of localShifts) {
+                                await setDoc(doc(db, 'users', uid, 'shifts', String(shift.id)), shift);
+                            }
+                        })();
+                        refreshUIAfterSync();
+                    }
+                );
+            }
+            // תרחיש 3: אין נתונים בענן אבל יש נתונים מקומיים (אורח חדש שמתחבר פעם ראשונה)
+            else if (cloudShifts.length === 0 && localShifts.length > 0) {
+                showSmartAlertDialog(
+                    'גיבוי נתונים מקומיים',
+                    'נמצאו משמרות שהוזנו במכשיר זה. האם ברצונך לגבות אותן אל תוך חשבון ה-Google שלך?',
+                    'גבה לענן',
+                    'דלג',
+                    async () => {
+                        for (let shift of localShifts) {
+                            await setDoc(doc(db, 'users', uid, 'shifts', String(shift.id)), shift);
+                        }
+                        shifts = localShifts;
+                        localStorage.setItem('railway_last_user', uid);
+                        refreshUIAfterSync();
+                    },
+                    () => {
+                        shifts = localShifts;
+                        localStorage.setItem('railway_last_user', uid);
+                        refreshUIAfterSync();
+                    }
+                );
+            }
+            // תרחיש 4: הכל ריק
+            else {
+                shifts = [];
+                localStorage.setItem('railway_last_user', uid);
+                refreshUIAfterSync();
+            }
+        } catch (e) {
+            console.error("Sync error during auth:", e);
+            loadLocalShifts();
+        }
+    }
+
+    function refreshUIAfterSync() {
+        if (typeof renderShifts === 'function' && currentView === 'history') {
+            renderShifts();
+        }
+        if (typeof updateActiveShiftUI === 'function') {
+            updateActiveShiftUI();
+        }
+    }
+
     window.handleAuthClick = async function(event) {
         event.stopPropagation();
         
-        // מניעת פתיחת תפריט אם נמצאים במסך פרופיל
         if (currentView === 'profile') return;
 
         if (window.currentUser) {
@@ -2390,13 +2460,18 @@
         window.closeUserMenu();
         showSmartAlertDialog(
             'התנתקות מהמערכת',
-            'האם אתה בטוח שברצונך להתנתק מחשבון ה-Google שלך?',
+            'האם אתה בטוח שברצונך להתנתק? (הנתונים במכשיר יאופסו, אך ישארו שמורים בענן).',
             'התנתק',
             'ביטול',
             async () => {
                 try {
                     await signOut(auth);
-                    showSmartAlertDialog('התנתקות', 'התנתקת בהצלחה מהחשבון.', 'הבנתי', '', () => {}, null);
+                    // ניקוי מלא של הזיכרון המקומי בעת התנתקות יזומה
+                    shifts = [];
+                    localStorage.removeItem('railway_shifts');
+                    localStorage.removeItem('railway_last_user');
+                    refreshUIAfterSync();
+                    showSmartAlertDialog('התנתקות', 'התנתקת בהצלחה. הנתונים המקומיים אופסו.', 'הבנתי', '', () => {}, null);
                 } catch (error) {
                     console.error(error);
                 }
@@ -2414,40 +2489,6 @@
         );
     };
 
-    window.syncShiftsWithCloud = async function(uid) {
-        try {
-            const shiftsRef = collection(db, 'users', uid, 'shifts');
-            const snapshot = await getDocs(shiftsRef);
-            let cloudShifts = [];
-            snapshot.forEach(docSnap => {
-                cloudShifts.push(docSnap.data());
-            });
-
-            let localShifts = JSON.parse(localStorage.getItem('railway_shifts') || '[]');
-
-            if (cloudShifts.length === 0 && localShifts.length > 0) {
-                for (let shift of localShifts) {
-                    await setDoc(doc(db, 'users', uid, 'shifts', String(shift.id)), shift);
-                }
-                shifts = localShifts;
-            } else if (cloudShifts.length > 0) {
-                shifts = cloudShifts;
-                autoSortShiftsArray(shifts);
-                localStorage.setItem('railway_shifts', JSON.stringify(shifts));
-            }
-            
-            if (typeof renderShifts === 'function' && currentView === 'history') {
-                renderShifts();
-            }
-            if (typeof updateActiveShiftUI === 'function') {
-                updateActiveShiftUI();
-            }
-        } catch (e) {
-            console.error("Sync error:", e);
-            loadLocalShifts();
-        }
-    };
-
     window.loadLocalShifts = function() {
         shifts = JSON.parse(localStorage.getItem('railway_shifts') || '[]');
         if (typeof renderShifts === 'function' && currentView === 'history') {
@@ -2462,10 +2503,11 @@
         localStorage.setItem('railway_shifts', JSON.stringify(shifts));
         
         if (window.currentUser) {
+            localStorage.setItem('railway_last_user', window.currentUser.uid);
             try {
                 await setDoc(doc(db, 'users', window.currentUser.uid, 'shifts', String(shiftObj.id)), shiftObj);
             } catch (e) {
-                console.error("Cloud save failed (will sync later):", e);
+                console.error("Cloud save failed:", e);
             }
         }
     };
@@ -2795,10 +2837,8 @@
         currentView = viewName;
         sessionStorage.setItem('railway_active_view', viewName);
 
-        // סגירת התפריט והרקע בעת מעבר מסכים
         window.closeUserMenu();
 
-        // טיפול במצב לחיצה של כפתור הפרופיל בראש העמוד במסך פרופיל (ללא שינוי צבע/בהירות)
         const authContainer = document.getElementById('headerAuthContainer');
         if (authContainer) {
             if (viewName === 'profile') {
