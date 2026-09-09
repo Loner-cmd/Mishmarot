@@ -35,101 +35,6 @@
             --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4);
         }
 
-        /* Maccabi Tel Aviv Special Theme - True Blue & Yellow Pride */
-        body.theme-special {
-            --bg-primary: #00122b;
-            --bg-card: #002347;
-            --bg-card-inner: #003366;
-            --accent-blue: #ffcc00;
-            --accent-cyan: #ffcc00;
-            --accent-cyan-dim: rgba(255, 204, 0, 0.85);
-            --accent-green: #22c55e;
-            --accent-orange: #f97316;
-            --accent-red: #ef4444;
-            --accent-yellow: #ffcc00;
-            --accent-taxi: #ffcc00;
-            --accent-purple: #f472b6;
-            --text-main: #ffffff;
-            --text-muted: #cbd5e1;
-            --border-color: rgba(255, 204, 0, 0.7);
-            --shadow: 0 12px 30px rgba(0, 0, 0, 0.85), 0 0 25px rgba(255, 204, 0, 0.4);
-            background-image: 
-                linear-gradient(135deg, rgba(0, 18, 43, 0.96) 0%, rgba(0, 35, 71, 0.96) 100%),
-                url('https://images.unsplash.com/photo-1522778119026-d647f0596c20?q=80&w=1200&auto=format&fit=crop');
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
-        }
-
-        body.theme-special header {
-            background: linear-gradient(135deg, #002347 0%, #00122b 100%);
-            border: 2px solid #ffcc00 !important;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.9), 0 0 20px rgba(255, 204, 0, 0.5);
-        }
-
-        body.theme-special .bottom-nav {
-            background: linear-gradient(135deg, #002347 0%, #00122b 100%);
-            border: 2px solid #ffcc00;
-            box-shadow: 0 0 25px rgba(255, 204, 0, 0.5);
-        }
-        body.theme-special .nav-indicator {
-            background: rgba(255, 204, 0, 0.3);
-            border: 1px solid #ffcc00;
-        }
-        body.theme-special .nav-tab.active svg {
-            fill: #ffcc00 !important;
-        }
-
-        body.theme-special .clock-screen-card,
-        body.theme-special .smart-actions-wrapper {
-            background: linear-gradient(140deg, #002347 0%, #00152e 100%);
-            border: 2px solid #ffcc00 !important;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8), 0 0 15px rgba(255, 204, 0, 0.3);
-        }
-
-        /* Month Accordion - Distinct Blue Shade */
-        body.theme-special .month-accordion {
-            background: #001933;
-            border: 2px solid #ffcc00 !important;
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.7);
-        }
-        body.theme-special .month-accordion-header {
-            background: #002a52;
-            color: #ffcc00 !important;
-        }
-
-        /* Shift Cards - Uniform Clean Maccabi Blue */
-        body.theme-special .shift-card {
-            background: #002244;
-            border: 1.5px solid #ffcc00 !important;
-            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.7);
-        }
-
-        body.theme-special .modal-sheet,
-        body.theme-special .error-dialog-card {
-            background: linear-gradient(135deg, #002c59 0%, #001428 100%);
-            border: 2.5px solid #ffcc00 !important;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.95), 0 0 25px rgba(255, 204, 0, 0.5);
-        }
-
-        body.theme-special .logo-text span,
-        body.theme-special .section-title,
-        body.theme-special .card-sub-title {
-            color: #ffcc00 !important;
-            text-shadow: 0 0 8px rgba(255, 204, 0, 0.5);
-        }
-
-        body.theme-special .btn-main-circle.state-idle {
-            border: 4px solid #ffcc00;
-            background: radial-gradient(circle, #ffcc00 0%, #002347 75%);
-            box-shadow: 0 0 35px rgba(255, 204, 0, 0.7);
-        }
-        body.theme-special .btn-main-circle.state-idle .btn-main-text {
-            color: #00122b;
-            text-shadow: none;
-            font-weight: 900;
-        }
-
         * {
             box-sizing: border-box;
             margin: 0;
@@ -1330,7 +1235,6 @@
             flex-wrap: wrap;
         }
 
-        /* ----- STAYS UNTOUCHED AS REQUESTED ----- */
         .tag {
             font-size: 0.72rem;
             font-weight: 700;
@@ -1372,7 +1276,6 @@
             color: #fca5a5;
             border: 1px solid rgba(239, 68, 68, 0.4);
         }
-        /* -------------------------------------- */
 
         .shift-details {
             max-height: 0;
@@ -2021,18 +1924,13 @@
                 </div>
                 
                 <button id="btnMainAction" class="btn-main-circle state-idle" onclick="handleMainAction()">
-                    <!-- Maccabi Shield / Star David Emblem inside main button -->
-                    <svg viewBox="0 0 24 24" style="width: 32px; height: 32px; fill: #ffcc00; margin-bottom: 4px;">
-                        <path d="M12 2L3 7v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-9-5zm0 2.18l7 3.89v5.43c0 4.54-3.11 8.82-7 9.87-3.89-1.05-7-5.33-7-9.87V8.07l7-3.89z"/>
-                        <path d="M12 7.5L9.5 12h5L12 7.5z M12 16.5L14.5 12h-5L12 16.5z"/>
-                    </svg>
                     <span class="btn-main-text" id="mainActionText">כניסה למשמרת</span>
                     <span class="btn-main-timer" id="mainActionTimer">00:00:00</span>
                 </button>
 
                 <svg id="btnPlusManual" class="svg-plus-btn" viewBox="0 0 36 36" onclick="openShiftModal(null)">
-                    <line x1="18" y1="4" x2="18" y2="32" stroke="#ffcc00" stroke-width="4.5" stroke-linecap="round"/>
-                    <line x1="4" y1="18" x2="32" y2="18" stroke="#ffcc00" stroke-width="4.5" stroke-linecap="round"/>
+                    <line x1="18" y1="4" x2="18" y2="32" stroke="#34d399" stroke-width="4.5" stroke-linecap="round"/>
+                    <line x1="4" y1="18" x2="32" y2="18" stroke="#34d399" stroke-width="4.5" stroke-linecap="round"/>
                 </svg>
             </div>
         </div>
@@ -2312,15 +2210,6 @@
             </button>
         </div>
         <div style="padding: 16px 0; display: flex; flex-direction: column; gap: 12px; color: var(--text-muted);">
-            <div class="card-sub-section" style="padding: 14px;">
-                <p style="font-weight: 700; color: var(--accent-cyan); margin-bottom: 8px;">בחירת ערכת נושא</p>
-                <div class="form-group">
-                    <select id="themeSelect" class="form-control" onchange="changeTheme(this.value)">
-                        <option value="default">עיצוב מקורי</option>
-                        <option value="special">עיצוב ספיישל</option>
-                    </select>
-                </div>
-            </div>
             <div class="card-sub-section" style="padding: 14px; text-align: center;">
                 <p style="font-weight: 700; color: var(--accent-cyan); margin-bottom: 6px;">סקיצת הגדרות עתידיות</p>
                 <p style="font-size: 0.85rem;">כאן יופיעו בעתיד הגדרות תצוגה, התראות והעדפות אישיות.</p>
@@ -2412,6 +2301,7 @@
             let lastUser = localStorage.getItem('railway_last_user');
             let isSameUser = (lastUser === uid);
 
+            // אם זה אותו משתמש, מסנכרנים בשקט (למשל סגר ופתח את האפליקציה)
             if (isSameUser) {
                 shifts = cloudShifts.length > 0 ? cloudShifts : localShifts;
                 autoSortShiftsArray(shifts);
@@ -2421,6 +2311,9 @@
                 return;
             }
 
+            // --- משתמש חדש על המכשיר, או כניסה לאחר התנתקות / גלישה בסתר ---
+
+            // תרחיש 1: אפליקציה ריקה לגמרי, יש נתונים בענן -> טעינה שקטה ומידית (כפי שביקשת)
             if (cloudShifts.length > 0 && localShifts.length === 0) {
                 shifts = cloudShifts;
                 autoSortShiftsArray(shifts);
@@ -2428,6 +2321,7 @@
                 localStorage.setItem('railway_last_user', uid);
                 refreshUIAfterSync();
             }
+            // תרחיש 2: יש משמרות מקומיות (אורח) וגם יש נתונים בענן -> עצירה! הקפצת התראה
             else if (cloudShifts.length > 0 && localShifts.length > 0) {
                 showSmartAlertDialog(
                     'התנגשות נתונים',
@@ -2444,6 +2338,7 @@
                     () => {
                         shifts = localShifts;
                         localStorage.setItem('railway_last_user', uid);
+                        // מעלה מיד את הנתונים המקומיים לענן כדי לגבות שם
                         (async () => {
                             for (let shift of localShifts) {
                                 await setDoc(doc(db, 'users', uid, 'shifts', String(shift.id)), shift);
@@ -2453,6 +2348,7 @@
                     }
                 );
             }
+            // תרחיש 3: אין נתונים בענן אבל יש נתונים מקומיים (אורח חדש שמתחבר פעם ראשונה)
             else if (cloudShifts.length === 0 && localShifts.length > 0) {
                 showSmartAlertDialog(
                     'גיבוי נתונים מקומיים',
@@ -2474,6 +2370,7 @@
                     }
                 );
             }
+            // תרחיש 4: הכל ריק
             else {
                 shifts = [];
                 localStorage.setItem('railway_last_user', uid);
@@ -2552,32 +2449,12 @@
 
     window.openSettingsModal = function() {
         window.closeUserMenu();
-        const savedTheme = localStorage.getItem('railway_app_theme') || 'default';
-        const themeSel = document.getElementById('themeSelect');
-        if (themeSel) themeSel.value = savedTheme;
         document.getElementById('settingsModal').classList.add('open');
     };
 
     window.closeSettingsModal = function() {
         document.getElementById('settingsModal').classList.remove('open');
     };
-
-    window.changeTheme = function(themeName) {
-        localStorage.setItem('railway_app_theme', themeName);
-        if (themeName === 'special') {
-            document.body.classList.add('theme-special');
-        } else {
-            document.body.classList.remove('theme-special');
-        }
-    };
-
-    // Load theme on startup
-    (function initTheme() {
-        const savedTheme = localStorage.getItem('railway_app_theme') || 'default';
-        if (savedTheme === 'special') {
-            document.body.classList.add('theme-special');
-        }
-    })();
 
     window.confirmSignOut = function() {
         window.closeUserMenu();
@@ -2589,6 +2466,7 @@
             async () => {
                 try {
                     await signOut(auth);
+                    // ניקוי מלא של הזיכרון המקומי בעת התנתקות יזומה
                     shifts = [];
                     localStorage.removeItem('railway_shifts');
                     localStorage.removeItem('railway_last_user');
