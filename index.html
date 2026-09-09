@@ -2297,85 +2297,12 @@
                 cloudShifts.push(docSnap.data());
             });
 
-            let localShifts = JSON.parse(localStorage.getItem('railway_shifts') || '[]');
-            let lastUser = localStorage.getItem('railway_last_user');
-            let isSameUser = (lastUser === uid);
-
-            // אם זה אותו משתמש, מסנכרנים בשקט (למשל סגר ופתח את האפליקציה)
-            if (isSameUser) {
-                shifts = cloudShifts.length > 0 ? cloudShifts : localShifts;
-                autoSortShiftsArray(shifts);
-                localStorage.setItem('railway_shifts', JSON.stringify(shifts));
-                localStorage.setItem('railway_last_user', uid);
-                refreshUIAfterSync();
-                return;
-            }
-
-            // --- משתמש חדש על המכשיר, או כניסה לאחר התנתקות / גלישה בסתר ---
-
-            // תרחיש 1: אפליקציה ריקה לגמרי, יש נתונים בענן -> טעינה שקטה ומידית (כפי שביקשת)
-            if (cloudShifts.length > 0 && localShifts.length === 0) {
-                shifts = cloudShifts;
-                autoSortShiftsArray(shifts);
-                localStorage.setItem('railway_shifts', JSON.stringify(shifts));
-                localStorage.setItem('railway_last_user', uid);
-                refreshUIAfterSync();
-            }
-            // תרחיש 2: יש משמרות מקומיות (אורח) וגם יש נתונים בענן -> עצירה! הקפצת התראה
-            else if (cloudShifts.length > 0 && localShifts.length > 0) {
-                showSmartAlertDialog(
-                    'התנגשות נתונים',
-                    'נמצאו משמרות מקומיות במכשיר זה וגם משמרות שמורות בענן. האם ברצונך לטעון את נתוני הענן (ולמחוק את המידע המקומי), או להשאיר את המידע המקומי?',
-                    'טען ענן (דרוס מקומי)',
-                    'השאר מידע מקומי',
-                    () => {
-                        shifts = cloudShifts;
-                        autoSortShiftsArray(shifts);
-                        localStorage.setItem('railway_shifts', JSON.stringify(shifts));
-                        localStorage.setItem('railway_last_user', uid);
-                        refreshUIAfterSync();
-                    },
-                    () => {
-                        shifts = localShifts;
-                        localStorage.setItem('railway_last_user', uid);
-                        // מעלה מיד את הנתונים המקומיים לענן כדי לגבות שם
-                        (async () => {
-                            for (let shift of localShifts) {
-                                await setDoc(doc(db, 'users', uid, 'shifts', String(shift.id)), shift);
-                            }
-                        })();
-                        refreshUIAfterSync();
-                    }
-                );
-            }
-            // תרחיש 3: אין נתונים בענן אבל יש נתונים מקומיים (אורח חדש שמתחבר פעם ראשונה)
-            else if (cloudShifts.length === 0 && localShifts.length > 0) {
-                showSmartAlertDialog(
-                    'גיבוי נתונים מקומיים',
-                    'נמצאו משמרות שהוזנו במכשיר זה. האם ברצונך לגבות אותן אל תוך חשבון ה-Google שלך?',
-                    'גבה לענן',
-                    'דלג',
-                    async () => {
-                        for (let shift of localShifts) {
-                            await setDoc(doc(db, 'users', uid, 'shifts', String(shift.id)), shift);
-                        }
-                        shifts = localShifts;
-                        localStorage.setItem('railway_last_user', uid);
-                        refreshUIAfterSync();
-                    },
-                    () => {
-                        shifts = localShifts;
-                        localStorage.setItem('railway_last_user', uid);
-                        refreshUIAfterSync();
-                    }
-                );
-            }
-            // תרחיש 4: הכל ריק
-            else {
-                shifts = [];
-                localStorage.setItem('railway_last_user', uid);
-                refreshUIAfterSync();
-            }
+            // הענן הוא המקור הקובע תמיד – דריסה שקטה ומידית של המקומי
+            shifts = cloudShifts;
+            autoSortShiftsArray(shifts);
+            localStorage.setItem('railway_shifts', JSON.stringify(shifts));
+            localStorage.setItem('railway_last_user', uid);
+            refreshUIAfterSync();
         } catch (e) {
             console.error("Sync error during auth:", e);
             loadLocalShifts();
@@ -2466,7 +2393,6 @@
             async () => {
                 try {
                     await signOut(auth);
-                    // ניקוי מלא של הזיכרון המקומי בעת התנתקות יזומה
                     shifts = [];
                     localStorage.removeItem('railway_shifts');
                     localStorage.removeItem('railway_last_user');
