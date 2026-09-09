@@ -29,6 +29,7 @@
             --accent-yellow: #eab308;
             --accent-taxi: #facc15;
             --accent-purple: #c084fc;
+            --accent-instruction: #2dd4bf;
             --text-main: #f8fafc;
             --text-muted: #94a3b8;
             --border-color: rgba(255, 255, 255, 0.1);
@@ -1265,6 +1266,12 @@
             border: 1px solid rgba(192, 132, 252, 0.35);
         }
 
+        .tag-instruction {
+            background: rgba(45, 212, 191, 0.15);
+            color: var(--accent-instruction);
+            border: 1px solid rgba(45, 212, 191, 0.35);
+        }
+
         .tag-complete {
             background: rgba(16, 185, 129, 0.15);
             color: var(--accent-green);
@@ -1436,7 +1443,7 @@
             opacity: 0;
             pointer-events: none;
             transition: opacity 0.2s ease;
-            padding: 20px; 
+            padding: 10px; 
         }
 
         .modal-overlay.open {
@@ -1450,10 +1457,10 @@
             max-width: 440px;
             border-radius: 20px; 
             border: 1px solid var(--border-color);
-            padding: 10px 16px 16px; 
-            transform: scale(0.95) translateY(20px); 
+            padding: 6px 14px 10px; 
+            transform: scale(0.95) translateY(10px); 
             transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s ease;
-            max-height: 88vh; 
+            max-height: 94vh; 
             overflow-y: auto;
         }
 
@@ -1465,13 +1472,13 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 6px; 
+            margin-bottom: 4px; 
             border-bottom: 1px solid var(--border-color);
-            padding-bottom: 6px; 
+            padding-bottom: 4px; 
         }
 
         .modal-title {
-            font-size: 1.1rem; 
+            font-size: 1.05rem; 
             font-weight: 700;
             color: #fff;
         }
@@ -1484,33 +1491,33 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 4px;
+            padding: 2px;
         }
 
         .card-sub-section {
             background: rgba(0, 0, 0, 0.15);
             border-radius: 12px;
-            padding: 8px 10px; 
-            margin-top: 4px; 
-            margin-bottom: 6px; 
+            padding: 6px 10px; 
+            margin-top: 3px; 
+            margin-bottom: 4px; 
             border: 1px solid rgba(255, 255, 255, 0.05);
         }
 
         .card-sub-title {
-            font-size: 0.85rem;
+            font-size: 0.82rem;
             font-weight: 700;
             color: var(--accent-cyan);
-            margin-bottom: 6px; 
+            margin-bottom: 4px; 
             display: flex;
             align-items: center;
             gap: 6px;
         }
 
         .form-group {
-            margin-bottom: 6px; 
+            margin-bottom: 4px; 
             display: flex;
             flex-direction: column;
-            gap: 4px; 
+            gap: 2px; 
             min-width: 0;
             width: 100%;
         }
@@ -1520,7 +1527,7 @@
         }
 
         .form-label {
-            font-size: 0.85rem;
+            font-size: 0.82rem;
             font-weight: 600;
             color: var(--text-muted);
         }
@@ -1536,9 +1543,9 @@
             background: var(--bg-card-inner);
             border: 1px solid var(--border-color);
             border-radius: 12px;
-            padding: 8px 10px; 
+            padding: 6px 10px; 
             color: #fff;
-            font-size: 0.92rem; 
+            font-size: 0.9rem; 
             outline: none;
             width: 100%;
             min-width: 0;
@@ -1546,7 +1553,7 @@
             -webkit-appearance: none;
             -moz-appearance: none;
             appearance: none;
-            height: 40px; 
+            height: 36px; 
             text-align: center;
             font-family: 'Inter', 'Assistant', sans-serif;
             font-variant-numeric: tabular-nums;
@@ -1591,21 +1598,21 @@
         .form-row {
             display: grid;
             grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-            gap: 12px;
+            gap: 10px;
             width: 100%;
         }
 
         .custom-nalt-input {
             display: none;
-            margin-top: 8px;
+            margin-top: 6px;
         }
 
         .row-error-msg {
-            font-size: 0.8rem;
+            font-size: 0.78rem;
             color: #fca5a5;
             text-align: center;
             margin-top: 2px;
-            margin-bottom: 4px; 
+            margin-bottom: 2px; 
             display: none;
             font-weight: 600;
         }
@@ -1618,9 +1625,9 @@
             width: 100%;
             background: linear-gradient(135deg, var(--accent-blue), #0066cc);
             color: white;
-            padding: 12px; 
-            border-radius: 14px;
-            font-size: 0.95rem; 
+            padding: 10px; 
+            border-radius: 12px;
+            font-size: 0.92rem; 
             font-weight: 700;
             border: none;
             cursor: pointer;
@@ -2184,6 +2191,37 @@
                 <div id="premTimeError" class="row-error-msg"></div>
             </div>
 
+            <!-- אזור מורשה בלבד: פרמיית הדרכה -->
+            <div class="card-sub-section" id="instructionSection" style="display: none;">
+                <div class="card-sub-title">
+                    <svg class="svg-icon" width="16" height="16" viewBox="0 0 24 24">
+                        <path d="M18 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 4h5v8l-2.5-1.5L6 12V4zm0 15v-2l2.5-1.5L11 17v2H6zm12 0h-5v-8l2.5 1.5L18-12v8zm0-10h-5V4h5v5z"/>
+                    </svg>
+                    פרמיית הדרכה (אופציונלי)
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">משעה</label>
+                        <div class="input-wrapper">
+                            <input type="time" id="fieldInstructionPremStart" class="form-control" onchange="validateModalRealtime(true)" oninput="validateModalRealtime(false)">
+                            <svg class="field-error-icon" viewBox="0 0 24 24">
+                                <path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">עד שעה</label>
+                        <div class="input-wrapper">
+                            <input type="time" id="fieldInstructionPremEnd" class="form-control" onchange="validateModalRealtime(true)" oninput="validateModalRealtime(false)">
+                            <svg class="field-error-icon" viewBox="0 0 24 24">
+                                <path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+                <div id="instructionPremTimeError" class="row-error-msg"></div>
+            </div>
+
             <div class="card-sub-section">
                 <div class="form-group">
                     <label class="form-label" style="display: flex; align-items: center; gap: 6px;">
@@ -2265,6 +2303,14 @@
     const auth = getAuth(app);
     const db = getFirestore(app);
 
+    const AUTHORIZED_EMAIL = "bormolei1@gmail.com";
+
+    function isUserAuthorized() {
+        return window.currentUser && window.currentUser.email === AUTHORIZED_EMAIL;
+    }
+
+    window.isUserAuthorized = isUserAuthorized;
+
     enableIndexedDbPersistence(db).catch((err) => {
         console.log("Offline persistence not available", err);
     });
@@ -2297,7 +2343,6 @@
                 cloudShifts.push(docSnap.data());
             });
 
-            // הענן הוא המקור הקובע תמיד – דריסה שקטה ומידית של המקומי
             shifts = cloudShifts;
             autoSortShiftsArray(shifts);
             localStorage.setItem('railway_shifts', JSON.stringify(shifts));
@@ -3098,6 +3143,8 @@
             naltEndMinutes: 0,
             premStartTime: '',
             premEndTime: '',
+            instructionPremStartTime: '',
+            instructionPremEndTime: '',
             fullPrem: false,
             notes: ''
         };
@@ -3823,6 +3870,7 @@
         const hasNalt = totalNaltMins > 0;
         
         const hasPrem = Boolean(shift.premStartTime || shift.premEndTime);
+        const hasInstructionPrem = Boolean(shift.instructionPremStartTime || shift.instructionPremEndTime);
         const hasSiddur = Boolean(shift.siddur && shift.siddur.trim());
         const hasNotes = Boolean(shift.notes && shift.notes.trim());
 
@@ -3836,6 +3884,7 @@
         }
 
         const premDurationMins = (shift.premStartTime && shift.premEndTime) ? calculateDurationMinutes(shift.premStartTime, shift.premEndTime) : 0;
+        const instructionPremDurationMins = (shift.instructionPremStartTime && shift.instructionPremEndTime) ? calculateDurationMinutes(shift.instructionPremStartTime, shift.instructionPremEndTime) : 0;
 
         const parts = (shift.date || '').split('-');
         const daysArr = ['ראשון', 'שני', 'שלישי', 'רביעי', 'חמישי', 'שישי', 'שבת'];
@@ -3931,6 +3980,13 @@
                                     </svg>
                                     פרמיה
                                 </span>` : ''}
+                                ${(isUserAuthorized() && hasInstructionPrem) ? `
+                                <span class="tag tag-instruction">
+                                    <svg class="svg-icon" width="12" height="12" viewBox="0 0 24 24">
+                                        <path d="M18 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 4h5v8l-2.5-1.5L6 12V4zm0 15v-2l2.5-1.5L11 17v2H6zm12 0h-5v-8l2.5 1.5L18-12v8zm0-10h-5V4h5v5z"/>
+                                    </svg>
+                                    הדרכה
+                                </span>` : ''}
                             </div>
                             <div class="badges-group-left">
                                 ${hasStart && hasEnd ? `
@@ -4011,6 +4067,14 @@
                             <div class="breakdown-item">
                                 <span class="breakdown-label">פרמיה ${premDurationMins > 0 ? '(' + formatMinutesToHM(premDurationMins) + ')' : ''}:</span>
                                 <span class="breakdown-value">${shift.premStartTime || '---'} – ${shift.premEndTime || '---'}</span>
+                            </div>
+                        </div>` : ''}
+
+                        ${(isUserAuthorized() && hasInstructionPrem) ? `
+                        <div class="sub-breakdown">
+                            <div class="breakdown-item">
+                                <span class="breakdown-label">פרמיית הדרכה ${instructionPremDurationMins > 0 ? '(' + formatMinutesToHM(instructionPremDurationMins) + ')' : ''}:</span>
+                                <span class="breakdown-value">${shift.instructionPremStartTime || '---'} – ${shift.instructionPremEndTime || '---'}</span>
                             </div>
                         </div>` : ''}
                         
@@ -4135,6 +4199,13 @@
     function openShiftModal(shiftId) {
         const modal = document.getElementById('shiftModal');
         const title = document.getElementById('modalTitle');
+        const instructionSection = document.getElementById('instructionSection');
+
+        if (isUserAuthorized()) {
+            instructionSection.style.display = 'block';
+        } else {
+            instructionSection.style.display = 'none';
+        }
 
         if (shiftId) {
             const shift = shifts.find(s => String(s.id) === String(shiftId));
@@ -4155,6 +4226,8 @@
             setNaltFieldUI('End', nEndMins);
             document.getElementById('fieldPremStart').value = shift.premStartTime || '';
             document.getElementById('fieldPremEnd').value = shift.premEndTime || '';
+            document.getElementById('fieldInstructionPremStart').value = shift.instructionPremStartTime || '';
+            document.getElementById('fieldInstructionPremEnd').value = shift.instructionPremEndTime || '';
         } else {
             const now = new Date();
             const y = now.getFullYear();
@@ -4173,6 +4246,8 @@
             setNaltFieldUI('End', 0);
             document.getElementById('fieldPremStart').value = '';
             document.getElementById('fieldPremEnd').value = '';
+            document.getElementById('fieldInstructionPremStart').value = '';
+            document.getElementById('fieldInstructionPremEnd').value = '';
         }
 
         modal.classList.add('open');
@@ -4188,14 +4263,19 @@
         const shiftEnd = document.getElementById('fieldEndTime').value || '';
         const premStart = document.getElementById('fieldPremStart').value || '';
         const premEnd = document.getElementById('fieldPremEnd').value || '';
+        const instructionPremStart = document.getElementById('fieldInstructionPremStart').value || '';
+        const instructionPremEnd = document.getElementById('fieldInstructionPremEnd').value || '';
 
         let startInvalid = false;
         let endInvalid = false;
         let bothEmptyInvalid = false;
         let premStartInvalid = false;
         let premEndInvalid = false;
+        let instructionPremStartInvalid = false;
+        let instructionPremEndInvalid = false;
         let shiftErrorMsg = '';
         let premErrorMsg = '';
+        let instructionPremErrorMsg = '';
 
         if (!shiftStart && !shiftEnd) {
             startInvalid = true;
@@ -4260,15 +4340,53 @@
             }
         }
 
+        if (instructionPremStart && (shiftStart || shiftEnd)) {
+            let ipStartMins = timeToMinutes(instructionPremStart);
+            while (ipStartMins < adjustedSStart) ipStartMins += 1440;
+            if (ipStartMins < adjustedSStart || ipStartMins > adjustedSEnd) {
+                instructionPremStartInvalid = true;
+                instructionPremErrorMsg = 'תחילת פרמיית ההדרכה חורגת מהמשמרת';
+            }
+        }
+
+        if (instructionPremEnd && (shiftEnd || shiftStart)) {
+            let ipEndMins = timeToMinutes(instructionPremEnd);
+            while (ipEndMins < adjustedSStart) ipEndMins += 1440;
+            if (ipEndMins > adjustedSEnd) {
+                instructionPremEndInvalid = true;
+                instructionPremErrorMsg = 'סיום פרמיית ההדרכה חורג מהמשמרת';
+            }
+        }
+
+        if (instructionPremStart && instructionPremEnd) {
+            let ipStartMins = timeToMinutes(instructionPremStart);
+            while (ipStartMins < adjustedSStart) ipStartMins += 1440;
+            let ipEndMins = timeToMinutes(instructionPremEnd);
+            while (ipEndMins < adjustedSStart) ipEndMins += 1440;
+            
+            let ipDuration = ipEndMins - ipStartMins;
+            if (ipDuration < 0) ipDuration += 1440;
+            let shiftDuration = adjustedSEnd - adjustedSStart;
+            
+            if (ipDuration > shiftDuration + 2 || ipDuration === 0) {
+                instructionPremStartInvalid = true;
+                instructionPremEndInvalid = true;
+                instructionPremErrorMsg = 'זמני פרמיית ההדרכה שגויים';
+            }
+        }
+
         return {
-            valid: !startInvalid && !endInvalid && !premStartInvalid && !premEndInvalid,
+            valid: !startInvalid && !endInvalid && !premStartInvalid && !premEndInvalid && !instructionPremStartInvalid && !instructionPremEndInvalid,
             startInvalid,
             endInvalid,
             bothEmptyInvalid,
             premStartInvalid,
             premEndInvalid,
+            instructionPremStartInvalid,
+            instructionPremEndInvalid,
             shiftError: shiftErrorMsg,
-            premError: premErrorMsg
+            premError: premErrorMsg,
+            instructionPremError: instructionPremErrorMsg
         };
     }
 
@@ -4277,9 +4395,12 @@
         const endInput = document.getElementById('fieldEndTime');
         const premStartInput = document.getElementById('fieldPremStart');
         const premEndInput = document.getElementById('fieldPremEnd');
+        const instructionPremStartInput = document.getElementById('fieldInstructionPremStart');
+        const instructionPremEndInput = document.getElementById('fieldInstructionPremEnd');
         
         const shiftErr = document.getElementById('shiftTimeError');
         const premErr = document.getElementById('premTimeError');
+        const instructionPremErr = document.getElementById('instructionPremTimeError');
 
         const state = getValidationState();
 
@@ -4314,6 +4435,21 @@
         } else {
             premErr.classList.remove('visible');
         }
+
+        if (instructionPremStartInput && instructionPremEndInput && instructionPremErr) {
+            if (state.instructionPremStartInvalid) instructionPremStartInput.classList.add('input-error');
+            else instructionPremStartInput.classList.remove('input-error');
+
+            if (state.instructionPremEndInvalid) instructionPremEndInput.classList.add('input-error');
+            else instructionPremEndInput.classList.remove('input-error');
+
+            if (state.instructionPremStartInvalid || state.instructionPremEndInvalid) {
+                instructionPremErr.textContent = state.instructionPremError || 'פרמיית ההדרכה מחוץ לזמני המשמרת';
+                instructionPremErr.classList.add('visible');
+            } else {
+                instructionPremErr.classList.remove('visible');
+            }
+        }
     }
 
     function saveShiftDirect() {
@@ -4335,6 +4471,8 @@
         const fullPremVal = document.getElementById('fieldFullPremModal').checked;
         const premStartVal = document.getElementById('fieldPremStart').value || '';
         const premEndVal = document.getElementById('fieldPremEnd').value || '';
+        const instructionPremStartVal = isUserAuthorized() ? (document.getElementById('fieldInstructionPremStart').value || '') : '';
+        const instructionPremEndVal = isUserAuthorized() ? (document.getElementById('fieldInstructionPremEnd').value || '') : '';
         const notesVal = document.getElementById('fieldNotes').value.trim();
 
         const validation = getValidationState();
@@ -4347,6 +4485,7 @@
             if (validation.bothEmptyInvalid) errorTitle = 'נתונים חסרים';
             else if (validation.shiftError && validation.shiftError.includes('13')) errorTitle = 'חריגת משך משמרת';
             else if (validation.premStartInvalid || validation.premEndInvalid) errorTitle = 'שגיאה בשמירת נתוני הפרמיה';
+            else if (validation.instructionPremStartInvalid || validation.instructionPremEndInvalid) errorTitle = 'שגיאה בשמירת נתוני פרמיית ההדרכה';
             
             showErrorDialog(errorMsg, errorTitle);
             return;
@@ -4368,6 +4507,8 @@
                     fullPrem: fullPremVal,
                     premStartTime: premStartVal,
                     premEndTime: premEndVal,
+                    instructionPremStartTime: instructionPremStartVal,
+                    instructionPremEndTime: instructionPremEndVal,
                     notes: notesVal
                 };
                 if (fullPremVal && startVal && startVal !== endVal) {
@@ -4387,6 +4528,8 @@
                 fullPrem: fullPremVal,
                 premStartTime: premStartVal,
                 premEndTime: premEndVal,
+                instructionPremStartTime: instructionPremStartVal,
+                instructionPremEndTime: instructionPremEndVal,
                 notes: notesVal
             };
             if (fullPremVal && startVal && startVal !== endVal) {
