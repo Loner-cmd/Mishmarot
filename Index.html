@@ -2303,10 +2303,18 @@
     const auth = getAuth(app);
     const db = getFirestore(app);
 
-    const AUTHORIZED_EMAILS = ["bormolei1@gmail.com", "phils1984@gmail.com"];
+    const AUTHORIZED_EMAILS = [
+        "bormolei1@gmail.com", 
+        "phils1984@gmail.com", 
+        "Phils1984@gmail.com",
+        "uniqueslayer6695@gmail.com",
+        "Uniqueslayer6695@gmail.com"
+    ];
 
     function isUserAuthorized() {
-        return window.currentUser && AUTHORIZED_EMAILS.includes(window.currentUser.email);
+        if (!window.currentUser || !window.currentUser.email) return false;
+        const cleanUserEmail = window.currentUser.email.trim().toLowerCase();
+        return AUTHORIZED_EMAILS.some(email => email.trim().toLowerCase() === cleanUserEmail);
     }
 
     window.isUserAuthorized = isUserAuthorized;
@@ -2323,6 +2331,7 @@
         const authContainer = document.getElementById('headerAuthContainer');
 
         if (user) {
+            console.log("Logged in user email:", user.email);
             const displayName = user.displayName ? user.displayName.split(' ')[0] : 'מחובר';
             btnText.textContent = displayName;
             authContainer.classList.add('logged-in');
