@@ -2713,16 +2713,7 @@
                     console.error(error);
                 }
             },
-            () => {
-                setTimeout(() => {
-                    if (window.currentUser && currentView !== 'profile') {
-                        const dropdown = document.getElementById('userDropdownMenu');
-                        const backdrop = document.getElementById('menuBackdrop');
-                        dropdown.classList.add('open');
-                        backdrop.classList.add('open');
-                    }
-                }, 100);
-            }
+            () => {}
         );
     };
 
