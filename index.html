@@ -1428,7 +1428,7 @@
             opacity: 0.8;
         }
 
-        /* עיצוב ייעודי לכפתורי ההעתקה הקטנים עם תגובה מיידית ואפקט חזק */
+        /* עיצוב ייעודי לכפתורי ההעתקה הקטנים עם תגובה מיידית ואפקט לחיצה מודגש וחזק */
         .copy-icon-btn {
             padding: 2px 5px;
             font-size: 0.7rem;
@@ -1439,11 +1439,14 @@
             align-items: center;
             justify-content: center;
             touch-action: manipulation;
-            transition: transform 0.08s ease, background-color 0.08s ease;
+            -webkit-user-select: none;
+            user-select: none;
+            transition: transform 0.05s ease, background-color 0.05s ease;
         }
-        .copy-icon-btn:active {
-            transform: scale(0.7) !important;
-            background-color: rgba(0, 210, 255, 0.3) !important;
+        .copy-icon-btn:active, .copy-icon-btn.pressed-copy {
+            transform: scale(0.65) !important;
+            background-color: rgba(0, 210, 255, 0.45) !important;
+            border-color: var(--accent-cyan) !important;
         }
 
         .btn-danger-outline {
@@ -2700,7 +2703,7 @@
                         <div style="display: flex; justify-content: space-between; align-items: center;">
                             <div style="display: flex; align-items: center; gap: 6px; min-width: 0;">
                                 <span style="font-size: 0.9rem; font-weight: 700; color: #fff; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${userEmail}</span>
-                                <button class="btn-secondary copy-icon-btn" onclick="navigator.clipboard.writeText('${userEmail}')" title="העתק מייל">${copySvg}</button>
+                                <button class="btn-secondary copy-icon-btn" onclick="navigator.clipboard.writeText('${userEmail}')" ontouchstart="this.classList.add('pressed-copy')" ontouchend="this.classList.remove('pressed-copy')" onmousedown="this.classList.add('pressed-copy')" onmouseup="this.classList.remove('pressed-copy')" title="העתק מייל">${copySvg}</button>
                             </div>
                             <span style="font-size: 0.72rem; font-weight: 700; padding: 2px 8px; border-radius: 6px; background: ${isInst ? 'rgba(16,185,129,0.15); color: var(--accent-green);' : 'rgba(148,163,184,0.1); color: var(--text-muted);'}">
                                 ${isInst ? 'מדריך פעיל' : 'משתמש רגיל'}
@@ -2709,7 +2712,7 @@
                         <div style="display: flex; justify-content: space-between; align-items: center; gap: 6px;">
                             <div style="display: flex; align-items: center; gap: 6px; min-width: 0;">
                                 <span style="font-size: 0.72rem; color: var(--text-muted); font-family: monospace; direction: ltr; overflow: hidden; text-overflow: ellipsis;">${uId}</span>
-                                <button class="btn-secondary copy-icon-btn" onclick="navigator.clipboard.writeText('${uId}')" title="העתק UID">${copySvg}</button>
+                                <button class="btn-secondary copy-icon-btn" onclick="navigator.clipboard.writeText('${uId}')" ontouchstart="this.classList.add('pressed-copy')" ontouchend="this.classList.remove('pressed-copy')" onmousedown="this.classList.add('pressed-copy')" onmouseup="this.classList.remove('pressed-copy')" title="העתק UID">${copySvg}</button>
                             </div>
                             <button class="btn-secondary" style="padding: 5px 12px; font-size: 0.78rem; font-weight: 700; white-space: nowrap; width: auto; background: ${isInst ? 'rgba(239,68,68,0.2); color:#fca5a5; border-color: rgba(239,68,68,0.4);' : 'rgba(16,185,129,0.2); color:#34d399; border-color: rgba(16,185,129,0.4);'}; transition: transform 0.1s ease, opacity 0.1s ease;" onclick="toggleInstructorStatus('${uId}', ${!isInst})" onmousedown="this.style.transform='scale(0.92)'" onmouseup="this.style.transform='scale(1)'" ontouchstart="this.style.transform='scale(0.92)'" ontouchend="this.style.transform='scale(1)'">
                                 ${isInst ? 'ביטול הרשאה' : 'מתן הרשאה'}
@@ -4326,7 +4329,7 @@
                         
                         ${hasNotes ? `
                         <div class="notes-display-box">
-                            <svg class="svg-icon" width="14" height="14" viewBox="0 0 24 24" style="flex-shrink: 0; margin-top: 2px; color: var(--text-muted);"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"/></svg>
+                            <svg class="svg-icon" width="14" height="14" viewBox="0 0 24 24" style="flex-shrink: 0; margin-top: 2px; color: var(--text-muted);"><path d="M20 2H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
                             <span style="flex: 1;">${shift.notes}</span>
                         </div>` : ''}
 
