@@ -29,6 +29,7 @@
             --accent-yellow: #eab308;
             --accent-taxi: #facc15;
             --accent-purple: #c084fc;
+            --accent-instructor: #38bdf8;
             --text-main: #f8fafc;
             --text-muted: #94a3b8;
             --border-color: rgba(255, 255, 255, 0.1);
@@ -1265,6 +1266,12 @@
             border: 1px solid rgba(192, 132, 252, 0.35);
         }
 
+        .tag-instructor {
+            background: rgba(56, 189, 248, 0.15);
+            color: var(--accent-instructor);
+            border: 1px solid rgba(56, 189, 248, 0.35);
+        }
+
         .tag-complete {
             background: rgba(16, 185, 129, 0.15);
             color: var(--accent-green);
@@ -1436,7 +1443,7 @@
             opacity: 0;
             pointer-events: none;
             transition: opacity 0.2s ease;
-            padding: 20px; 
+            padding: 16px; 
         }
 
         .modal-overlay.open {
@@ -1450,10 +1457,10 @@
             max-width: 440px;
             border-radius: 20px; 
             border: 1px solid var(--border-color);
-            padding: 10px 16px 16px; 
+            padding: 8px 14px 12px; 
             transform: scale(0.95) translateY(20px); 
             transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s ease;
-            max-height: 88vh; 
+            max-height: 92vh; 
             overflow-y: auto;
         }
 
@@ -1465,13 +1472,13 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 6px; 
+            margin-bottom: 4px; 
             border-bottom: 1px solid var(--border-color);
-            padding-bottom: 6px; 
+            padding-bottom: 4px; 
         }
 
         .modal-title {
-            font-size: 1.1rem; 
+            font-size: 1.05rem; 
             font-weight: 700;
             color: #fff;
         }
@@ -1489,28 +1496,28 @@
 
         .card-sub-section {
             background: rgba(0, 0, 0, 0.15);
-            border-radius: 12px;
-            padding: 8px 10px; 
-            margin-top: 4px; 
-            margin-bottom: 6px; 
+            border-radius: 10px;
+            padding: 6px 8px; 
+            margin-top: 3px; 
+            margin-bottom: 4px; 
             border: 1px solid rgba(255, 255, 255, 0.05);
         }
 
         .card-sub-title {
-            font-size: 0.85rem;
+            font-size: 0.82rem;
             font-weight: 700;
             color: var(--accent-cyan);
-            margin-bottom: 6px; 
+            margin-bottom: 4px; 
             display: flex;
             align-items: center;
             gap: 6px;
         }
 
         .form-group {
-            margin-bottom: 6px; 
+            margin-bottom: 4px; 
             display: flex;
             flex-direction: column;
-            gap: 4px; 
+            gap: 3px; 
             min-width: 0;
             width: 100%;
         }
@@ -1520,7 +1527,7 @@
         }
 
         .form-label {
-            font-size: 0.85rem;
+            font-size: 0.82rem;
             font-weight: 600;
             color: var(--text-muted);
         }
@@ -1535,10 +1542,10 @@
         .form-control {
             background: var(--bg-card-inner);
             border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 8px 10px; 
+            border-radius: 10px;
+            padding: 6px 8px; 
             color: #fff;
-            font-size: 0.92rem; 
+            font-size: 0.88rem; 
             outline: none;
             width: 100%;
             min-width: 0;
@@ -1546,7 +1553,7 @@
             -webkit-appearance: none;
             -moz-appearance: none;
             appearance: none;
-            height: 40px; 
+            height: 36px; 
             text-align: center;
             font-family: 'Inter', 'Assistant', sans-serif;
             font-variant-numeric: tabular-nums;
@@ -1563,8 +1570,8 @@
             right: 12px;
             top: 50%;
             transform: translateY(-50%);
-            width: 18px;
-            height: 18px;
+            width: 16px;
+            height: 16px;
             color: var(--accent-red);
             display: none;
             pointer-events: none;
@@ -1591,21 +1598,21 @@
         .form-row {
             display: grid;
             grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-            gap: 12px;
+            gap: 10px;
             width: 100%;
         }
 
         .custom-nalt-input {
             display: none;
-            margin-top: 8px;
+            margin-top: 6px;
         }
 
         .row-error-msg {
-            font-size: 0.8rem;
+            font-size: 0.78rem;
             color: #fca5a5;
             text-align: center;
             margin-top: 2px;
-            margin-bottom: 4px; 
+            margin-bottom: 2px; 
             display: none;
             font-weight: 600;
         }
@@ -1618,9 +1625,9 @@
             width: 100%;
             background: linear-gradient(135deg, var(--accent-blue), #0066cc);
             color: white;
-            padding: 12px; 
-            border-radius: 14px;
-            font-size: 0.95rem; 
+            padding: 10px; 
+            border-radius: 12px;
+            font-size: 0.92rem; 
             font-weight: 700;
             border: none;
             cursor: pointer;
@@ -2184,6 +2191,31 @@
                 <div id="premTimeError" class="row-error-msg"></div>
             </div>
 
+            <!-- אזור הדרכה ייעודי למדריכים בלבד -->
+            <div class="card-sub-section" id="instructorSectionModal" style="display: none;">
+                <div class="card-sub-title" style="color: var(--accent-instructor);">
+                    <svg class="svg-icon" width="16" height="16" viewBox="0 0 24 24">
+                        <path d="M12 3L1 9l11 6 9-4.91V17h2V9L12 3zM5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82z"/>
+                    </svg>
+                    פרמיית הדרכה (אופציונלי)
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">משעה</label>
+                        <div class="input-wrapper">
+                            <input type="time" id="fieldInstructorStart" class="form-control" onchange="validateModalRealtime(true)" oninput="validateModalRealtime(false)">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">עד שעה</label>
+                        <div class="input-wrapper">
+                            <input type="time" id="fieldInstructorEnd" class="form-control" onchange="validateModalRealtime(true)" oninput="validateModalRealtime(false)">
+                        </div>
+                    </div>
+                </div>
+                <div id="instructorTimeError" class="row-error-msg"></div>
+            </div>
+
             <div class="card-sub-section">
                 <div class="form-group">
                     <label class="form-label" style="display: flex; align-items: center; gap: 6px;">
@@ -2250,7 +2282,7 @@
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-    import { getFirestore, collection, doc, setDoc, getDocs, deleteDoc, enableIndexedDbPersistence } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { getFirestore, collection, doc, setDoc, getDocs, deleteDoc, getDoc, enableIndexedDbPersistence } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
     const firebaseConfig = {
         apiKey: "AIzaSyDNq260cSPIXAgbLdYAAU1pvpB-mnHRiZw",
@@ -2270,6 +2302,24 @@
     });
 
     window.currentUser = null;
+    window.isUserInstructor = false;
+
+    async function checkInstructorPermission(uid) {
+        try {
+            const instructorDocRef = doc(db, 'instructors', uid);
+            const instructorSnap = await getDoc(instructorDocRef);
+            
+            if (instructorSnap.exists() && instructorSnap.data().active === true) {
+                window.isUserInstructor = true;
+                console.log("המשתמש זוהה כמדריך מורשה");
+            } else {
+                window.isUserInstructor = false;
+            }
+        } catch (e) {
+            console.error("שגיאה בבדיקת הרשאות מדריך:", e);
+            window.isUserInstructor = false;
+        }
+    }
 
     onAuthStateChanged(auth, async (user) => {
         window.currentUser = user;
@@ -2280,8 +2330,11 @@
             const displayName = user.displayName ? user.displayName.split(' ')[0] : 'מחובר';
             btnText.textContent = displayName;
             authContainer.classList.add('logged-in');
+            
+            await checkInstructorPermission(user.uid);
             await handleUserAuthenticationSync(user.uid);
         } else {
+            window.isUserInstructor = false;
             btnText.textContent = 'התחברות';
             authContainer.classList.remove('logged-in');
             loadLocalShifts();
@@ -2301,7 +2354,6 @@
             let lastUser = localStorage.getItem('railway_last_user');
             let isSameUser = (lastUser === uid);
 
-            // אם זה אותו משתמש, מסנכרנים בשקט (למשל סגר ופתח את האפליקציה)
             if (isSameUser) {
                 shifts = cloudShifts.length > 0 ? cloudShifts : localShifts;
                 autoSortShiftsArray(shifts);
@@ -2311,9 +2363,6 @@
                 return;
             }
 
-            // --- משתמש חדש על המכשיר, או כניסה לאחר התנתקות / גלישה בסתר ---
-
-            // תרחיש 1: אפליקציה ריקה לגמרי, יש נתונים בענן -> טעינה שקטה ומידית (כפי שביקשת)
             if (cloudShifts.length > 0 && localShifts.length === 0) {
                 shifts = cloudShifts;
                 autoSortShiftsArray(shifts);
@@ -2321,7 +2370,6 @@
                 localStorage.setItem('railway_last_user', uid);
                 refreshUIAfterSync();
             }
-            // תרחיש 2: יש משמרות מקומיות (אורח) וגם יש נתונים בענן -> עצירה! הקפצת התראה
             else if (cloudShifts.length > 0 && localShifts.length > 0) {
                 showSmartAlertDialog(
                     'התנגשות נתונים',
@@ -2338,7 +2386,6 @@
                     () => {
                         shifts = localShifts;
                         localStorage.setItem('railway_last_user', uid);
-                        // מעלה מיד את הנתונים המקומיים לענן כדי לגבות שם
                         (async () => {
                             for (let shift of localShifts) {
                                 await setDoc(doc(db, 'users', uid, 'shifts', String(shift.id)), shift);
@@ -2348,7 +2395,6 @@
                     }
                 );
             }
-            // תרחיש 3: אין נתונים בענן אבל יש נתונים מקומיים (אורח חדש שמתחבר פעם ראשונה)
             else if (cloudShifts.length === 0 && localShifts.length > 0) {
                 showSmartAlertDialog(
                     'גיבוי נתונים מקומיים',
@@ -2370,7 +2416,6 @@
                     }
                 );
             }
-            // תרחיש 4: הכל ריק
             else {
                 shifts = [];
                 localStorage.setItem('railway_last_user', uid);
@@ -2466,8 +2511,8 @@
             async () => {
                 try {
                     await signOut(auth);
-                    // ניקוי מלא של הזיכרון המקומי בעת התנתקות יזומה
                     shifts = [];
+                    window.isUserInstructor = false;
                     localStorage.removeItem('railway_shifts');
                     localStorage.removeItem('railway_last_user');
                     refreshUIAfterSync();
@@ -3172,6 +3217,8 @@
             naltEndMinutes: 0,
             premStartTime: '',
             premEndTime: '',
+            instructorStartTime: '',
+            instructorEndTime: '',
             fullPrem: false,
             notes: ''
         };
@@ -3897,6 +3944,7 @@
         const hasNalt = totalNaltMins > 0;
         
         const hasPrem = Boolean(shift.premStartTime || shift.premEndTime);
+        const hasInstructor = window.isUserInstructor && Boolean(shift.instructorStartTime || shift.instructorEndTime);
         const hasSiddur = Boolean(shift.siddur && shift.siddur.trim());
         const hasNotes = Boolean(shift.notes && shift.notes.trim());
 
@@ -3910,6 +3958,7 @@
         }
 
         const premDurationMins = (shift.premStartTime && shift.premEndTime) ? calculateDurationMinutes(shift.premStartTime, shift.premEndTime) : 0;
+        const instructorDurationMins = (window.isUserInstructor && shift.instructorStartTime && shift.instructorEndTime) ? calculateDurationMinutes(shift.instructorStartTime, shift.instructorEndTime) : 0;
 
         const parts = (shift.date || '').split('-');
         const daysArr = ['ראשון', 'שני', 'שלישי', 'רביעי', 'חמישי', 'שישי', 'שבת'];
@@ -4005,6 +4054,13 @@
                                     </svg>
                                     פרמיה
                                 </span>` : ''}
+                                ${hasInstructor ? `
+                                <span class="tag tag-instructor">
+                                    <svg class="svg-icon" width="12" height="12" viewBox="0 0 24 24">
+                                        <path d="M12 3L1 9l11 6 9-4.91V17h2V9L12 3zM5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82z"/>
+                                    </svg>
+                                    הדרכה
+                                </span>` : ''}
                             </div>
                             <div class="badges-group-left">
                                 ${hasStart && hasEnd ? `
@@ -4085,6 +4141,14 @@
                             <div class="breakdown-item">
                                 <span class="breakdown-label">פרמיה ${premDurationMins > 0 ? '(' + formatMinutesToHM(premDurationMins) + ')' : ''}:</span>
                                 <span class="breakdown-value">${shift.premStartTime || '---'} – ${shift.premEndTime || '---'}</span>
+                            </div>
+                        </div>` : ''}
+
+                        ${window.isUserInstructor && hasInstructor ? `
+                        <div class="sub-breakdown" style="border-color: rgba(56, 189, 248, 0.2);">
+                            <div class="breakdown-item">
+                                <span class="breakdown-label" style="color: var(--accent-instructor);">פרמיית הדרכה ${instructorDurationMins > 0 ? '(' + formatMinutesToHM(instructorDurationMins) + ')' : ''}:</span>
+                                <span class="breakdown-value">${shift.instructorStartTime || '---'} – ${shift.instructorEndTime || '---'}</span>
                             </div>
                         </div>` : ''}
                         
@@ -4209,6 +4273,13 @@
     function openShiftModal(shiftId) {
         const modal = document.getElementById('shiftModal');
         const title = document.getElementById('modalTitle');
+        const instructorSection = document.getElementById('instructorSectionModal');
+
+        if (window.isUserInstructor) {
+            instructorSection.style.display = 'block';
+        } else {
+            instructorSection.style.display = 'none';
+        }
 
         if (shiftId) {
             const shift = shifts.find(s => String(s.id) === String(shiftId));
@@ -4229,6 +4300,10 @@
             setNaltFieldUI('End', nEndMins);
             document.getElementById('fieldPremStart').value = shift.premStartTime || '';
             document.getElementById('fieldPremEnd').value = shift.premEndTime || '';
+            if (window.isUserInstructor) {
+                document.getElementById('fieldInstructorStart').value = shift.instructorStartTime || '';
+                document.getElementById('fieldInstructorEnd').value = shift.instructorEndTime || '';
+            }
         } else {
             const now = new Date();
             const y = now.getFullYear();
@@ -4247,6 +4322,10 @@
             setNaltFieldUI('End', 0);
             document.getElementById('fieldPremStart').value = '';
             document.getElementById('fieldPremEnd').value = '';
+            if (window.isUserInstructor) {
+                document.getElementById('fieldInstructorStart').value = '';
+                document.getElementById('fieldInstructorEnd').value = '';
+            }
         }
 
         modal.classList.add('open');
@@ -4409,6 +4488,8 @@
         const fullPremVal = document.getElementById('fieldFullPremModal').checked;
         const premStartVal = document.getElementById('fieldPremStart').value || '';
         const premEndVal = document.getElementById('fieldPremEnd').value || '';
+        const instructorStartVal = window.isUserInstructor ? (document.getElementById('fieldInstructorStart').value || '') : '';
+        const instructorEndVal = window.isUserInstructor ? (document.getElementById('fieldInstructorEnd').value || '') : '';
         const notesVal = document.getElementById('fieldNotes').value.trim();
 
         const validation = getValidationState();
@@ -4442,6 +4523,8 @@
                     fullPrem: fullPremVal,
                     premStartTime: premStartVal,
                     premEndTime: premEndVal,
+                    instructorStartTime: instructorStartVal,
+                    instructorEndTime: instructorEndVal,
                     notes: notesVal
                 };
                 if (fullPremVal && startVal && startVal !== endVal) {
@@ -4461,6 +4544,8 @@
                 fullPrem: fullPremVal,
                 premStartTime: premStartVal,
                 premEndTime: premEndVal,
+                instructorStartTime: instructorStartVal,
+                instructorEndTime: instructorEndVal,
                 notes: notesVal
             };
             if (fullPremVal && startVal && startVal !== endVal) {
