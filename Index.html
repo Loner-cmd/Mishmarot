@@ -2279,6 +2279,19 @@
 
 <div id="printArea" style="display: none;"></div>
 
+<script>
+    window.closeUserMenu = function(e) {
+        if(e) {
+            e.stopPropagation();
+            e.preventDefault();
+        }
+        const dropdown = document.getElementById('userDropdownMenu');
+        const backdrop = document.getElementById('menuBackdrop');
+        if (dropdown) dropdown.classList.remove('open');
+        if (backdrop) backdrop.classList.remove('open');
+    };
+</script>
+
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
@@ -2468,17 +2481,6 @@
                 }
             }
         }
-    };
-
-    window.closeUserMenu = function(e) {
-        if(e) {
-            e.stopPropagation();
-            e.preventDefault();
-        }
-        const dropdown = document.getElementById('userDropdownMenu');
-        const backdrop = document.getElementById('menuBackdrop');
-        if (dropdown) dropdown.classList.remove('open');
-        if (backdrop) backdrop.classList.remove('open');
     };
 
     window.goToProfileView = function() {
