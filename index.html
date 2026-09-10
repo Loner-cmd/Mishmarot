@@ -2651,12 +2651,14 @@
                 const isInst = Boolean(instructorsMap[uId]);
                 const userEmail = uData.email || 'ללא מייל';
 
+                const copySvg = `<svg class="svg-icon" width="13" height="13" viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>`;
+
                 html += `
                     <div style="background: rgba(0,0,0,0.25); border: 1px solid rgba(255,255,255,0.06); border-radius: 12px; padding: 10px 12px; display: flex; flex-direction: column; gap: 8px;">
                         <div style="display: flex; justify-content: space-between; align-items: center;">
                             <div style="display: flex; align-items: center; gap: 6px; min-width: 0;">
                                 <span style="font-size: 0.9rem; font-weight: 700; color: #fff; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${userEmail}</span>
-                                <button class="btn-secondary" style="padding: 2px 6px; font-size: 0.68rem; height: 20px; line-height: 1;" onclick="navigator.clipboard.writeText('${userEmail}')">העתק</button>
+                                <button class="btn-secondary" style="padding: 2px 5px; font-size: 0.7rem; height: 22px; width: 26px; min-width: unset; display: flex; align-items: center; justify-content: center;" onclick="navigator.clipboard.writeText('${userEmail}')" title="העתק מייל">${copySvg}</button>
                             </div>
                             <span style="font-size: 0.72rem; font-weight: 700; padding: 2px 8px; border-radius: 6px; background: ${isInst ? 'rgba(16,185,129,0.15); color: var(--accent-green);' : 'rgba(148,163,184,0.1); color: var(--text-muted);'}">
                                 ${isInst ? 'מדריך פעיל' : 'משתמש רגיל'}
@@ -2665,10 +2667,10 @@
                         <div style="display: flex; justify-content: space-between; align-items: center; gap: 6px;">
                             <div style="display: flex; align-items: center; gap: 6px; min-width: 0;">
                                 <span style="font-size: 0.72rem; color: var(--text-muted); font-family: monospace; direction: ltr; overflow: hidden; text-overflow: ellipsis;">${uId}</span>
-                                <button class="btn-secondary" style="padding: 2px 6px; font-size: 0.68rem; height: 20px; line-height: 1;" onclick="navigator.clipboard.writeText('${uId}')">העתק</button>
+                                <button class="btn-secondary" style="padding: 2px 5px; font-size: 0.7rem; height: 22px; width: 26px; min-width: unset; display: flex; align-items: center; justify-content: center;" onclick="navigator.clipboard.writeText('${uId}')" title="העתק UID">${copySvg}</button>
                             </div>
-                            <button class="btn-secondary" style="padding: 5px 10px; font-size: 0.78rem; background: ${isInst ? 'rgba(239,68,68,0.2); color:#fca5a5;' : 'rgba(16,185,129,0.2); color:#34d399;'}" onclick="toggleInstructorStatus('${uId}', ${!isInst})">
-                                ${isInst ? 'ביטול הרשאה' : 'מתן הרשאה'}
+                            <button class="btn-secondary" style="padding: 4px 10px; font-size: 0.75rem; white-space: nowrap; width: auto; background: ${isInst ? 'rgba(239,68,68,0.2); color:#fca5a5;' : 'rgba(16,185,129,0.2); color:#34d399;'}" onclick="toggleInstructorStatus('${uId}', ${!isInst})">
+                                ${isInst ? 'ביטול' : 'הרשאה'}
                             </button>
                         </div>
                     </div>
