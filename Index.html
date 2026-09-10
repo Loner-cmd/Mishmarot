@@ -29,7 +29,6 @@
             --accent-yellow: #eab308;
             --accent-taxi: #facc15;
             --accent-purple: #c084fc;
-            --accent-instruction: #2dd4bf;
             --text-main: #f8fafc;
             --text-muted: #94a3b8;
             --border-color: rgba(255, 255, 255, 0.1);
@@ -1266,12 +1265,6 @@
             border: 1px solid rgba(192, 132, 252, 0.35);
         }
 
-        .tag-instruction {
-            background: rgba(45, 212, 191, 0.15);
-            color: var(--accent-instruction);
-            border: 1px solid rgba(45, 212, 191, 0.35);
-        }
-
         .tag-complete {
             background: rgba(16, 185, 129, 0.15);
             color: var(--accent-green);
@@ -1443,7 +1436,7 @@
             opacity: 0;
             pointer-events: none;
             transition: opacity 0.2s ease;
-            padding: 10px; 
+            padding: 20px; 
         }
 
         .modal-overlay.open {
@@ -1457,10 +1450,10 @@
             max-width: 440px;
             border-radius: 20px; 
             border: 1px solid var(--border-color);
-            padding: 6px 14px 10px; 
-            transform: scale(0.95) translateY(10px); 
+            padding: 10px 16px 16px; 
+            transform: scale(0.95) translateY(20px); 
             transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s ease;
-            max-height: 94vh; 
+            max-height: 88vh; 
             overflow-y: auto;
         }
 
@@ -1472,13 +1465,13 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 4px; 
+            margin-bottom: 6px; 
             border-bottom: 1px solid var(--border-color);
-            padding-bottom: 4px; 
+            padding-bottom: 6px; 
         }
 
         .modal-title {
-            font-size: 1.05rem; 
+            font-size: 1.1rem; 
             font-weight: 700;
             color: #fff;
         }
@@ -1491,33 +1484,33 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 2px;
+            padding: 4px;
         }
 
         .card-sub-section {
             background: rgba(0, 0, 0, 0.15);
             border-radius: 12px;
-            padding: 6px 10px; 
-            margin-top: 3px; 
-            margin-bottom: 4px; 
+            padding: 8px 10px; 
+            margin-top: 4px; 
+            margin-bottom: 6px; 
             border: 1px solid rgba(255, 255, 255, 0.05);
         }
 
         .card-sub-title {
-            font-size: 0.82rem;
+            font-size: 0.85rem;
             font-weight: 700;
             color: var(--accent-cyan);
-            margin-bottom: 4px; 
+            margin-bottom: 6px; 
             display: flex;
             align-items: center;
             gap: 6px;
         }
 
         .form-group {
-            margin-bottom: 4px; 
+            margin-bottom: 6px; 
             display: flex;
             flex-direction: column;
-            gap: 2px; 
+            gap: 4px; 
             min-width: 0;
             width: 100%;
         }
@@ -1527,7 +1520,7 @@
         }
 
         .form-label {
-            font-size: 0.82rem;
+            font-size: 0.85rem;
             font-weight: 600;
             color: var(--text-muted);
         }
@@ -1543,9 +1536,9 @@
             background: var(--bg-card-inner);
             border: 1px solid var(--border-color);
             border-radius: 12px;
-            padding: 6px 10px; 
+            padding: 8px 10px; 
             color: #fff;
-            font-size: 0.9rem; 
+            font-size: 0.92rem; 
             outline: none;
             width: 100%;
             min-width: 0;
@@ -1553,7 +1546,7 @@
             -webkit-appearance: none;
             -moz-appearance: none;
             appearance: none;
-            height: 36px; 
+            height: 40px; 
             text-align: center;
             font-family: 'Inter', 'Assistant', sans-serif;
             font-variant-numeric: tabular-nums;
@@ -1598,21 +1591,21 @@
         .form-row {
             display: grid;
             grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-            gap: 10px;
+            gap: 12px;
             width: 100%;
         }
 
         .custom-nalt-input {
             display: none;
-            margin-top: 6px;
+            margin-top: 8px;
         }
 
         .row-error-msg {
-            font-size: 0.78rem;
+            font-size: 0.8rem;
             color: #fca5a5;
             text-align: center;
             margin-top: 2px;
-            margin-bottom: 2px; 
+            margin-bottom: 4px; 
             display: none;
             font-weight: 600;
         }
@@ -1625,9 +1618,9 @@
             width: 100%;
             background: linear-gradient(135deg, var(--accent-blue), #0066cc);
             color: white;
-            padding: 10px; 
-            border-radius: 12px;
-            font-size: 0.92rem; 
+            padding: 12px; 
+            border-radius: 14px;
+            font-size: 0.95rem; 
             font-weight: 700;
             border: none;
             cursor: pointer;
@@ -2191,37 +2184,6 @@
                 <div id="premTimeError" class="row-error-msg"></div>
             </div>
 
-            <!-- אזור מורשה בלבד: פרמיית הדרכה -->
-            <div class="card-sub-section" id="instructionSection" style="display: none;">
-                <div class="card-sub-title">
-                    <svg class="svg-icon" width="16" height="16" viewBox="0 0 24 24">
-                        <path d="M12 3L1 9l11 6 9-4.91V17h2V9M5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82z"/>
-                    </svg>
-                    פרמיית הדרכה (אופציונלי)
-                </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label class="form-label">משעה</label>
-                        <div class="input-wrapper">
-                            <input type="time" id="fieldInstructionPremStart" class="form-control" onchange="validateModalRealtime(true)" oninput="validateModalRealtime(false)">
-                            <svg class="field-error-icon" viewBox="0 0 24 24">
-                                <path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
-                            </svg>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">עד שעה</label>
-                        <div class="input-wrapper">
-                            <input type="time" id="fieldInstructionPremEnd" class="form-control" onchange="validateModalRealtime(true)" oninput="validateModalRealtime(false)">
-                            <svg class="field-error-icon" viewBox="0 0 24 24">
-                                <path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
-                            </svg>
-                        </div>
-                    </div>
-                </div>
-                <div id="instructionPremTimeError" class="row-error-msg"></div>
-            </div>
-
             <div class="card-sub-section">
                 <div class="form-group">
                     <label class="form-label" style="display: flex; align-items: center; gap: 6px;">
@@ -2303,29 +2265,6 @@
     const auth = getAuth(app);
     const db = getFirestore(app);
 
-    const AUTHORIZED_EMAILS = [
-        "bormolei1@gmail.com", 
-        "phils1984@gmail.com",
-    ];
-
-    function isUserAuthorized() {
-        let userEmail = null;
-        if (window.currentUser && window.currentUser.email) {
-            userEmail = window.currentUser.email;
-        } else if (auth.currentUser && auth.currentUser.email) {
-            userEmail = auth.currentUser.email;
-        }
-
-        if (!userEmail) return false;
-        
-        const cleanUserEmail = userEmail.trim().toLowerCase();
-        const isAuth = AUTHORIZED_EMAILS.some(email => email.trim().toLowerCase() === cleanUserEmail);
-        console.log("Auth Check - User:", cleanUserEmail, "Authorized:", isAuth);
-        return isAuth;
-    }
-
-    window.isUserAuthorized = isUserAuthorized;
-
     enableIndexedDbPersistence(db).catch((err) => {
         console.log("Offline persistence not available", err);
     });
@@ -2338,7 +2277,6 @@
         const authContainer = document.getElementById('headerAuthContainer');
 
         if (user) {
-            console.log("Logged in user email:", user.email);
             const displayName = user.displayName ? user.displayName.split(' ')[0] : 'מחובר';
             btnText.textContent = displayName;
             authContainer.classList.add('logged-in');
@@ -2359,11 +2297,85 @@
                 cloudShifts.push(docSnap.data());
             });
 
-            shifts = cloudShifts;
-            autoSortShiftsArray(shifts);
-            localStorage.setItem('railway_shifts', JSON.stringify(shifts));
-            localStorage.setItem('railway_last_user', uid);
-            refreshUIAfterSync();
+            let localShifts = JSON.parse(localStorage.getItem('railway_shifts') || '[]');
+            let lastUser = localStorage.getItem('railway_last_user');
+            let isSameUser = (lastUser === uid);
+
+            // אם זה אותו משתמש, מסנכרנים בשקט (למשל סגר ופתח את האפליקציה)
+            if (isSameUser) {
+                shifts = cloudShifts.length > 0 ? cloudShifts : localShifts;
+                autoSortShiftsArray(shifts);
+                localStorage.setItem('railway_shifts', JSON.stringify(shifts));
+                localStorage.setItem('railway_last_user', uid);
+                refreshUIAfterSync();
+                return;
+            }
+
+            // --- משתמש חדש על המכשיר, או כניסה לאחר התנתקות / גלישה בסתר ---
+
+            // תרחיש 1: אפליקציה ריקה לגמרי, יש נתונים בענן -> טעינה שקטה ומידית (כפי שביקשת)
+            if (cloudShifts.length > 0 && localShifts.length === 0) {
+                shifts = cloudShifts;
+                autoSortShiftsArray(shifts);
+                localStorage.setItem('railway_shifts', JSON.stringify(shifts));
+                localStorage.setItem('railway_last_user', uid);
+                refreshUIAfterSync();
+            }
+            // תרחיש 2: יש משמרות מקומיות (אורח) וגם יש נתונים בענן -> עצירה! הקפצת התראה
+            else if (cloudShifts.length > 0 && localShifts.length > 0) {
+                showSmartAlertDialog(
+                    'התנגשות נתונים',
+                    'נמצאו משמרות מקומיות במכשיר זה וגם משמרות שמורות בענן. האם ברצונך לטעון את נתוני הענן (ולמחוק את המידע המקומי), או להשאיר את המידע המקומי?',
+                    'טען ענן (דרוס מקומי)',
+                    'השאר מידע מקומי',
+                    () => {
+                        shifts = cloudShifts;
+                        autoSortShiftsArray(shifts);
+                        localStorage.setItem('railway_shifts', JSON.stringify(shifts));
+                        localStorage.setItem('railway_last_user', uid);
+                        refreshUIAfterSync();
+                    },
+                    () => {
+                        shifts = localShifts;
+                        localStorage.setItem('railway_last_user', uid);
+                        // מעלה מיד את הנתונים המקומיים לענן כדי לגבות שם
+                        (async () => {
+                            for (let shift of localShifts) {
+                                await setDoc(doc(db, 'users', uid, 'shifts', String(shift.id)), shift);
+                            }
+                        })();
+                        refreshUIAfterSync();
+                    }
+                );
+            }
+            // תרחיש 3: אין נתונים בענן אבל יש נתונים מקומיים (אורח חדש שמתחבר פעם ראשונה)
+            else if (cloudShifts.length === 0 && localShifts.length > 0) {
+                showSmartAlertDialog(
+                    'גיבוי נתונים מקומיים',
+                    'נמצאו משמרות שהוזנו במכשיר זה. האם ברצונך לגבות אותן אל תוך חשבון ה-Google שלך?',
+                    'גבה לענן',
+                    'דלג',
+                    async () => {
+                        for (let shift of localShifts) {
+                            await setDoc(doc(db, 'users', uid, 'shifts', String(shift.id)), shift);
+                        }
+                        shifts = localShifts;
+                        localStorage.setItem('railway_last_user', uid);
+                        refreshUIAfterSync();
+                    },
+                    () => {
+                        shifts = localShifts;
+                        localStorage.setItem('railway_last_user', uid);
+                        refreshUIAfterSync();
+                    }
+                );
+            }
+            // תרחיש 4: הכל ריק
+            else {
+                shifts = [];
+                localStorage.setItem('railway_last_user', uid);
+                refreshUIAfterSync();
+            }
         } catch (e) {
             console.error("Sync error during auth:", e);
             loadLocalShifts();
@@ -2454,6 +2466,7 @@
             async () => {
                 try {
                     await signOut(auth);
+                    // ניקוי מלא של הזיכרון המקומי בעת התנתקות יזומה
                     shifts = [];
                     localStorage.removeItem('railway_shifts');
                     localStorage.removeItem('railway_last_user');
@@ -3159,8 +3172,6 @@
             naltEndMinutes: 0,
             premStartTime: '',
             premEndTime: '',
-            instructionPremStartTime: '',
-            instructionPremEndTime: '',
             fullPrem: false,
             notes: ''
         };
@@ -3886,7 +3897,6 @@
         const hasNalt = totalNaltMins > 0;
         
         const hasPrem = Boolean(shift.premStartTime || shift.premEndTime);
-        const hasInstructionPrem = Boolean(shift.instructionPremStartTime || shift.instructionPremEndTime);
         const hasSiddur = Boolean(shift.siddur && shift.siddur.trim());
         const hasNotes = Boolean(shift.notes && shift.notes.trim());
 
@@ -3900,7 +3910,6 @@
         }
 
         const premDurationMins = (shift.premStartTime && shift.premEndTime) ? calculateDurationMinutes(shift.premStartTime, shift.premEndTime) : 0;
-        const instructionPremDurationMins = (shift.instructionPremStartTime && shift.instructionPremEndTime) ? calculateDurationMinutes(shift.instructionPremStartTime, shift.instructionPremEndTime) : 0;
 
         const parts = (shift.date || '').split('-');
         const daysArr = ['ראשון', 'שני', 'שלישי', 'רביעי', 'חמישי', 'שישי', 'שבת'];
@@ -3996,13 +4005,6 @@
                                     </svg>
                                     פרמיה
                                 </span>` : ''}
-                                ${(isUserAuthorized() && hasInstructionPrem) ? `
-                                <span class="tag tag-instruction">
-                                    <svg class="svg-icon" width="12" height="12" viewBox="0 0 24 24">
-                                        <path d="M12 3L1 9l11 6 9-4.91V17h2V9M5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82z"/>
-                                    </svg>
-                                    הדרכה
-                                </span>` : ''}
                             </div>
                             <div class="badges-group-left">
                                 ${hasStart && hasEnd ? `
@@ -4083,14 +4085,6 @@
                             <div class="breakdown-item">
                                 <span class="breakdown-label">פרמיה ${premDurationMins > 0 ? '(' + formatMinutesToHM(premDurationMins) + ')' : ''}:</span>
                                 <span class="breakdown-value">${shift.premStartTime || '---'} – ${shift.premEndTime || '---'}</span>
-                            </div>
-                        </div>` : ''}
-
-                        ${(isUserAuthorized() && hasInstructionPrem) ? `
-                        <div class="sub-breakdown">
-                            <div class="breakdown-item">
-                                <span class="breakdown-label">פרמיית הדרכה ${instructionPremDurationMins > 0 ? '(' + formatMinutesToHM(instructionPremDurationMins) + ')' : ''}:</span>
-                                <span class="breakdown-value">${shift.instructionPremStartTime || '---'} – ${shift.instructionPremEndTime || '---'}</span>
                             </div>
                         </div>` : ''}
                         
@@ -4215,13 +4209,6 @@
     function openShiftModal(shiftId) {
         const modal = document.getElementById('shiftModal');
         const title = document.getElementById('modalTitle');
-        const instructionSection = document.getElementById('instructionSection');
-
-        if (isUserAuthorized()) {
-            instructionSection.style.display = 'block';
-        } else {
-            instructionSection.style.display = 'none';
-        }
 
         if (shiftId) {
             const shift = shifts.find(s => String(s.id) === String(shiftId));
@@ -4242,8 +4229,6 @@
             setNaltFieldUI('End', nEndMins);
             document.getElementById('fieldPremStart').value = shift.premStartTime || '';
             document.getElementById('fieldPremEnd').value = shift.premEndTime || '';
-            document.getElementById('fieldInstructionPremStart').value = shift.instructionPremStartTime || '';
-            document.getElementById('fieldInstructionPremEnd').value = shift.instructionPremEndTime || '';
         } else {
             const now = new Date();
             const y = now.getFullYear();
@@ -4262,8 +4247,6 @@
             setNaltFieldUI('End', 0);
             document.getElementById('fieldPremStart').value = '';
             document.getElementById('fieldPremEnd').value = '';
-            document.getElementById('fieldInstructionPremStart').value = '';
-            document.getElementById('fieldInstructionPremEnd').value = '';
         }
 
         modal.classList.add('open');
@@ -4279,19 +4262,14 @@
         const shiftEnd = document.getElementById('fieldEndTime').value || '';
         const premStart = document.getElementById('fieldPremStart').value || '';
         const premEnd = document.getElementById('fieldPremEnd').value || '';
-        const instructionPremStart = document.getElementById('fieldInstructionPremStart').value || '';
-        const instructionPremEnd = document.getElementById('fieldInstructionPremEnd').value || '';
 
         let startInvalid = false;
         let endInvalid = false;
         let bothEmptyInvalid = false;
         let premStartInvalid = false;
         let premEndInvalid = false;
-        let instructionPremStartInvalid = false;
-        let instructionPremEndInvalid = false;
         let shiftErrorMsg = '';
         let premErrorMsg = '';
-        let instructionPremErrorMsg = '';
 
         if (!shiftStart && !shiftEnd) {
             startInvalid = true;
@@ -4356,53 +4334,15 @@
             }
         }
 
-        if (instructionPremStart && (shiftStart || shiftEnd)) {
-            let ipStartMins = timeToMinutes(instructionPremStart);
-            while (ipStartMins < adjustedSStart) ipStartMins += 1440;
-            if (ipStartMins < adjustedSStart || ipStartMins > adjustedSEnd) {
-                instructionPremStartInvalid = true;
-                instructionPremErrorMsg = 'תחילת פרמיית ההדרכה חורגת מהמשמרת';
-            }
-        }
-
-        if (instructionPremEnd && (shiftEnd || shiftStart)) {
-            let ipEndMins = timeToMinutes(instructionPremEnd);
-            while (ipEndMins < adjustedSStart) ipEndMins += 1440;
-            if (ipEndMins > adjustedSEnd) {
-                instructionPremEndInvalid = true;
-                instructionPremErrorMsg = 'סיום פרמיית ההדרכה חורג מהמשמרת';
-            }
-        }
-
-        if (instructionPremStart && instructionPremEnd) {
-            let ipStartMins = timeToMinutes(instructionPremStart);
-            while (ipStartMins < adjustedSStart) ipStartMins += 1440;
-            let ipEndMins = timeToMinutes(instructionPremEnd);
-            while (ipEndMins < adjustedSStart) ipEndMins += 1440;
-            
-            let ipDuration = ipEndMins - ipStartMins;
-            if (ipDuration < 0) ipDuration += 1440;
-            let shiftDuration = adjustedSEnd - adjustedSStart;
-            
-            if (ipDuration > shiftDuration + 2 || ipDuration === 0) {
-                instructionPremStartInvalid = true;
-                instructionPremEndInvalid = true;
-                instructionPremErrorMsg = 'זמני פרמיית ההדרכה שגויים';
-            }
-        }
-
         return {
-            valid: !startInvalid && !endInvalid && !premStartInvalid && !premEndInvalid && !instructionPremStartInvalid && !instructionPremEndInvalid,
+            valid: !startInvalid && !endInvalid && !premStartInvalid && !premEndInvalid,
             startInvalid,
             endInvalid,
             bothEmptyInvalid,
             premStartInvalid,
             premEndInvalid,
-            instructionPremStartInvalid,
-            instructionPremEndInvalid,
             shiftError: shiftErrorMsg,
-            premError: premErrorMsg,
-            instructionPremError: instructionPremErrorMsg
+            premError: premErrorMsg
         };
     }
 
@@ -4411,12 +4351,9 @@
         const endInput = document.getElementById('fieldEndTime');
         const premStartInput = document.getElementById('fieldPremStart');
         const premEndInput = document.getElementById('fieldPremEnd');
-        const instructionPremStartInput = document.getElementById('fieldInstructionPremStart');
-        const instructionPremEndInput = document.getElementById('fieldInstructionPremEnd');
         
         const shiftErr = document.getElementById('shiftTimeError');
         const premErr = document.getElementById('premTimeError');
-        const instructionPremErr = document.getElementById('instructionPremTimeError');
 
         const state = getValidationState();
 
@@ -4451,21 +4388,6 @@
         } else {
             premErr.classList.remove('visible');
         }
-
-        if (instructionPremStartInput && instructionPremEndInput && instructionPremErr) {
-            if (state.instructionPremStartInvalid) instructionPremStartInput.classList.add('input-error');
-            else instructionPremStartInput.classList.remove('input-error');
-
-            if (state.instructionPremEndInvalid) instructionPremEndInput.classList.add('input-error');
-            else instructionPremEndInput.classList.remove('input-error');
-
-            if (state.instructionPremStartInvalid || state.instructionPremEndInvalid) {
-                instructionPremErr.textContent = state.instructionPremError || 'פרמיית ההדרכה מחוץ לזמני המשמרת';
-                instructionPremErr.classList.add('visible');
-            } else {
-                instructionPremErr.classList.remove('visible');
-            }
-        }
     }
 
     function saveShiftDirect() {
@@ -4487,8 +4409,6 @@
         const fullPremVal = document.getElementById('fieldFullPremModal').checked;
         const premStartVal = document.getElementById('fieldPremStart').value || '';
         const premEndVal = document.getElementById('fieldPremEnd').value || '';
-        const instructionPremStartVal = isUserAuthorized() ? (document.getElementById('fieldInstructionPremStart').value || '') : '';
-        const instructionPremEndVal = isUserAuthorized() ? (document.getElementById('fieldInstructionPremEnd').value || '') : '';
         const notesVal = document.getElementById('fieldNotes').value.trim();
 
         const validation = getValidationState();
@@ -4501,7 +4421,6 @@
             if (validation.bothEmptyInvalid) errorTitle = 'נתונים חסרים';
             else if (validation.shiftError && validation.shiftError.includes('13')) errorTitle = 'חריגת משך משמרת';
             else if (validation.premStartInvalid || validation.premEndInvalid) errorTitle = 'שגיאה בשמירת נתוני הפרמיה';
-            else if (validation.instructionPremStartInvalid || validation.instructionPremEndInvalid) errorTitle = 'שגיאה בשמירת נתוני פרמיית ההדרכה';
             
             showErrorDialog(errorMsg, errorTitle);
             return;
@@ -4523,8 +4442,6 @@
                     fullPrem: fullPremVal,
                     premStartTime: premStartVal,
                     premEndTime: premEndVal,
-                    instructionPremStartTime: instructionPremStartVal,
-                    instructionPremEndTime: instructionPremEndVal,
                     notes: notesVal
                 };
                 if (fullPremVal && startVal && startVal !== endVal) {
@@ -4544,8 +4461,6 @@
                 fullPrem: fullPremVal,
                 premStartTime: premStartVal,
                 premEndTime: premEndVal,
-                instructionPremStartTime: instructionPremStartVal,
-                instructionPremEndTime: instructionPremEndVal,
                 notes: notesVal
             };
             if (fullPremVal && startVal && startVal !== endVal) {
