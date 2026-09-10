@@ -2709,7 +2709,6 @@
                     localStorage.removeItem('railway_shifts');
                     localStorage.removeItem('railway_last_user');
                     refreshUIAfterSync();
-                    showSmartAlertDialog('התנתקות', 'התנתקת בהצלחה. הנתונים המקומיים אופסו.', 'הבנתי', '', () => {}, null);
                 } catch (error) {
                     console.error(error);
                 }
