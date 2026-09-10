@@ -2439,12 +2439,6 @@
         if (dropdown) dropdown.classList.remove('open');
         if (backdrop) backdrop.classList.remove('open');
     };
-
-    // פונקציה חדשה שסוגרת אך ורק את התפריט עצמו מבלי לכבות את ההחשכה (לשימוש בהגדרות והתנתקות)
-    window.closeDropdownOnly = function() {
-        const dropdown = document.getElementById('userDropdownMenu');
-        if (dropdown) dropdown.classList.remove('open');
-    };
 </script>
 
 <script type="module">
@@ -2654,7 +2648,7 @@
             const provider = new GoogleAuthProvider();
             try {
                 await signInWithPopup(auth, provider);
-            } catch (error) {
+            } catch (error)  {
                 console.error("Login error:", error);
                 if (
                     error.code !== 'auth/cancelled-popup-request' && 
@@ -2692,19 +2686,26 @@
     };
 
     window.openSettingsModal = function() {
-        window.closeDropdownOnly(); // סגירת התפריט בלבד והשארת ההחשכה והרקע פעילים
+        // סגירת התפריט בלבד מיד בלחיצה, תוך שמירה על ההחשכה ברקע לחלון ההגדרות
+        const dropdown = document.getElementById('userDropdownMenu');
+        if (dropdown) dropdown.classList.remove('open');
         document.getElementById('settingsModal').classList.add('open');
     };
 
     window.closeSettingsModal = function() {
         document.getElementById('settingsModal').classList.remove('open');
-        // סגירת ההחשכה לחלוטין בסגירת חלון ההגדרות
+        // איפוס מלא של ההחשכה והתפריט כדי שלחיצה רנדומלית במסך תחזור לתפקד
+        const dropdown = document.getElementById('userDropdownMenu');
         const backdrop = document.getElementById('menuBackdrop');
+        if (dropdown) dropdown.classList.remove('open');
         if (backdrop) backdrop.classList.remove('open');
     };
 
     window.confirmSignOut = function() {
-        window.closeDropdownOnly(); // סגירת התפריט בלבד והשארת ההחשכה לפעילות חלון האישור
+        // סגירת התפריט בלבד מיד בלחיצה, תוך שמירה על ההחשכה לחלון האישור
+        const dropdown = document.getElementById('userDropdownMenu');
+        if (dropdown) dropdown.classList.remove('open');
+
         showSmartAlertDialog(
             'התנתקות מהמערכת',
             'האם אתה בטוח שברצונך להתנתק? (הנתונים במכשיר יאופסו, אך ישארו שמורים בענן).',
@@ -2712,7 +2713,6 @@
             'ביטול',
             async () => {
                 try {
-                    // כיבוי ההחשכה מיד עם לחיצה על התנתקות
                     const backdrop = document.getElementById('menuBackdrop');
                     if (backdrop) backdrop.classList.remove('open');
 
@@ -2727,7 +2727,6 @@
                 }
             },
             () => {
-                // במקרה של ביטול, נכבה את ההחשכה
                 const backdrop = document.getElementById('menuBackdrop');
                 if (backdrop) backdrop.classList.remove('open');
             }
