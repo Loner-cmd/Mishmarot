@@ -1420,6 +1420,12 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            transition: transform 0.1s ease, background-color 0.1s ease, opacity 0.1s ease;
+        }
+
+        .btn-secondary:active, button:active, .admin-action-btn:active {
+            transform: scale(0.95);
+            opacity: 0.8;
         }
 
         .btn-danger-outline {
@@ -1632,6 +1638,12 @@
             border: none;
             cursor: pointer;
             margin-top: 4px; 
+            transition: transform 0.1s ease, opacity 0.1s ease;
+        }
+
+        .btn-save-modal:active {
+            transform: scale(0.97);
+            opacity: 0.85;
         }
 
         .empty-state {
@@ -1726,6 +1738,10 @@
             font-weight: 700;
             border: none;
             cursor: pointer;
+            transition: transform 0.1s ease;
+        }
+        .btn-dialog-action:active {
+            transform: scale(0.96);
         }
 
         .btn-dialog-confirm {
@@ -2015,8 +2031,11 @@
 
             <!-- כפתור ניהול מיוחד למנהל העל בלבד -->
             <div id="ownerAdminBtnContainer" style="display: none;">
-                <button class="btn-secondary" style="width: 100%; background: rgba(0, 210, 255, 0.15); border-color: var(--accent-cyan); color: var(--accent-cyan); font-weight: 700; padding: 12px;" onclick="navigateTo('admin')">
-                    ניהול מערכת הרשאות ⚙️
+                <button class="btn-secondary" style="width: 100%; background: rgba(0, 210, 255, 0.15); border-color: var(--accent-cyan); color: var(--accent-cyan); font-weight: 700; padding: 12px; display: flex; align-items: center; justify-content: center; gap: 8px;" onclick="navigateTo('admin')">
+                    <svg class="svg-icon" width="18" height="18" viewBox="0 0 24 24">
+                        <path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/>
+                    </svg>
+                    ניהול מערכת הרשאות
                 </button>
             </div>
 
@@ -2050,7 +2069,12 @@
     <div id="viewAdmin" class="app-view" style="display: none;">
         <div class="clock-screen-card" style="align-items: stretch; gap: 14px;">
             <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 10px;">
-                <h2 style="font-size: 1.2rem; color: var(--accent-cyan);">פאנל ניהול הרשאות ⚙️</h2>
+                <h2 style="font-size: 1.2rem; color: var(--accent-cyan); display: flex; align-items: center; gap: 8px;">
+                    <svg class="svg-icon" width="20" height="20" viewBox="0 0 24 24">
+                        <path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/>
+                    </svg>
+                    פאנל ניהול הרשאות
+                </h2>
                 <button class="btn-icon-action" style="background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border-color); color: var(--text-main);" onclick="navigateTo('profile')" title="חזרה">
                     <svg class="svg-icon" width="18" height="18" viewBox="0 0 24 24">
                         <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
@@ -2669,8 +2693,8 @@
                                 <span style="font-size: 0.72rem; color: var(--text-muted); font-family: monospace; direction: ltr; overflow: hidden; text-overflow: ellipsis;">${uId}</span>
                                 <button class="btn-secondary" style="padding: 2px 5px; font-size: 0.7rem; height: 22px; width: 26px; min-width: unset; display: flex; align-items: center; justify-content: center;" onclick="navigator.clipboard.writeText('${uId}')" title="העתק UID">${copySvg}</button>
                             </div>
-                            <button class="btn-secondary" style="padding: 4px 10px; font-size: 0.75rem; white-space: nowrap; width: auto; background: ${isInst ? 'rgba(239,68,68,0.2); color:#fca5a5;' : 'rgba(16,185,129,0.2); color:#34d399;'}" onclick="toggleInstructorStatus('${uId}', ${!isInst})">
-                                ${isInst ? 'ביטול' : 'הרשאה'}
+                            <button class="btn-secondary" style="padding: 5px 12px; font-size: 0.78rem; font-weight: 700; white-space: nowrap; width: auto; background: ${isInst ? 'rgba(239,68,68,0.2); color:#fca5a5; border-color: rgba(239,68,68,0.4);' : 'rgba(16,185,129,0.2); color:#34d399; border-color: rgba(16,185,129,0.4);'}; transition: transform 0.1s ease, opacity 0.1s ease;" onclick="toggleInstructorStatus('${uId}', ${!isInst})" onmousedown="this.style.transform='scale(0.95)'" onmouseup="this.style.transform='scale(1)'" ontouchstart="this.style.transform='scale(0.95)'" ontouchend="this.style.transform='scale(1)'">
+                                ${isInst ? 'ביטול הרשאה' : 'מתן הרשאה'}
                             </button>
                         </div>
                     </div>
