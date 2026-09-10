@@ -1420,6 +1420,12 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            transition: transform 0.1s ease, background-color 0.1s ease, opacity 0.1s ease;
+        }
+
+        .btn-secondary:active, button:active, .admin-action-btn:active {
+            transform: scale(0.95);
+            opacity: 0.8;
         }
 
         .btn-danger-outline {
@@ -1632,6 +1638,12 @@
             border: none;
             cursor: pointer;
             margin-top: 4px; 
+            transition: transform 0.1s ease, opacity 0.1s ease;
+        }
+
+        .btn-save-modal:active {
+            transform: scale(0.97);
+            opacity: 0.85;
         }
 
         .empty-state {
@@ -1726,6 +1738,10 @@
             font-weight: 700;
             border: none;
             cursor: pointer;
+            transition: transform 0.1s ease;
+        }
+        .btn-dialog-action:active {
+            transform: scale(0.96);
         }
 
         .btn-dialog-confirm {
@@ -1992,6 +2008,7 @@
         <div id="shiftsContainer" class="shifts-list"></div>
     </div>
 
+    <!-- מסך פרופיל אישי -->
     <div id="viewProfile" class="app-view" style="display: none;">
         <div class="clock-screen-card" style="align-items: stretch; gap: 14px;">
             <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 10px;">
@@ -2010,6 +2027,16 @@
             <div class="card-sub-section">
                 <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 4px;">כתובת מייל:</p>
                 <p id="profileEmail" style="font-size: 1rem; font-weight: 600; color: var(--accent-cyan);"></p>
+            </div>
+
+            <!-- כפתור ניהול מיוחד למנהל העל בלבד -->
+            <div id="ownerAdminBtnContainer" style="display: none;">
+                <button class="btn-secondary" style="width: 100%; background: rgba(0, 210, 255, 0.15); border-color: var(--accent-cyan); color: var(--accent-cyan); font-weight: 700; padding: 12px; display: flex; align-items: center; justify-content: center; gap: 8px;" onclick="navigateTo('admin')">
+                    <svg class="svg-icon" width="18" height="18" viewBox="0 0 24 24">
+                        <path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/>
+                    </svg>
+                    ניהול מערכת הרשאות
+                </button>
             </div>
 
             <div class="card-sub-section" style="margin-top: 4px;">
@@ -2033,6 +2060,32 @@
                         <span class="stat-label">נל״ת</span>
                         <span class="stat-val" id="profNaltVal">0 שעות</span>
                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- מסך ניהול הרשאות למנהל העל בלבד -->
+    <div id="viewAdmin" class="app-view" style="display: none;">
+        <div class="clock-screen-card" style="align-items: stretch; gap: 14px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 10px;">
+                <h2 style="font-size: 1.2rem; color: var(--accent-cyan); display: flex; align-items: center; gap: 8px;">
+                    <svg class="svg-icon" width="20" height="20" viewBox="0 0 24 24">
+                        <path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/>
+                    </svg>
+                    פאנל ניהול הרשאות
+                </h2>
+                <button class="btn-icon-action" style="background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border-color); color: var(--text-main);" onclick="navigateTo('profile')" title="חזרה">
+                    <svg class="svg-icon" width="18" height="18" viewBox="0 0 24 24">
+                        <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+                    </svg>
+                </button>
+            </div>
+
+            <div class="card-sub-section">
+                <p style="font-size: 0.9rem; font-weight: 700; color: #fff; margin-bottom: 10px;">משתמשים שהתחברו למערכת:</p>
+                <div id="adminUsersList" style="display: flex; flex-direction: column; gap: 8px; max-height: 420px; overflow-y: auto;">
+                    <div style="text-align: center; color: var(--text-muted); padding: 20px;">טוען משתמשים...</div>
                 </div>
             </div>
         </div>
@@ -2316,15 +2369,19 @@
 
     window.currentUser = null;
     window.isUserInstructor = false;
+    const OWNER_UID = "ShasTZArs9Uqddy973BmlW4oP7T2";
 
     async function checkInstructorPermission(uid) {
         try {
+            if (uid === OWNER_UID) {
+                window.isUserInstructor = true;
+                return;
+            }
             const instructorDocRef = doc(db, 'instructors', uid);
             const instructorSnap = await getDoc(instructorDocRef);
             
             if (instructorSnap.exists() && instructorSnap.data().active === true) {
                 window.isUserInstructor = true;
-                console.log("המשתמש זוהה כמדריך מורשה");
             } else {
                 window.isUserInstructor = false;
             }
@@ -2346,6 +2403,17 @@
             
             await checkInstructorPermission(user.uid);
             await handleUserAuthenticationSync(user.uid);
+
+            try {
+                await setDoc(doc(db, 'app_users', user.uid), {
+                    email: user.email || 'לא ידוע',
+                    name: user.displayName || 'משתמש',
+                    lastLogin: new Date().toISOString()
+                }, { merge: true });
+            } catch (err) {
+                console.error("Error logging user:", err);
+            }
+
         } else {
             window.isUserInstructor = false;
             btnText.textContent = 'התחברות';
@@ -2452,7 +2520,7 @@
     window.handleAuthClick = async function(event) {
         event.stopPropagation();
         
-        if (currentView === 'profile') return;
+        if (currentView === 'profile' || currentView === 'admin') return;
 
         if (window.currentUser) {
             const dropdown = document.getElementById('userDropdownMenu');
@@ -2488,6 +2556,14 @@
         if (window.currentUser) {
             document.getElementById('profileName').textContent = window.currentUser.displayName || 'משתמש רכבת';
             document.getElementById('profileEmail').textContent = window.currentUser.email || 'לא זמין';
+            
+            const ownerBtn = document.getElementById('ownerAdminBtnContainer');
+            if (window.currentUser.uid === OWNER_UID) {
+                ownerBtn.style.display = 'block';
+            } else {
+                ownerBtn.style.display = 'none';
+            }
+
             populateProfileMonthSelector();
             updateProfileSummaryData();
         }
@@ -2568,6 +2644,77 @@
             } catch (e) {
                 console.error("Cloud delete failed:", e);
             }
+        }
+    };
+
+    // פונקציות עבור פאנל הניהול שלך
+    window.loadAdminUsersList = async function() {
+        const listContainer = document.getElementById('adminUsersList');
+        if (!listContainer) return;
+        
+        listContainer.innerHTML = '<div style="text-align: center; color: var(--text-muted); padding: 20px;">טוען משתמשים...</div>';
+
+        try {
+            const usersSnap = await getDocs(collection(db, 'app_users'));
+            const instructorsSnap = await getDocs(collection(db, 'instructors'));
+            
+            let instructorsMap = {};
+            instructorsSnap.forEach(docSnap => {
+                instructorsMap[docSnap.id] = docSnap.data().active === true;
+            });
+
+            if (usersSnap.empty) {
+                listContainer.innerHTML = '<div style="text-align: center; color: var(--text-muted); padding: 20px;">אין עדיין משתמשים במערכת</div>';
+                return;
+            }
+
+            let html = '';
+            usersSnap.forEach(docSnap => {
+                const uId = docSnap.id;
+                const uData = docSnap.data();
+                const isInst = Boolean(instructorsMap[uId]);
+                const userEmail = uData.email || 'ללא מייל';
+
+                const copySvg = `<svg class="svg-icon" width="13" height="13" viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>`;
+
+                html += `
+                    <div style="background: rgba(0,0,0,0.25); border: 1px solid rgba(255,255,255,0.06); border-radius: 12px; padding: 10px 12px; display: flex; flex-direction: column; gap: 8px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div style="display: flex; align-items: center; gap: 6px; min-width: 0;">
+                                <span style="font-size: 0.9rem; font-weight: 700; color: #fff; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${userEmail}</span>
+                                <button class="btn-secondary" style="padding: 2px 5px; font-size: 0.7rem; height: 22px; width: 26px; min-width: unset; display: flex; align-items: center; justify-content: center;" onclick="navigator.clipboard.writeText('${userEmail}')" title="העתק מייל">${copySvg}</button>
+                            </div>
+                            <span style="font-size: 0.72rem; font-weight: 700; padding: 2px 8px; border-radius: 6px; background: ${isInst ? 'rgba(16,185,129,0.15); color: var(--accent-green);' : 'rgba(148,163,184,0.1); color: var(--text-muted);'}">
+                                ${isInst ? 'מדריך פעיל' : 'משתמש רגיל'}
+                            </span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; align-items: center; gap: 6px;">
+                            <div style="display: flex; align-items: center; gap: 6px; min-width: 0;">
+                                <span style="font-size: 0.72rem; color: var(--text-muted); font-family: monospace; direction: ltr; overflow: hidden; text-overflow: ellipsis;">${uId}</span>
+                                <button class="btn-secondary" style="padding: 2px 5px; font-size: 0.7rem; height: 22px; width: 26px; min-width: unset; display: flex; align-items: center; justify-content: center;" onclick="navigator.clipboard.writeText('${uId}')" title="העתק UID">${copySvg}</button>
+                            </div>
+                            <button class="btn-secondary" style="padding: 5px 12px; font-size: 0.78rem; font-weight: 700; white-space: nowrap; width: auto; background: ${isInst ? 'rgba(239,68,68,0.2); color:#fca5a5; border-color: rgba(239,68,68,0.4);' : 'rgba(16,185,129,0.2); color:#34d399; border-color: rgba(16,185,129,0.4);'}; transition: transform 0.1s ease, opacity 0.1s ease;" onclick="toggleInstructorStatus('${uId}', ${!isInst})" onmousedown="this.style.transform='scale(0.92)'" onmouseup="this.style.transform='scale(1)'" ontouchstart="this.style.transform='scale(0.92)'" ontouchend="this.style.transform='scale(1)'">
+                                ${isInst ? 'ביטול הרשאה' : 'מתן הרשאה'}
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+
+            listContainer.innerHTML = html;
+        } catch (err) {
+            console.error("Error loading users:", err);
+            listContainer.innerHTML = '<div style="text-align: center; color: var(--accent-red); padding: 20px;">שגיאה בטעינת משתמשים</div>';
+        }
+    };
+
+    window.toggleInstructorStatus = async function(uid, makeActive) {
+        try {
+            await setDoc(doc(db, 'instructors', uid), { active: makeActive }, { merge: true });
+            loadAdminUsersList();
+        } catch (err) {
+            console.error("Error updating instructor:", err);
+            showErrorDialog('שגיאה בעדכון ההרשאה');
         }
     };
 </script>
@@ -2888,7 +3035,7 @@
 
         const authContainer = document.getElementById('headerAuthContainer');
         if (authContainer) {
-            if (viewName === 'profile') {
+            if (viewName === 'profile' || viewName === 'admin') {
                 authContainer.classList.add('disabled-profile');
             } else {
                 authContainer.classList.remove('disabled-profile');
@@ -2898,9 +3045,10 @@
         document.getElementById('viewClock').style.display = (viewName === 'clock') ? 'flex' : 'none';
         document.getElementById('viewHistory').style.display = (viewName === 'history') ? 'flex' : 'none';
         document.getElementById('viewProfile').style.display = (viewName === 'profile') ? 'flex' : 'none';
+        document.getElementById('viewAdmin').style.display = (viewName === 'admin') ? 'flex' : 'none';
 
         const bottomNavEl = document.getElementById('bottomNav').closest('.bottom-nav-wrapper');
-        if (viewName === 'profile') {
+        if (viewName === 'profile' || viewName === 'admin') {
             bottomNavEl.style.display = 'none'; 
         } else {
             bottomNavEl.style.display = 'flex';
@@ -2940,6 +3088,10 @@
                 wrapper.classList.remove('slide-in');
             }
             renderShifts();
+        }
+
+        if (viewName === 'admin') {
+            loadAdminUsersList();
         }
     }
 
