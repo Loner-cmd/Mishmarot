@@ -2314,9 +2314,20 @@
     ];
 
     function isUserAuthorized() {
-        if (!window.currentUser || !window.currentUser.email) return false;
-        const cleanUserEmail = window.currentUser.email.trim().toLowerCase();
-        return AUTHORIZED_EMAILS.some(email => email.trim().toLowerCase() === cleanUserEmail);
+        // בדיקה גמישה ומיידית מול אובייקט המשתמש או אחסון מקומי מעודכן
+        let userEmail = null;
+        if (window.currentUser && window.currentUser.email) {
+            userEmail = window.currentUser.email;
+        } else if (auth.currentUser && auth.currentUser.email) {
+            userEmail = auth.currentUser.email;
+        }
+
+        if (!userEmail) return false;
+        
+        const cleanUserEmail = userEmail.trim().toLowerCase();
+        const isAuth = AUTHORIZED_EMAILS.some(email => email.trim().toLowerCase() === cleanUserEmail);
+        console.log("Auth Check - User:", cleanUserEmail, "Authorized:", isAuth);
+        return isAuth;
     }
 
     window.isUserAuthorized = isUserAuthorized;
@@ -4578,4 +4589,3 @@
 </script>
 </body>
 </html>
-
