@@ -2016,7 +2016,7 @@
             <!-- כפתור ניהול מיוחד למנהל העל בלבד -->
             <div id="ownerAdminBtnContainer" style="display: none;">
                 <button class="btn-secondary" style="width: 100%; background: rgba(0, 210, 255, 0.15); border-color: var(--accent-cyan); color: var(--accent-cyan); font-weight: 700; padding: 12px;" onclick="navigateTo('admin')">
-                    ניהול מערכת ומדריכים ⚙️
+                    ניהול מערכת הרשאות ⚙️
                 </button>
             </div>
 
@@ -2046,11 +2046,11 @@
         </div>
     </div>
 
-    <!-- מסך ניהול מדריכים למנהל העל בלבד -->
+    <!-- מסך ניהול הרשאות למנהל העל בלבד -->
     <div id="viewAdmin" class="app-view" style="display: none;">
         <div class="clock-screen-card" style="align-items: stretch; gap: 14px;">
             <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 10px;">
-                <h2 style="font-size: 1.2rem; color: var(--accent-cyan);">פאנל ניהול מדריכים ⚙️</h2>
+                <h2 style="font-size: 1.2rem; color: var(--accent-cyan);">פאנל ניהול הרשאות ⚙️</h2>
                 <button class="btn-icon-action" style="background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border-color); color: var(--text-main);" onclick="navigateTo('profile')" title="חזרה">
                     <svg class="svg-icon" width="18" height="18" viewBox="0 0 24 24">
                         <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
@@ -2059,16 +2059,8 @@
             </div>
 
             <div class="card-sub-section">
-                <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 8px;">הוספת UID ידנית למערכת:</p>
-                <div style="display: flex; gap: 8px;">
-                    <input type="text" id="adminManualUid" class="form-control" placeholder="הדבק UID כאן..." style="flex: 1; font-size: 0.8rem; direction: ltr;">
-                    <button class="btn-secondary" style="background: var(--accent-green); color: #fff; width: 80px; font-size: 0.85rem;" onclick="adminAddInstructorManual()">הוסף</button>
-                </div>
-            </div>
-
-            <div class="card-sub-section">
                 <p style="font-size: 0.9rem; font-weight: 700; color: #fff; margin-bottom: 10px;">משתמשים שהתחברו למערכת:</p>
-                <div id="adminUsersList" style="display: flex; flex-direction: column; gap: 8px; max-height: 350px; overflow-y: auto;">
+                <div id="adminUsersList" style="display: flex; flex-direction: column; gap: 8px; max-height: 420px; overflow-y: auto;">
                     <div style="text-align: center; color: var(--text-muted); padding: 20px;">טוען משתמשים...</div>
                 </div>
             </div>
@@ -2388,7 +2380,6 @@
             await checkInstructorPermission(user.uid);
             await handleUserAuthenticationSync(user.uid);
 
-            // תיעוד המשתמש במערכת כדי שיופיע בפאנל הניהול שלך
             try {
                 await setDoc(doc(db, 'app_users', user.uid), {
                     email: user.email || 'לא ידוע',
@@ -2542,7 +2533,6 @@
             document.getElementById('profileName').textContent = window.currentUser.displayName || 'משתמש רכבת';
             document.getElementById('profileEmail').textContent = window.currentUser.email || 'לא זמין';
             
-            // הצגת כפתור ניהול אך ורק למנהל העל
             const ownerBtn = document.getElementById('ownerAdminBtnContainer');
             if (window.currentUser.uid === OWNER_UID) {
                 ownerBtn.style.display = 'block';
@@ -2659,23 +2649,27 @@
                 const uId = docSnap.id;
                 const uData = docSnap.data();
                 const isInst = Boolean(instructorsMap[uId]);
+                const userEmail = uData.email || 'ללא מייל';
 
                 html += `
-                    <div style="background: rgba(0,0,0,0.25); border: 1px solid rgba(255,255,255,0.06); border-radius: 12px; padding: 10px 12px; display: flex; flex-direction: column; gap: 6px;">
+                    <div style="background: rgba(0,0,0,0.25); border: 1px solid rgba(255,255,255,0.06); border-radius: 12px; padding: 10px 12px; display: flex; flex-direction: column; gap: 8px;">
                         <div style="display: flex; justify-content: space-between; align-items: center;">
-                            <span style="font-size: 0.9rem; font-weight: 700; color: #fff;">${uData.email || 'ללא מייל'}</span>
-                            <span style="font-size: 0.75rem; font-weight: 700; padding: 2px 8px; border-radius: 6px; background: ${isInst ? 'rgba(16,185,129,0.15); color: var(--accent-green);' : 'rgba(148,163,184,0.1); color: var(--text-muted);'}">
+                            <div style="display: flex; align-items: center; gap: 6px; min-width: 0;">
+                                <span style="font-size: 0.9rem; font-weight: 700; color: #fff; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${userEmail}</span>
+                                <button class="btn-secondary" style="padding: 2px 6px; font-size: 0.68rem; height: 20px; line-height: 1;" onclick="navigator.clipboard.writeText('${userEmail}')">העתק</button>
+                            </div>
+                            <span style="font-size: 0.72rem; font-weight: 700; padding: 2px 8px; border-radius: 6px; background: ${isInst ? 'rgba(16,185,129,0.15); color: var(--accent-green);' : 'rgba(148,163,184,0.1); color: var(--text-muted);'}">
                                 ${isInst ? 'מדריך פעיל' : 'משתמש רגיל'}
                             </span>
                         </div>
                         <div style="display: flex; justify-content: space-between; align-items: center; gap: 6px;">
-                            <span style="font-size: 0.72rem; color: var(--text-muted); font-family: monospace; direction: ltr; overflow: hidden; text-overflow: ellipsis;">${uId}</span>
-                            <div style="display: flex; gap: 6px;">
-                                <button class="btn-secondary" style="padding: 4px 8px; font-size: 0.72rem;" onclick="navigator.clipboard.writeText('${uId}')">העתק UID</button>
-                                <button class="btn-secondary" style="padding: 4px 8px; font-size: 0.72rem; background: ${isInst ? 'rgba(239,68,68,0.2); color:#fca5a5;' : 'rgba(16,185,129,0.2); color:#34d399;'}" onclick="toggleInstructorStatus('${uId}', ${!isInst})">
-                                    ${isInst ? 'הסר הרשאה' : 'תן הרשאה'}
-                                </button>
+                            <div style="display: flex; align-items: center; gap: 6px; min-width: 0;">
+                                <span style="font-size: 0.72rem; color: var(--text-muted); font-family: monospace; direction: ltr; overflow: hidden; text-overflow: ellipsis;">${uId}</span>
+                                <button class="btn-secondary" style="padding: 2px 6px; font-size: 0.68rem; height: 20px; line-height: 1;" onclick="navigator.clipboard.writeText('${uId}')">העתק</button>
                             </div>
+                            <button class="btn-secondary" style="padding: 5px 10px; font-size: 0.78rem; background: ${isInst ? 'rgba(239,68,68,0.2); color:#fca5a5;' : 'rgba(16,185,129,0.2); color:#34d399;'}" onclick="toggleInstructorStatus('${uId}', ${!isInst})">
+                                ${isInst ? 'ביטול הרשאה' : 'מתן הרשאה'}
+                            </button>
                         </div>
                     </div>
                 `;
@@ -2696,18 +2690,6 @@
             console.error("Error updating instructor:", err);
             showErrorDialog('שגיאה בעדכון ההרשאה');
         }
-    };
-
-    window.adminAddInstructorManual = async function() {
-        const input = document.getElementById('adminManualUid');
-        const uid = input.value.trim();
-        if (!uid) {
-            showErrorDialog('נא להזין UID תקין');
-            return;
-        }
-        await toggleInstructorStatus(uid, true);
-        input.value = '';
-        showSmartAlertDialog('הצלחה', 'המדריך נוסף בהצלחה למערכת!', 'הבנתי', '', () => {}, null);
     };
 </script>
 
