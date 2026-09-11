@@ -872,7 +872,7 @@
             border: 1px solid var(--border-color);
             overflow: hidden;
             margin-bottom: 12px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
         }
         
         .month-accordion:last-child {
@@ -909,7 +909,8 @@
         .month-accordion-body {
             padding: 12px;
             display: none;
-            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            background: #0e1836;
         }
 
         .month-accordion.open .month-accordion-body {
@@ -1004,9 +1005,9 @@
         .shift-card {
             background: var(--bg-card);
             border-radius: 16px;
-            border: 1px solid rgba(0, 210, 255, 0.25);
+            border: 1px solid rgba(0, 210, 255, 0.22);
             overflow: hidden;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25);
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
             transition: border-color 0.2s, transform 0.15s;
             user-select: none;
             position: relative;
@@ -4360,7 +4361,7 @@
                                 ${hasNotes ? `
                                 <span class="tag tag-notes" title="קיימות הערות למשמרת">
                                     <svg class="svg-icon" width="13" height="13" viewBox="0 0 24 24">
-                                        <path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"/>
+                                        <path d="M20 2H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/>
                                     </svg>
                                 </span>` : ''}
                             </div>
