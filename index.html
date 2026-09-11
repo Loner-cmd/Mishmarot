@@ -867,12 +867,12 @@
         }
 
         .month-accordion {
-            background: var(--bg-card);
-            border-radius: 16px;
-            border: 1px solid var(--border-color);
+            background: #080e1d;
+            border-radius: 18px;
+            border: 1px solid rgba(0, 210, 255, 0.15);
             overflow: hidden;
-            margin-bottom: 12px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            margin-bottom: 16px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.5);
         }
         
         .month-accordion:last-child {
@@ -884,7 +884,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background: rgba(0, 0, 0, 0.2);
+            background: rgba(0, 0, 0, 0.3);
             cursor: pointer;
             font-weight: 700;
             font-size: 1.05rem;
@@ -894,7 +894,7 @@
         }
 
         .month-accordion-header:active {
-            background: rgba(0, 0, 0, 0.4);
+            background: rgba(0, 0, 0, 0.5);
         }
 
         .chevron-icon {
@@ -907,9 +907,10 @@
         }
 
         .month-accordion-body {
-            padding: 12px;
+            padding: 14px;
             display: none;
-            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            border-top: 1px solid rgba(255, 255, 255, 0.06);
+            background: rgba(4, 8, 18, 0.45);
         }
 
         .month-accordion.open .month-accordion-body {
@@ -1435,7 +1436,6 @@
             opacity: 0.8;
         }
 
-        /* עיצוב ייעודי לכפתורי ההעתקה הקטנים עם תגובה מיידית ואפקט לחיצה מודגש וחזק */
         .copy-icon-btn {
             padding: 2px 5px;
             font-size: 0.7rem;
@@ -1461,7 +1461,6 @@
             color: #fca5a5;
         }
 
-        /* מתג הפעלה (Toggle Switch) מעוצב */
         .toggle-switch-container {
             display: flex;
             align-items: center;
