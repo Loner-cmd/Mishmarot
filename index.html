@@ -1272,6 +1272,13 @@
             border: 1px solid rgba(56, 189, 248, 0.35);
         }
 
+        .tag-notes {
+            background: rgba(148, 163, 184, 0.12);
+            color: var(--text-muted);
+            border: 1px solid rgba(148, 163, 184, 0.25);
+            padding: 3px 6px;
+        }
+
         .tag-complete {
             background: rgba(16, 185, 129, 0.15);
             color: var(--accent-green);
@@ -2440,12 +2447,10 @@
         if (backdrop) backdrop.classList.remove('open');
     };
 
-    // מאזין גלובלי שסוגר את התפריט בכל לחיצה בכל מקום במסך (כולל פאנל עליון/כותרות) אם אינו כפתור התפריט
     document.addEventListener('click', function(e) {
         const dropdown = document.getElementById('userDropdownMenu');
         const authContainer = document.getElementById('headerAuthContainer');
         if (dropdown && dropdown.classList.contains('open')) {
-            // אם הלחיצה לא הייתה בתוך תפריט המשתמש ולא על כפתור הפתיחה שלו
             if (!dropdown.contains(e.target) && !authContainer.contains(e.target)) {
                 dropdown.classList.remove('open');
                 const backdrop = document.getElementById('menuBackdrop');
@@ -2702,7 +2707,6 @@
     };
 
     window.openSettingsModal = function() {
-        // סגירת התפריט בלבד מיד בלחיצה, תוך שמירה על ההחשכה ברקע לחלון ההגדרות
         const dropdown = document.getElementById('userDropdownMenu');
         if (dropdown) dropdown.classList.remove('open');
         document.getElementById('settingsModal').classList.add('open');
@@ -2717,7 +2721,6 @@
     };
 
     window.confirmSignOut = function() {
-        // סגירת התפריט וההחשכה מיד בלחיצה על התנתקות כדי שלא יישאר כלום תלוי על המסך
         const dropdown = document.getElementById('userDropdownMenu');
         const backdrop = document.getElementById('menuBackdrop');
         if (dropdown) dropdown.classList.remove('open');
@@ -2785,7 +2788,6 @@
         }
     };
 
-    // פונקציות עבור פאנל הניהול שלך (כולל הסרת ה-OWNER מהרשימה)
     window.loadAdminUsersList = async function() {
         const listContainer = document.getElementById('adminUsersList');
         if (!listContainer) return;
@@ -2806,7 +2808,7 @@
 
             usersSnap.forEach(docSnap => {
                 const uId = docSnap.id;
-                if (uId === OWNER_UID) return; // הסרת מנהל העל מהרשימה לחלוטין
+                if (uId === OWNER_UID) return;
 
                 count++;
                 const uData = docSnap.data();
@@ -4356,6 +4358,12 @@
                                         <path d="M12 3L1 9l11 6 9-4.91V17h2V9L12 3zM5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82z"/>
                                     </svg>
                                     הדרכה
+                                </span>` : ''}
+                                ${hasNotes ? `
+                                <span class="tag tag-notes" title="קיימות הערות למשמרת">
+                                    <svg class="svg-icon" width="13" height="13" viewBox="0 0 24 24">
+                                        <path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"/>
+                                    </svg>
                                 </span>` : ''}
                             </div>
                             <div class="badges-group-left">
