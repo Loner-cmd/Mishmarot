@@ -96,7 +96,7 @@
             box-shadow: 0 10px 25px rgba(0,0,0,0.6);
             position: relative;
             z-index: 2500;
-            overflow: visible; 
+            overflow: hidden; /* חותך את פס ההתקדמות בדיוק לפי הפינות העגולות של הפאנל */
         }
 
         header.sticky-mode {
@@ -144,7 +144,7 @@
         .header-progress-fill {
             height: 100%;
             width: 0%;
-            transition: width 1s linear, background 0.5s ease;
+            transition: width 1s linear;
             position: relative;
         }
 
@@ -153,17 +153,17 @@
             position: absolute;
             right: 0; top: 50%;
             transform: translateY(-50%);
-            width: 8px; height: 8px;
-            background: #fff;
+            width: 6px; height: 6px;
+            background: #ffffff;
             border-radius: 50%;
-            box-shadow: 0 0 6px #fff, 0 0 10px currentColor;
+            box-shadow: 0 0 8px #39ff14, 0 0 12px #ffffff;
             z-index: 3;
-            animation: pulse-spark 1s infinite alternate;
+            animation: pulse-tip 1s infinite alternate ease-in-out;
         }
 
-        @keyframes pulse-spark {
-            0% { transform: translateY(-50%) scale(0.8); opacity: 0.8; }
-            100% { transform: translateY(-50%) scale(1.3); opacity: 1; }
+        @keyframes pulse-tip {
+            0% { transform: translateY(-50%) scale(0.8); opacity: 0.7; }
+            100% { transform: translateY(-50%) scale(1.4); opacity: 1; }
         }
 
         .fill-green {
@@ -3348,13 +3348,9 @@
             let durMins = Math.floor(totalSec / 60);
             let pct = Math.min((durMins / 720), 1); 
 
-            if (currentView === 'history') {
-                headerPWrap.style.display = 'block';
-                headerPFill.style.width = (pct * 100) + '%';
-                headerPFill.className = 'header-progress-fill fill-green';
-            } else {
-                headerPWrap.style.display = 'none';
-            }
+            headerPWrap.style.display = 'block';
+            headerPFill.style.width = (pct * 100) + '%';
+            headerPFill.className = 'header-progress-fill fill-green';
 
             btnMainAction.className = 'btn-main-circle state-active';
             mainActionText.textContent = 'יציאה ממשמרת';
