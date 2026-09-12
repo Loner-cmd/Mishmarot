@@ -553,7 +553,21 @@
             justify-content: center;
         }
 
-        /* הגדלת הכפתור ללא שקע חיצוני */
+        /* מעטפת חיצונית עדינה מאחורי הכפתור שיוצרת את מסגרת/פס הכהה הדק הסטטי */
+        .well-container {
+            width: 220px;
+            height: 220px;
+            border-radius: 50%;
+            background: linear-gradient(145deg, #070e1d, #101c38);
+            border: 1px solid rgba(255, 255, 255, 0.07);
+            box-shadow: inset 0 3px 8px rgba(0, 0, 0, 0.7), 0 6px 16px rgba(0, 0, 0, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        /* הכפתור הראשי עגול עם טווח תנועת לחיצה עדין ומקורי */
         .btn-main-circle {
             width: 210px;
             height: 210px;
@@ -593,7 +607,7 @@
             transition: color 0.2s;
         }
 
-        .btn-main-line1 { font-size: 1.2rem; font-weight: 700; }
+        .btn-main-line1 { font-size: 1.1rem; font-weight: 700; }
         .btn-main-line2 { font-size: 1.35rem; font-weight: 800; }
 
         .btn-main-circle.state-idle {
@@ -610,7 +624,7 @@
         .btn-main-circle.state-active .btn-main-icon { stroke: #881337; }
         .btn-main-circle.state-active .btn-main-text-wrap { color: #fb7185; text-shadow: 0 0 10px rgba(251, 113, 133, 0.3); }
 
-        /* אפקט הלחיצה: רק הסמל זוהר ונדלק בעת לחיצה */
+        /* אפקט הלחיצה: רק הסמל זוהר ונדלק בעת לחיצה, עם עומק לחיצה עדין ומדויק כמו בהתחלה */
         .btn-main-circle.state-idle.pressed-effect .btn-main-icon,
         .btn-main-circle.state-idle:active .btn-main-icon,
         .btn-main-circle.state-idle.pressed .btn-main-icon {
@@ -626,7 +640,7 @@
         }
 
         .pressed-effect, .btn-main-circle:active, .btn-main-circle.pressed {
-            transform: scale(0.96) translateY(2px) !important;
+            transform: scale(0.96) translateY(1px) !important;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5), inset 0 6px 10px rgba(0, 0, 0, 0.6), inset 0 -2px 4px rgba(255, 255, 255, 0.1) !important;
         }
         
@@ -1847,7 +1861,7 @@
 
 <div id="menuBackdrop" class="menu-backdrop" onclick="closeUserMenu(event)"></div>
 
-<!-- תפריט המשתמש ממוקם מחוץ להדר ב-position: fixed כך שהוא נפתח במדויק מתחת לאייקון, גולש באפקט מגירה חלק, ונשאר מעל שכבת ההחשכה ללא חיתוך וללא הצללה מיותרת -->
+<!-- תפריט המשתמש ממוקם ב-fixed עם אפקט מגירה חלק (Slide Down/Up) כך שהוא מופיע מתחת לאייקון, מעל ההחשכה, וללא חיתוך -->
 <div id="userDropdownMenu" class="user-dropdown-menu">
     <button class="dropdown-item" onclick="goToProfileView()">פרופיל אישי</button>
     <button class="dropdown-item" onclick="openSettingsModal()">הגדרות</button>
