@@ -84,7 +84,7 @@
             flex-shrink: 0;
         }
 
-        /* Top Header - Normal state */
+        /* Top Header - Normal state עם overflow hidden כדי לחתוך את פס ההתקדמות בצורה מושלמת */
         header {
             display: flex;
             align-items: center;
@@ -343,6 +343,7 @@
             opacity: 1;
         }
 
+        /* תפריט המשתמש ממוקם גבוה יותר מבחינת z-index ונמצא מעל ההחשכה מבלי להיחתך ומבלי להיות מוחשך */
         .user-dropdown-menu {
             position: absolute;
             top: 50px;
@@ -350,12 +351,12 @@
             background: var(--bg-card);
             border: 1px solid var(--border-color);
             border-radius: 14px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.9);
             width: 160px;
             display: none;
             flex-direction: column;
-            z-index: 2700;
-            overflow: hidden;
+            z-index: 3500;
+            overflow: visible;
             animation: dropdown-fade 0.2s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
@@ -547,20 +548,19 @@
 
         .main-action-wrapper {
             position: relative;
-            width: 275px;
-            height: 275px;
+            width: 260px;
+            height: 260px;
             margin: 10px auto;
             display: flex;
             align-items: center;
             justify-content: center;
         }
 
-        /* כפתור מעודכן: מוגדל (185px), פרופיל נמוך, ריאליסטי בלחיצה */
+        /* הגדלת הכפתור ללא שקע חיצוני */
         .btn-main-circle {
-            width: 185px;
-            height: 185px;
+            width: 210px;
+            height: 210px;
             border-radius: 50%;
-            background: linear-gradient(145deg, #223a73, #152750);
             cursor: pointer;
             display: flex;
             flex-direction: column;
@@ -571,20 +571,21 @@
             font-family: 'Assistant', sans-serif;
             -webkit-tap-highlight-color: transparent;
             position: relative;
+            transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+            background: linear-gradient(145deg, #223a73, #152750);
             z-index: 5;
-            transition: all 0.15s cubic-bezier(0.2, 0.8, 0.2, 1);
         }
 
         .btn-main-icon {
-            width: 48px;
-            height: 48px;
+            width: 42px;
+            height: 42px;
             fill: none;
             stroke-width: 3.5;
             stroke-linecap: round;
             stroke-linejoin: round;
-            filter: drop-shadow(0px -1px 0.5px rgba(0, 0, 0, 0.85)) drop-shadow(0px 1px 0.5px rgba(255, 255, 255, 0.15));
+            filter: drop-shadow(0px -1.5px 1px rgba(0, 0, 0, 0.85)) drop-shadow(0px 1.5px 1px rgba(255, 255, 255, 0.15));
             margin-bottom: 2px;
-            transition: stroke 0.2s;
+            transition: stroke 0.2s, filter 0.2s;
         }
 
         .btn-main-text-wrap {
@@ -595,30 +596,41 @@
             transition: color 0.2s;
         }
 
-        .btn-main-line1 { font-size: 1.15rem; font-weight: 700; }
-        .btn-main-line2 { font-size: 1.25rem; font-weight: 800; }
+        .btn-main-line1 { font-size: 1.2rem; font-weight: 700; }
+        .btn-main-line2 { font-size: 1.35rem; font-weight: 800; }
 
-        /* מצב מנוחה: צללית רכה ועדינה יותר כך שהכפתור נראה פחות "גבוהה" */
         .btn-main-circle.state-idle {
             border: 2px solid #065f46;
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5), inset 0 2px 3px rgba(255, 255, 255, 0.2);
-            transform: translateY(0px);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.6), inset 0 4px 6px rgba(255, 255, 255, 0.25), inset 0 -6px 8px rgba(0, 0, 0, 0.4);
         }
         .btn-main-circle.state-idle .btn-main-icon { stroke: #065f46; }
-        .btn-main-circle.state-idle .btn-main-text-wrap { color: #34d399; text-shadow: 0 0 8px rgba(52, 211, 153, 0.3); }
+        .btn-main-circle.state-idle .btn-main-text-wrap { color: #34d399; text-shadow: 0 0 10px rgba(52, 211, 153, 0.3); }
 
         .btn-main-circle.state-active {
             border: 2px solid #881337;
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5), inset 0 2px 3px rgba(255, 255, 255, 0.2);
-            transform: translateY(0px);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.6), inset 0 4px 6px rgba(255, 255, 255, 0.25), inset 0 -6px 8px rgba(0, 0, 0, 0.4);
         }
         .btn-main-circle.state-active .btn-main-icon { stroke: #881337; }
-        .btn-main-circle.state-active .btn-main-text-wrap { color: #fb7185; text-shadow: 0 0 8px rgba(251, 113, 133, 0.3); }
+        .btn-main-circle.state-active .btn-main-text-wrap { color: #fb7185; text-shadow: 0 0 10px rgba(251, 113, 133, 0.3); }
 
-        /* לחיצה: תנועה קטנה כלפי מטה וצמצום מלא של הצללית כך שנדבק לפאנל */
+        /* אפקט הלחיצה: רק הסמל זוהר ונדלק בעת לחיצה */
+        .btn-main-circle.state-idle.pressed-effect .btn-main-icon,
+        .btn-main-circle.state-idle:active .btn-main-icon,
+        .btn-main-circle.state-idle.pressed .btn-main-icon {
+            stroke: #34d399 !important;
+            filter: drop-shadow(0px -1.5px 1px rgba(0, 0, 0, 0.85)) drop-shadow(0px 1.5px 1px rgba(255, 255, 255, 0.15)) drop-shadow(0 0 14px rgba(52, 211, 153, 0.9)) !important;
+        }
+
+        .btn-main-circle.state-active.pressed-effect .btn-main-icon,
+        .btn-main-circle.state-active:active .btn-main-icon,
+        .btn-main-circle.state-active.pressed .btn-main-icon {
+            stroke: #fb7185 !important;
+            filter: drop-shadow(0px -1.5px 1px rgba(0, 0, 0, 0.85)) drop-shadow(0px 1.5px 1px rgba(255, 255, 255, 0.15)) drop-shadow(0 0 14px rgba(251, 113, 133, 0.9)) !important;
+        }
+
         .pressed-effect, .btn-main-circle:active, .btn-main-circle.pressed {
-            transform: translateY(3px) !important;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.7), inset 0 1px 2px rgba(255, 255, 255, 0.1) !important;
+            transform: scale(0.96) translateY(2px) !important;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5), inset 0 6px 10px rgba(0, 0, 0, 0.6), inset 0 -2px 4px rgba(255, 255, 255, 0.1) !important;
         }
         
         .plus-pressed-effect {
@@ -628,10 +640,10 @@
 
         .svg-plus-btn {
             position: absolute;
-            top: 22px; 
-            left: -8px; 
-            width: 40px;
-            height: 40px;
+            top: 15px; 
+            left: -15px; 
+            width: 38px;
+            height: 38px;
             cursor: pointer;
             filter: drop-shadow(0 0 6px rgba(52, 211, 153, 0.4));
             transition: transform 0.15s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.15s ease, filter 0.15s ease;
@@ -1917,7 +1929,7 @@
             </div>
         </div>
 
-        <div class="header-progress-container" id="headerProgressWrap">
+        <div class="header-progress-container" id="headerProgressWrap" style="border-bottom-left-radius: 16px; border-bottom-right-radius: 16px;">
             <div class="header-progress-fill fill-green" id="headerProgressFill"></div>
         </div>
     </header>
@@ -1935,16 +1947,18 @@
             </div>
 
             <div class="main-action-wrapper">
-                <button id="btnMainAction" class="btn-main-circle state-idle" onclick="handleMainAction()">
-                    <svg class="btn-main-icon" viewBox="0 0 24 24">
-                        <path d="M18.36 6.64a9 9 0 1 1-12.73 0"></path>
-                        <line x1="12" y1="2" x2="12" y2="12"></line>
-                    </svg>
-                    <div class="btn-main-text-wrap">
-                        <span class="btn-main-line1" id="mainActionTextLine1">כניסה</span>
-                        <span class="btn-main-line2" id="mainActionTextLine2">למשמרת</span>
-                    </div>
-                </button>
+                <div class="well-container">
+                    <button id="btnMainAction" class="btn-main-circle state-idle" onclick="handleMainAction()">
+                        <svg class="btn-main-icon" viewBox="0 0 24 24">
+                            <path d="M18.36 6.64a9 9 0 1 1-12.73 0"></path>
+                            <line x1="12" y1="2" x2="12" y2="12"></line>
+                        </svg>
+                        <div class="btn-main-text-wrap">
+                            <span class="btn-main-line1" id="mainActionTextLine1">כניסה</span>
+                            <span class="btn-main-line2" id="mainActionTextLine2">למשמרת</span>
+                        </div>
+                    </button>
+                </div>
 
                 <svg id="btnPlusManual" class="svg-plus-btn" viewBox="0 0 36 36" onclick="openShiftModal(null)">
                     <line x1="18" y1="4" x2="18" y2="32" stroke="#34d399" stroke-width="4.5" stroke-linecap="round"/>
@@ -4229,7 +4243,7 @@
                                 ${hasNotes ? `
                                 <span class="tag tag-notes" title="קיימות הערות למשמרת">
                                     <svg class="svg-icon" width="13" height="13" viewBox="0 0 24 24">
-                                        <path d="M20 2H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/>
+                                        <path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"/>
                                     </svg>
                                 </span>` : ''}
                             </div>
