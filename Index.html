@@ -84,7 +84,7 @@
             flex-shrink: 0;
         }
 
-        /* Top Header - Normal state */
+        /* Top Header - Normal state עם overflow hidden כדי לחתוך את פס ההתקדמות לחלוטין בתוך הפינות המעוגלות */
         header {
             display: flex;
             align-items: center;
@@ -343,29 +343,27 @@
             opacity: 1;
         }
 
+        /* תפריט המשתמש ממוקם ב-fixed עם אפקט מגירה חלק (Slide Down/Up) כך שהוא מופיע מתחת לאייקון, מעל ההחשכה, וללא חיתוך */
         .user-dropdown-menu {
-            position: absolute;
-            top: 50px;
-            left: 0;
+            position: fixed;
             background: var(--bg-card);
             border: 1px solid var(--border-color);
             border-radius: 14px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.9);
             width: 160px;
             display: none;
             flex-direction: column;
-            z-index: 2700;
+            z-index: 3500;
             overflow: hidden;
-            animation: dropdown-fade 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+            opacity: 0;
+            transform: translateY(-10px);
+            transition: opacity 0.2s ease, transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
         .user-dropdown-menu.open {
             display: flex;
-        }
-
-        @keyframes dropdown-fade {
-            0% { opacity: 0; transform: translateY(-8px) scale(0.95); }
-            100% { opacity: 1; transform: translateY(0) scale(1); }
+            opacity: 1;
+            transform: translateY(0);
         }
 
         .dropdown-item {
@@ -555,23 +553,24 @@
             justify-content: center;
         }
 
-        /* שקע עגול חיצוני */
+        /* מעטפת חיצונית עדינה מאחורי הכפתור שיוצרת את מסגרת/פס הכהה הדק הסטטי */
         .well-container {
-            width: 190px;
-            height: 190px;
+            width: 220px;
+            height: 220px;
             border-radius: 50%;
-            background: #0d1730;
-            box-shadow: inset 0 6px 12px rgba(0, 0, 0, 0.8), inset 0 -2px 4px rgba(255, 255, 255, 0.05);
+            background: linear-gradient(145deg, #070e1d, #101c38);
+            border: 1px solid rgba(255, 255, 255, 0.07);
+            box-shadow: inset 0 3px 8px rgba(0, 0, 0, 0.7), 0 6px 16px rgba(0, 0, 0, 0.3);
             display: flex;
             align-items: center;
             justify-content: center;
             position: relative;
         }
 
-        /* הכפתור הראשי - מבנה טרפזי תלת-ממדי עם צבעי הנייבי המקוריים */
+        /* הכפתור הראשי עגול עם טווח תנועת לחיצה עדין ומקורי */
         .btn-main-circle {
-            width: 170px;
-            height: 170px;
+            width: 210px;
+            height: 210px;
             border-radius: 50%;
             cursor: pointer;
             display: flex;
@@ -588,17 +587,16 @@
             z-index: 5;
         }
 
-        /* סמל החשמל והטקסט שסודרו בקפידה באופציה העיצובית שלך */
         .btn-main-icon {
-            width: 36px;
-            height: 36px;
+            width: 42px;
+            height: 42px;
             fill: none;
             stroke-width: 3.5;
             stroke-linecap: round;
             stroke-linejoin: round;
             filter: drop-shadow(0px -1.5px 1px rgba(0, 0, 0, 0.85)) drop-shadow(0px 1.5px 1px rgba(255, 255, 255, 0.15));
             margin-bottom: 2px;
-            transition: stroke 0.2s;
+            transition: stroke 0.2s, filter 0.2s;
         }
 
         .btn-main-text-wrap {
@@ -610,24 +608,39 @@
         }
 
         .btn-main-line1 { font-size: 1.1rem; font-weight: 700; }
-        .btn-main-line2 { font-size: 1.2rem; font-weight: 800; }
+        .btn-main-line2 { font-size: 1.35rem; font-weight: 800; }
 
         .btn-main-circle.state-idle {
             border: 2px solid #065f46;
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.6), inset 0 4px 6px rgba(255, 255, 255, 0.25), inset 0 -6px 8px rgba(0, 0, 0, 0.4);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.6), inset 0 4px 6px rgba(255, 255, 255, 0.25), inset 0 -6px 8px rgba(0, 0, 0, 0.4);
         }
         .btn-main-circle.state-idle .btn-main-icon { stroke: #065f46; }
-        .btn-main-circle.state-idle .btn-main-text-wrap { color: #34d399; text-shadow: 0 0 8px rgba(52, 211, 153, 0.3); }
+        .btn-main-circle.state-idle .btn-main-text-wrap { color: #34d399; text-shadow: 0 0 10px rgba(52, 211, 153, 0.3); }
 
         .btn-main-circle.state-active {
             border: 2px solid #881337;
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.6), inset 0 4px 6px rgba(255, 255, 255, 0.25), inset 0 -6px 8px rgba(0, 0, 0, 0.4);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.6), inset 0 4px 6px rgba(255, 255, 255, 0.25), inset 0 -6px 8px rgba(0, 0, 0, 0.4);
         }
         .btn-main-circle.state-active .btn-main-icon { stroke: #881337; }
-        .btn-main-circle.state-active .btn-main-text-wrap { color: #fb7185; text-shadow: 0 0 8px rgba(251, 113, 133, 0.3); }
+        .btn-main-circle.state-active .btn-main-text-wrap { color: #fb7185; text-shadow: 0 0 10px rgba(251, 113, 133, 0.3); }
+
+        /* אפקט הלחיצה: רק הסמל זוהר ונדלק בעת לחיצה, עם עומק לחיצה עדין ומדויק כמו בהתחלה */
+        .btn-main-circle.state-idle.pressed-effect .btn-main-icon,
+        .btn-main-circle.state-idle:active .btn-main-icon,
+        .btn-main-circle.state-idle.pressed .btn-main-icon {
+            stroke: #34d399 !important;
+            filter: drop-shadow(0px -1.5px 1px rgba(0, 0, 0, 0.85)) drop-shadow(0px 1.5px 1px rgba(255, 255, 255, 0.15)) drop-shadow(0 0 14px rgba(52, 211, 153, 0.9)) !important;
+        }
+
+        .btn-main-circle.state-active.pressed-effect .btn-main-icon,
+        .btn-main-circle.state-active:active .btn-main-icon,
+        .btn-main-circle.state-active.pressed .btn-main-icon {
+            stroke: #fb7185 !important;
+            filter: drop-shadow(0px -1.5px 1px rgba(0, 0, 0, 0.85)) drop-shadow(0px 1.5px 1px rgba(255, 255, 255, 0.15)) drop-shadow(0 0 14px rgba(251, 113, 133, 0.9)) !important;
+        }
 
         .pressed-effect, .btn-main-circle:active, .btn-main-circle.pressed {
-            transform: scale(0.96) translateY(2px) !important;
+            transform: scale(0.96) translateY(1px) !important;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5), inset 0 6px 10px rgba(0, 0, 0, 0.6), inset 0 -2px 4px rgba(255, 255, 255, 0.1) !important;
         }
         
@@ -638,8 +651,8 @@
 
         .svg-plus-btn {
             position: absolute;
-            top: 25px; 
-            left: -5px; 
+            top: 15px; 
+            left: -15px; 
             width: 38px;
             height: 38px;
             cursor: pointer;
@@ -1848,6 +1861,13 @@
 
 <div id="menuBackdrop" class="menu-backdrop" onclick="closeUserMenu(event)"></div>
 
+<!-- תפריט המשתמש ממוקם ב-fixed עם אפקט מגירה חלק (Slide Down/Up) כך שהוא מופיע מתחת לאייקון, מעל ההחשכה, וללא חיתוך -->
+<div id="userDropdownMenu" class="user-dropdown-menu">
+    <button class="dropdown-item" onclick="goToProfileView()">פרופיל אישי</button>
+    <button class="dropdown-item" onclick="openSettingsModal()">הגדרות</button>
+    <button class="dropdown-item danger-item" onclick="confirmSignOut()">התנתקות</button>
+</div>
+
 <div class="app-container">
     <header id="mainHeader">
         <div class="header-right">
@@ -1919,12 +1939,6 @@
                 </svg>
             </div>
             <span id="authBtnText" class="header-auth-label">התחברות</span>
-
-            <div id="userDropdownMenu" class="user-dropdown-menu">
-                <button class="dropdown-item" onclick="goToProfileView()">פרופיל אישי</button>
-                <button class="dropdown-item" onclick="openSettingsModal()">הגדרות</button>
-                <button class="dropdown-item danger-item" onclick="confirmSignOut()">התנתקות</button>
-            </div>
         </div>
 
         <div class="header-progress-container" id="headerProgressWrap">
@@ -2380,6 +2394,34 @@
             }
         }
     });
+
+    window.handleAuthClick = async function(event) {
+        event.stopPropagation();
+        
+        if (currentView === 'profile' || currentView === 'admin') return;
+
+        if (window.currentUser) {
+            const dropdown = document.getElementById('userDropdownMenu');
+            const backdrop = document.getElementById('menuBackdrop');
+            const isOpen = dropdown.classList.contains('open');
+            
+            if (isOpen) {
+                dropdown.classList.remove('open');
+                backdrop.classList.remove('open');
+            } else {
+                const authContainer = document.getElementById('headerAuthContainer');
+                const rect = authContainer.getBoundingClientRect();
+                
+                dropdown.style.top = (rect.bottom + 8) + 'px';
+                dropdown.style.left = rect.left + 'px';
+                
+                dropdown.classList.add('open');
+                backdrop.classList.add('open');
+            }
+        } else {
+            // תטופל בהמשך ב-Firebase
+        }
+    };
 </script>
 
 <script type="module">
@@ -2567,40 +2609,6 @@
             updateActiveShiftUI();
         }
     }
-
-    window.handleAuthClick = async function(event) {
-        event.stopPropagation();
-        
-        if (currentView === 'profile' || currentView === 'admin') return;
-
-        if (window.currentUser) {
-            const dropdown = document.getElementById('userDropdownMenu');
-            const backdrop = document.getElementById('menuBackdrop');
-            const isOpen = dropdown.classList.contains('open');
-            
-            if (isOpen) {
-                dropdown.classList.remove('open');
-                backdrop.classList.remove('open');
-            } else {
-                dropdown.classList.add('open');
-                backdrop.classList.add('open');
-            }
-        } else {
-            const provider = new GoogleAuthProvider();
-            try {
-                await signInWithPopup(auth, provider);
-            } catch (error) {
-                console.error("Login error:", error);
-                if (
-                    error.code !== 'auth/cancelled-popup-request' && 
-                    error.code !== 'auth/popup-closed-by-user' && 
-                    !String(error.message || '').includes('internal')
-                ) {
-                    showErrorDialog('שגיאה בהתחברות לגוגל: ' + (error.message || 'נסה שוב'));
-                }
-            }
-        }
-    };
 
     window.goToProfileView = function() {
         window.closeUserMenu();
