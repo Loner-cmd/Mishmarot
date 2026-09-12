@@ -96,7 +96,7 @@
             box-shadow: 0 10px 25px rgba(0,0,0,0.6);
             position: relative;
             z-index: 2500;
-            overflow: hidden; /* חותך את פס ההתקדמות בדיוק לפי הפינות העגולות של הפאנל */
+            overflow: hidden;
         }
 
         header.sticky-mode {
@@ -555,77 +555,68 @@
             justify-content: center;
         }
 
+        /* עיצוב אופציה 2: כפתור מרחף ריאליסטי עם הצמדות לפאנל */
         .btn-main-circle {
-            position: relative;
-            width: 190px;
-            height: 190px;
+            width: 170px;
+            height: 170px;
             border-radius: 50%;
-            background: var(--bg-card-inner); 
-            border: none;
+            background: linear-gradient(145deg, #223a73, #152750);
             cursor: pointer;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
-            transition: transform 0.15s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s, border-color 0.3s;
-            z-index: 5;
+            gap: 4px;
             outline: none;
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        .btn-main-text {
-            font-size: 1.45rem;
-            font-weight: 800;
             font-family: 'Assistant', sans-serif;
-            transition: color 0.3s, text-shadow 0.3s;
-            z-index: 2;
+            -webkit-tap-highlight-color: transparent;
+            position: relative;
+            z-index: 5;
+            transition: all 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
         }
 
-        .btn-main-timer {
-            position: absolute;
-            bottom: 35px; 
-            font-size: 1.15rem;
-            font-weight: 700;
-            font-family: 'Inter', monospace;
-            font-variant-numeric: tabular-nums;
-            color: #e2e8f0;
-            display: none;
-            z-index: 2;
+        .btn-main-icon {
+            width: 44px;
+            height: 44px;
+            fill: none;
+            stroke-width: 3.5;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            filter: drop-shadow(0px -1.5px 1px rgba(0, 0, 0, 0.85)) drop-shadow(0px 1.5px 1px rgba(255, 255, 255, 0.15));
+            margin-bottom: 2px;
+            transition: stroke 0.2s;
         }
+
+        .btn-main-text-wrap {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            line-height: 1.1;
+            transition: color 0.2s;
+        }
+
+        .btn-main-line1 { font-size: 1.1rem; font-weight: 700; }
+        .btn-main-line2 { font-size: 1.2rem; font-weight: 800; }
 
         .btn-main-circle.state-idle {
-            border: 2px solid #047857; 
-            box-shadow: 0 0 20px rgba(4, 120, 87, 0.15), inset 0 0 15px rgba(4, 120, 87, 0.05);
-            animation: breathe-idle 3s infinite alternate ease-in-out;
+            border: 2px solid #065f46;
+            box-shadow: 0 18px 30px rgba(0, 0, 0, 0.6), inset 0 2px 4px rgba(255, 255, 255, 0.2);
+            transform: translateY(0px);
         }
-        .btn-main-circle.state-idle .btn-main-text {
-            color: #34d399;
-            text-shadow: 0 0 8px rgba(52, 211, 153, 0.2);
-        }
-
-        @keyframes breathe-idle {
-            0% { box-shadow: 0 0 15px rgba(4, 120, 87, 0.1), inset 0 0 10px rgba(4, 120, 87, 0.05); }
-            100% { box-shadow: 0 0 35px rgba(4, 120, 87, 0.35), inset 0 0 20px rgba(4, 120, 87, 0.15); }
-        }
+        .btn-main-circle.state-idle .btn-main-icon { stroke: #065f46; }
+        .btn-main-circle.state-idle .btn-main-text-wrap { color: #34d399; text-shadow: 0 0 8px rgba(52, 211, 153, 0.3); }
 
         .btn-main-circle.state-active {
-            border: 2px solid #be123c; 
-            box-shadow: 0 0 20px rgba(190, 18, 60, 0.15), inset 0 0 15px rgba(190, 18, 60, 0.05);
-            animation: breathe-active 3s infinite alternate ease-in-out;
+            border: 2px solid #881337;
+            box-shadow: 0 18px 30px rgba(0, 0, 0, 0.6), inset 0 2px 4px rgba(255, 255, 255, 0.2);
+            transform: translateY(0px);
         }
-        .btn-main-circle.state-active .btn-main-text {
-            color: #fb7185;
-            text-shadow: 0 0 8px rgba(251, 113, 133, 0.2);
-        }
+        .btn-main-circle.state-active .btn-main-icon { stroke: #881337; }
+        .btn-main-circle.state-active .btn-main-text-wrap { color: #fb7185; text-shadow: 0 0 8px rgba(251, 113, 133, 0.3); }
 
-        @keyframes breathe-active {
-            0% { box-shadow: 0 0 15px rgba(190, 18, 60, 0.1), inset 0 0 10px rgba(190, 18, 60, 0.05); }
-            100% { box-shadow: 0 0 35px rgba(190, 18, 60, 0.35), inset 0 0 20px rgba(190, 18, 60, 0.15); }
-        }
-
-        .pressed-effect {
-            transform: scale(0.92) !important;
+        .pressed-effect, .btn-main-circle:active, .btn-main-circle.pressed {
+            transform: translateY(6px) !important;
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.8), inset 0 1px 2px rgba(255, 255, 255, 0.1) !important;
         }
         
         .plus-pressed-effect {
@@ -635,8 +626,8 @@
 
         .svg-plus-btn {
             position: absolute;
-            top: 35px; 
-            left: 0px; 
+            top: 25px; 
+            left: -5px; 
             width: 38px;
             height: 38px;
             cursor: pointer;
@@ -1943,8 +1934,14 @@
 
             <div class="main-action-wrapper">
                 <button id="btnMainAction" class="btn-main-circle state-idle" onclick="handleMainAction()">
-                    <span class="btn-main-text" id="mainActionText">כניסה למשמרת</span>
-                    <span class="btn-main-timer" id="mainActionTimer">00:00:00</span>
+                    <svg class="btn-main-icon" viewBox="0 0 24 24">
+                        <path d="M18.36 6.64a9 9 0 1 1-12.73 0"></path>
+                        <line x1="12" y1="2" x2="12" y2="12"></line>
+                    </svg>
+                    <div class="btn-main-text-wrap">
+                        <span class="btn-main-line1" id="mainActionTextLine1">כניסה</span>
+                        <span class="btn-main-line2" id="mainActionTextLine2">למשמרת</span>
+                    </div>
                 </button>
 
                 <svg id="btnPlusManual" class="svg-plus-btn" viewBox="0 0 36 36" onclick="openShiftModal(null)">
@@ -3226,8 +3223,8 @@
         const headerPFill = document.getElementById('headerProgressFill');
 
         const btnMainAction = document.getElementById('btnMainAction');
-        const mainActionText = document.getElementById('mainActionText');
-        const mainActionTimer = document.getElementById('mainActionTimer');
+        const mainActionLine1 = document.getElementById('mainActionTextLine1');
+        const mainActionLine2 = document.getElementById('mainActionTextLine2');
 
         if (active) {
             statusIndicator.className = 'status-badge active';
@@ -3253,9 +3250,8 @@
             headerPFill.className = 'header-progress-fill fill-green';
 
             btnMainAction.className = 'btn-main-circle state-active';
-            mainActionText.textContent = 'יציאה ממשמרת';
-            mainActionTimer.style.display = 'block';
-            mainActionTimer.textContent = `${h}:${m}:${s}`;
+            mainActionLine1.textContent = 'יציאה';
+            mainActionLine2.textContent = 'ממשמרת';
 
         } else {
             statusIndicator.className = 'status-badge idle';
@@ -3265,8 +3261,8 @@
             headerPWrap.style.display = 'none';
 
             btnMainAction.className = 'btn-main-circle state-idle';
-            mainActionText.textContent = 'כניסה למשמרת';
-            mainActionTimer.style.display = 'none';
+            mainActionLine1.textContent = 'כניסה';
+            mainActionLine2.textContent = 'למשמרת';
         }
     }
     
