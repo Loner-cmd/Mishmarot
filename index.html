@@ -555,82 +555,6 @@
             justify-content: center;
         }
 
-        .progress-ring {
-            position: absolute;
-            top: 0; left: 0;
-            width: 260px; 
-            height: 260px;
-            transform: rotate(-90deg);
-            pointer-events: none;
-        }
-
-        .progress-ring-bg {
-            fill: none;
-            stroke: rgba(255, 255, 255, 0.03);
-            stroke-width: 8;
-        }
-
-        .progress-ring-fill, .progress-ring-glow {
-            fill: none;
-            stroke-linecap: round;
-            transition: stroke-dashoffset 1s linear;
-        }
-
-        .progress-ring-fill {
-            stroke-width: 8;
-        }
-
-        .progress-ring-glow {
-            stroke-width: 10; 
-        }
-
-        @keyframes pulse-ring-color {
-            0% { stroke: #047857; }
-            100% { stroke: #39ff14; }
-        }
-
-        @keyframes pulse-ring-glow-combo {
-            0% { stroke: #047857; opacity: 0.15; }
-            100% { stroke: #39ff14; opacity: 0.8; }
-        }
-
-        .ring-green { 
-            animation: pulse-ring-color 1.5s infinite alternate ease-in-out;
-        }
-
-        .ring-green-glow {
-            animation: pulse-ring-glow-combo 1.5s infinite alternate ease-in-out;
-        }
-
-        .ring-spark-container {
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            pointer-events: none;
-            transition: transform 1s linear;
-            z-index: 10;
-            display: none;
-        }
-
-        .ring-spark {
-            position: absolute;
-            top: 20px; 
-            left: 50%;
-            margin-left: -4px; 
-            margin-top: -4px;  
-            width: 8px; 
-            height: 8px; 
-            border-radius: 0 4px 4px 0; 
-        }
-
-        .ring-spark-active {
-            animation: pulse-tip-glow 1.5s infinite alternate ease-in-out;
-        }
-
-        @keyframes pulse-tip-glow {
-            0% { background: #047857; box-shadow: 0 0 0 transparent; }
-            100% { background: #facc15; box-shadow: 2px 0 10px rgba(250, 204, 21, 0.9); }
-        }
-
         .btn-main-circle {
             position: relative;
             width: 190px;
@@ -2018,20 +1942,6 @@
             </div>
 
             <div class="main-action-wrapper">
-                <svg class="progress-ring" viewBox="0 0 260 260">
-                    <defs>
-                        <filter id="glowBlur" x="-50%" y="-50%" width="200%" height="200%">
-                            <feGaussianBlur stdDeviation="5" result="blur" />
-                        </filter>
-                    </defs>
-                    <circle class="progress-ring-bg" cx="130" cy="130" r="110"></circle>
-                    <circle id="circleProgressGlow" class="progress-ring-glow" cx="130" cy="130" r="110" filter="url(#glowBlur)"></circle>
-                    <circle id="circleProgressFill" class="progress-ring-fill" cx="130" cy="130" r="110"></circle>
-                </svg>
-                <div class="ring-spark-container" id="ringSparkContainer">
-                    <div id="ringSpark" class="ring-spark"></div>
-                </div>
-                
                 <button id="btnMainAction" class="btn-main-circle state-idle" onclick="handleMainAction()">
                     <span class="btn-main-text" id="mainActionText">כניסה למשמרת</span>
                     <span class="btn-main-timer" id="mainActionTimer">00:00:00</span>
@@ -3318,16 +3228,6 @@
         const btnMainAction = document.getElementById('btnMainAction');
         const mainActionText = document.getElementById('mainActionText');
         const mainActionTimer = document.getElementById('mainActionTimer');
-        const circleProgressFill = document.getElementById('circleProgressFill');
-        const circleProgressGlow = document.getElementById('circleProgressGlow');
-        const ringSparkContainer = document.getElementById('ringSparkContainer');
-        const ringSpark = document.getElementById('ringSpark');
-
-        const radius = 110;
-        const circumference = 2 * Math.PI * radius; 
-        
-        circleProgressFill.style.strokeDasharray = `${circumference} ${circumference}`;
-        circleProgressGlow.style.strokeDasharray = `${circumference} ${circumference}`;
 
         if (active) {
             statusIndicator.className = 'status-badge active';
@@ -3357,23 +3257,6 @@
             mainActionTimer.style.display = 'block';
             mainActionTimer.textContent = `${h}:${m}:${s}`;
 
-            const offset = circumference - (pct * circumference);
-            circleProgressFill.style.strokeDashoffset = offset;
-            circleProgressGlow.style.strokeDashoffset = offset;
-            
-            const deg = pct * 360;
-            ringSparkContainer.style.transform = `rotate(${deg}deg)`;
-            
-            if (pct >= 1) {
-                ringSparkContainer.style.display = 'none';
-            } else {
-                ringSparkContainer.style.display = 'block';
-            }
-
-            circleProgressFill.classList.add('ring-green');
-            circleProgressGlow.classList.add('ring-green-glow');
-            ringSpark.classList.add('ring-spark-active');
-
         } else {
             statusIndicator.className = 'status-badge idle';
             statusText.textContent = 'במנוחה';
@@ -3384,15 +3267,6 @@
             btnMainAction.className = 'btn-main-circle state-idle';
             mainActionText.textContent = 'כניסה למשמרת';
             mainActionTimer.style.display = 'none';
-
-            circleProgressFill.style.strokeDashoffset = circumference;
-            circleProgressGlow.style.strokeDashoffset = circumference;
-            
-            circleProgressFill.classList.remove('ring-green');
-            circleProgressGlow.classList.remove('ring-green-glow');
-            ringSpark.classList.remove('ring-spark-active');
-            
-            ringSparkContainer.style.display = 'none';
         }
     }
     
