@@ -84,7 +84,7 @@
             flex-shrink: 0;
         }
 
-        /* Top Header - Normal state עם overflow hidden כדי לחתוך את פס ההתקדמות בצורה מושלמת */
+        /* Top Header - Normal state עם overflow hidden כדי לחתוך את פס ההתקדמות לחלוטין בתוך הפינות המעוגלות */
         header {
             display: flex;
             align-items: center;
@@ -343,11 +343,9 @@
             opacity: 1;
         }
 
-        /* תפריט המשתמש ממוקם גבוה יותר מבחינת z-index ונמצא מעל ההחשכה מבלי להיחתך ומבלי להיות מוחשך */
+        /* תפריט המשתמש ממוקם ב-fixed עם אפקט מגירה חלק (Slide Down/Up) כך שהוא מופיע מתחת לאייקון, מעל ההחשכה, וללא חיתוך */
         .user-dropdown-menu {
-            position: absolute;
-            top: 50px;
-            left: 0;
+            position: fixed;
             background: var(--bg-card);
             border: 1px solid var(--border-color);
             border-radius: 14px;
@@ -356,17 +354,16 @@
             display: none;
             flex-direction: column;
             z-index: 3500;
-            overflow: visible;
-            animation: dropdown-fade 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+            overflow: hidden;
+            opacity: 0;
+            transform: translateY(-10px);
+            transition: opacity 0.2s ease, transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
         .user-dropdown-menu.open {
             display: flex;
-        }
-
-        @keyframes dropdown-fade {
-            0% { opacity: 0; transform: translateY(-8px) scale(0.95); }
-            100% { opacity: 1; transform: translateY(0) scale(1); }
+            opacity: 1;
+            transform: translateY(0);
         }
 
         .dropdown-item {
@@ -1850,6 +1847,13 @@
 
 <div id="menuBackdrop" class="menu-backdrop" onclick="closeUserMenu(event)"></div>
 
+<!-- תפריט המשתמש ממוקם מחוץ להדר ב-position: fixed כך שהוא נפתח במדויק מתחת לאייקון, גולש באפקט מגירה חלק, ונשאר מעל שכבת ההחשכה ללא חיתוך וללא הצללה מיותרת -->
+<div id="userDropdownMenu" class="user-dropdown-menu">
+    <button class="dropdown-item" onclick="goToProfileView()">פרופיל אישי</button>
+    <button class="dropdown-item" onclick="openSettingsModal()">הגדרות</button>
+    <button class="dropdown-item danger-item" onclick="confirmSignOut()">התנתקות</button>
+</div>
+
 <div class="app-container">
     <header id="mainHeader">
         <div class="header-right">
@@ -1921,15 +1925,9 @@
                 </svg>
             </div>
             <span id="authBtnText" class="header-auth-label">התחברות</span>
-
-            <div id="userDropdownMenu" class="user-dropdown-menu">
-                <button class="dropdown-item" onclick="goToProfileView()">פרופיל אישי</button>
-                <button class="dropdown-item" onclick="openSettingsModal()">הגדרות</button>
-                <button class="dropdown-item danger-item" onclick="confirmSignOut()">התנתקות</button>
-            </div>
         </div>
 
-        <div class="header-progress-container" id="headerProgressWrap" style="border-bottom-left-radius: 16px; border-bottom-right-radius: 16px;">
+        <div class="header-progress-container" id="headerProgressWrap">
             <div class="header-progress-fill fill-green" id="headerProgressFill"></div>
         </div>
     </header>
@@ -2382,6 +2380,34 @@
             }
         }
     });
+
+    window.handleAuthClick = async function(event) {
+        event.stopPropagation();
+        
+        if (currentView === 'profile' || currentView === 'admin') return;
+
+        if (window.currentUser) {
+            const dropdown = document.getElementById('userDropdownMenu');
+            const backdrop = document.getElementById('menuBackdrop');
+            const isOpen = dropdown.classList.contains('open');
+            
+            if (isOpen) {
+                dropdown.classList.remove('open');
+                backdrop.classList.remove('open');
+            } else {
+                const authContainer = document.getElementById('headerAuthContainer');
+                const rect = authContainer.getBoundingClientRect();
+                
+                dropdown.style.top = (rect.bottom + 8) + 'px';
+                dropdown.style.left = rect.left + 'px';
+                
+                dropdown.classList.add('open');
+                backdrop.classList.add('open');
+            }
+        } else {
+            // תטופל בהמשך ב-Firebase
+        }
+    };
 </script>
 
 <script type="module">
@@ -2569,40 +2595,6 @@
             updateActiveShiftUI();
         }
     }
-
-    window.handleAuthClick = async function(event) {
-        event.stopPropagation();
-        
-        if (currentView === 'profile' || currentView === 'admin') return;
-
-        if (window.currentUser) {
-            const dropdown = document.getElementById('userDropdownMenu');
-            const backdrop = document.getElementById('menuBackdrop');
-            const isOpen = dropdown.classList.contains('open');
-            
-            if (isOpen) {
-                dropdown.classList.remove('open');
-                backdrop.classList.remove('open');
-            } else {
-                dropdown.classList.add('open');
-                backdrop.classList.add('open');
-            }
-        } else {
-            const provider = new GoogleAuthProvider();
-            try {
-                await signInWithPopup(auth, provider);
-            } catch (error) {
-                console.error("Login error:", error);
-                if (
-                    error.code !== 'auth/cancelled-popup-request' && 
-                    error.code !== 'auth/popup-closed-by-user' && 
-                    !String(error.message || '').includes('internal')
-                ) {
-                    showErrorDialog('שגיאה בהתחברות לגוגל: ' + (error.message || 'נסה שוב'));
-                }
-            }
-        }
-    };
 
     window.goToProfileView = function() {
         window.closeUserMenu();
@@ -4243,7 +4235,7 @@
                                 ${hasNotes ? `
                                 <span class="tag tag-notes" title="קיימות הערות למשמרת">
                                     <svg class="svg-icon" width="13" height="13" viewBox="0 0 24 24">
-                                        <path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"/>
+                                        <path d="M20 2H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/>
                                     </svg>
                                 </span>` : ''}
                             </div>
