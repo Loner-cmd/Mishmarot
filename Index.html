@@ -101,7 +101,13 @@
 
         header.sticky-mode {
             position: sticky;
-            top: 8px; 
+            top: 0px; 
+            border-top-left-radius: 0;
+            border-top-right-radius: 0;
+            border-top: none;
+            background: rgba(19, 34, 71, 0.95);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
         }
 
         .header-right {
@@ -689,7 +695,7 @@
 
         .smart-actions-wrapper.fixed-mode {
             position: fixed;
-            top: 52px;
+            top: 60px;
             left: 0;
             right: 0;
             margin: 0 auto; 
@@ -2260,7 +2266,7 @@
                     <div class="form-group">
                         <label class="form-label">משעה</label>
                         <div class="input-wrapper">
-                            <input type="time" id="fieldPremStart" class="form-control" onchange="validateModalRealtime(true)" oninput="validateModalRealtime(false)">
+                            <input type="time" id="fieldPremStart" class="form-control" onchange="handleManualPremChange(); validateModalRealtime(true);" oninput="handleManualPremChange(); validateModalRealtime(false);">
                             <svg class="field-error-icon" viewBox="0 0 24 24">
                                 <path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
                             </svg>
@@ -2269,7 +2275,7 @@
                     <div class="form-group">
                         <label class="form-label">עד שעה</label>
                         <div class="input-wrapper">
-                            <input type="time" id="fieldPremEnd" class="form-control" onchange="validateModalRealtime(true)" oninput="validateModalRealtime(false)">
+                            <input type="time" id="fieldPremEnd" class="form-control" onchange="handleManualPremChange(); validateModalRealtime(true);" oninput="handleManualPremChange(); validateModalRealtime(false);">
                             <svg class="field-error-icon" viewBox="0 0 24 24">
                                 <path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
                             </svg>
@@ -4064,6 +4070,13 @@
         }
     }
 
+    function handleManualPremChange() {
+        const checkbox = document.getElementById('fieldFullPremModal');
+        if (checkbox && checkbox.checked) {
+            checkbox.checked = false;
+        }
+    }
+
     function handleFullPremClick(event, shiftId) {
         event.stopPropagation();
         event.preventDefault(); 
@@ -4077,7 +4090,7 @@
         if (isChecking && hasManualPrem) {
             showSmartAlertDialog(
                 'עדכון נתוני פרמיה',
-                'שים לב, קיימים נתוני פרמיה שהוזנו מראש. הפעלת "פרמיה מלאה" תעדכן נתונים אלו ותסנכרן אותם אוטומטית עם שעות המשמרת. האם להמשיך?',
+                'שים לב, קיימות נתוני פרמיה שהוזנו מראש. הפעלת "פרמיה מלאה" תעדכן נתונים אלו ותסנכרן אותם אוטומטית עם שעות המשמרת. האם להמשיך?',
                 'עדכן וסנכרן',
                 'ביטול',
                 () => executeFullPremToggle(shift, true),
@@ -4772,4 +4785,3 @@
 </script>
 </body>
 </html>
-
