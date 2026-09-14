@@ -919,28 +919,45 @@
             gap: 10px;
         }
 
-        /* Pure blue vector graph icon without any background box or border */
+        /* Perfectly matching tool button style for monthly summary */
         .btn-summary-modal {
             width: 36px;
             height: 36px;
             border-radius: 50%;
-            background: transparent;
-            border: none;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-color);
             color: var(--accent-cyan);
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            transition: transform 0.2s;
+            transition: all 0.2s;
             position: relative;
+            outline: none;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
         }
 
         .btn-summary-modal:active {
             transform: scale(0.85);
+            background: rgba(0, 210, 255, 0.15);
+            border-color: var(--accent-cyan);
+        }
+
+        .btn-summary-modal svg {
+            width: 18px;
+            height: 18px;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 2.2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
         }
 
         .chevron-icon {
             fill: currentColor;
+            stroke: none;
+            width: 20px;
+            height: 20px;
             transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
@@ -2501,6 +2518,10 @@
 <div id="printArea" style="display: none;"></div>
 
 <script>
+    // Global Constants
+    const PRESET_NALT_MINUTES = [0, 40, 45, 60, 90, 120, 270];
+
+    // Global UI helper functions
     window.closeUserMenu = function(e) {
         if(e) {
             e.stopPropagation();
@@ -2554,6 +2575,101 @@
                 backdrop.classList.add('open');
             }
         }
+    };
+
+    window.openMonthlySummaryModal = function(mk) {
+        const mShifts = window.shifts.filter(s => s.date && s.date.startsWith(mk));
+        let totWorkMins = 0;
+        let totPremMins = 0;
+        let totNaltMins = 0;
+
+        mShifts.forEach(s => {
+             if(s.startTime && s.endTime) {
+                 totWorkMins += calculateDurationMinutes(s.startTime, s.endTime);
+             }
+             if(s.premStartTime && s.premEndTime) {
+                 totPremMins += calculateDurationMinutes(s.premStartTime, s.premEndTime);
+             }
+             totNaltMins += (Number(s.naltStartMinutes)||0) + (Number(s.naltEndMinutes)||0);
+        });
+
+        document.getElementById('summaryModalTitle').textContent = `סיכום חודשי - ${formatMonthName(mk)}`;
+        document.getElementById('modalWorkVal').textContent = formatMinutesToHM(totWorkMins);
+        document.getElementById('modalPremVal').textContent = formatMinutesToHM(totPremMins);
+        document.getElementById('modalNaltVal').textContent = formatMinutesToHM(totNaltMins);
+        document.getElementById('modalExportBtn').setAttribute('onclick', `printMonthReport('${mk}')`);
+
+        document.getElementById('monthlySummaryModal').classList.add('open');
+    };
+
+    window.closeMonthlySummaryModal = function() {
+        document.getElementById('monthlySummaryModal').classList.remove('open');
+    };
+
+    window.openShiftModal = function(shiftId) {
+        const modal = document.getElementById('shiftModal');
+        const title = document.getElementById('modalTitle');
+        const instructorSection = document.getElementById('instructorSectionModal');
+
+        if (window.isUserInstructor) {
+            instructorSection.style.display = 'block';
+        } else {
+            instructorSection.style.display = 'none';
+        }
+
+        if (shiftId) {
+            const shift = window.shifts.find(s => String(s.id) === String(shiftId));
+            if (!shift) return;
+            title.textContent = 'עריכת משמרת';
+            document.getElementById('editShiftId').value = String(shift.id);
+            document.getElementById('fieldSiddur').value = shift.siddur || '';
+            document.getElementById('fieldDate').value = shift.date || '';
+            document.getElementById('fieldStartTime').value = shift.startTime || '';
+            document.getElementById('fieldEndTime').value = shift.endTime || '';
+            document.getElementById('fieldFullPremModal').checked = Boolean(shift.fullPrem);
+            document.getElementById('fieldNotes').value = shift.notes || '';
+            
+            const nStartMins = shift.naltStartMinutes ?? (shift.naltStartHours ? shift.naltStartHours * 60 : 0);
+            const nEndMins = shift.naltEndMinutes ?? (shift.naltEndHours ? shift.naltEndHours * 60 : 0);
+            
+            setNaltFieldUI('Start', nStartMins);
+            setNaltFieldUI('End', nEndMins);
+            document.getElementById('fieldPremStart').value = shift.premStartTime || '';
+            document.getElementById('fieldPremEnd').value = shift.premEndTime || '';
+            if (window.isUserInstructor) {
+                document.getElementById('fieldInstructorStart').value = shift.instructorStartTime || '';
+                document.getElementById('fieldInstructorEnd').value = shift.instructorEndTime || '';
+            }
+        } else {
+            const now = new Date();
+            const y = now.getFullYear();
+            const m = String(now.getMonth() + 1).padStart(2, '0');
+            const d = String(now.getDate()).padStart(2, '0');
+
+            title.textContent = 'הוספת משמרת ידנית';
+            document.getElementById('editShiftId').value = '';
+            document.getElementById('fieldSiddur').value = '';
+            document.getElementById('fieldDate').value = `${y}-${m}-${d}`;
+            document.getElementById('fieldStartTime').value = '';
+            document.getElementById('fieldEndTime').value = '';
+            document.getElementById('fieldFullPremModal').checked = false;
+            document.getElementById('fieldNotes').value = '';
+            setNaltFieldUI('Start', 0);
+            setNaltFieldUI('End', 0);
+            document.getElementById('fieldPremStart').value = '';
+            document.getElementById('fieldPremEnd').value = '';
+            if (window.isUserInstructor) {
+                document.getElementById('fieldInstructorStart').value = '';
+                document.getElementById('fieldInstructorEnd').value = '';
+            }
+        }
+
+        modal.classList.add('open');
+        validateModalRealtime(false);
+    };
+
+    window.closeModal = function() {
+        document.getElementById('shiftModal').classList.remove('open');
     };
 </script>
 
@@ -2662,18 +2778,18 @@
             let isSameUser = (lastUser === uid);
 
             if (isSameUser) {
-                shifts = cloudShifts.length > 0 ? cloudShifts : localShifts;
-                autoSortShiftsArray(shifts);
-                localStorage.setItem('railway_shifts', JSON.stringify(shifts));
+                window.shifts = cloudShifts.length > 0 ? cloudShifts : localShifts;
+                autoSortShiftsArray(window.shifts);
+                localStorage.setItem('railway_shifts', JSON.stringify(window.shifts));
                 localStorage.setItem('railway_last_user', uid);
                 refreshUIAfterSync();
                 return;
             }
 
             if (cloudShifts.length > 0 && localShifts.length === 0) {
-                shifts = cloudShifts;
-                autoSortShiftsArray(shifts);
-                localStorage.setItem('railway_shifts', JSON.stringify(shifts));
+                window.shifts = cloudShifts;
+                autoSortShiftsArray(window.shifts);
+                localStorage.setItem('railway_shifts', JSON.stringify(window.shifts));
                 localStorage.setItem('railway_last_user', uid);
                 refreshUIAfterSync();
             }
@@ -2684,14 +2800,14 @@
                     'טען ענן (דרוס מקומי)',
                     'השאר מידע מקומי',
                     () => {
-                        shifts = cloudShifts;
-                        autoSortShiftsArray(shifts);
-                        localStorage.setItem('railway_shifts', JSON.stringify(shifts));
+                        window.shifts = cloudShifts;
+                        autoSortShiftsArray(window.shifts);
+                        localStorage.setItem('railway_shifts', JSON.stringify(window.shifts));
                         localStorage.setItem('railway_last_user', uid);
                         refreshUIAfterSync();
                     },
                     () => {
-                        shifts = localShifts;
+                        window.shifts = localShifts;
                         localStorage.setItem('railway_last_user', uid);
                         (async () => {
                             for (let shift of localShifts) {
@@ -2712,19 +2828,19 @@
                         for (let shift of localShifts) {
                             await setDoc(doc(db, 'users', uid, 'shifts', String(shift.id)), shift);
                         }
-                        shifts = localShifts;
+                        window.shifts = localShifts;
                         localStorage.setItem('railway_last_user', uid);
                         refreshUIAfterSync();
                     },
                     () => {
-                        shifts = localShifts;
+                        window.shifts = localShifts;
                         localStorage.setItem('railway_last_user', uid);
                         refreshUIAfterSync();
                     }
                 );
             }
             else {
-                shifts = [];
+                window.shifts = [];
                 localStorage.setItem('railway_last_user', uid);
                 refreshUIAfterSync();
             }
@@ -2798,7 +2914,7 @@
                     if (dropdown) dropdown.classList.remove('open');
 
                     await signOut(auth);
-                    shifts = [];
+                    window.shifts = [];
                     window.isUserInstructor = false;
                     localStorage.removeItem('railway_shifts');
                     localStorage.removeItem('railway_last_user');
@@ -2815,7 +2931,7 @@
     };
 
     window.loadLocalShifts = function() {
-        shifts = JSON.parse(localStorage.getItem('railway_shifts') || '[]');
+        window.shifts = JSON.parse(localStorage.getItem('railway_shifts') || '[]');
         if (typeof renderShifts === 'function' && currentView === 'history') {
             renderShifts();
         }
@@ -2825,7 +2941,7 @@
     };
 
     window.saveShiftToCloudAndLocal = async function(shiftObj) {
-        localStorage.setItem('railway_shifts', JSON.stringify(shifts));
+        localStorage.setItem('railway_shifts', JSON.stringify(window.shifts));
         
         if (window.currentUser) {
             localStorage.setItem('railway_last_user', window.currentUser.uid);
@@ -2838,7 +2954,7 @@
     };
 
     window.deleteShiftFromCloudAndLocal = async function(shiftId) {
-        localStorage.setItem('railway_shifts', JSON.stringify(shifts));
+        localStorage.setItem('railway_shifts', JSON.stringify(window.shifts));
         
         if (window.currentUser) {
             try {
@@ -3012,7 +3128,7 @@
         document.getElementById('dynamic-favicon').href = iconUrl;
     })();
 
-    let shifts = JSON.parse(localStorage.getItem('railway_shifts') || '[]');
+    window.shifts = JSON.parse(localStorage.getItem('railway_shifts') || '[]');
     let currentView = sessionStorage.getItem('railway_active_view') || 'clock';
     let isSelectionMode = false;
     let isSortingMode = false;
@@ -3188,9 +3304,9 @@
         }, 2200);
     }
 
-    // Strict separation: Long press shows tooltip ONLY (~350ms) without triggering action; short tap triggers action ONLY without tooltip
+    // Robust, safe interaction mechanism for tools and summary buttons (Tooltip on long press 500ms)
     function setupGlobalInteractions() {
-        const drawerItems = document.querySelectorAll('.tools-popup-drawer .btn-drawer-item');
+        const drawerItems = document.querySelectorAll('.tools-popup-drawer .btn-drawer-item, .month-accordion-header .btn-summary-modal');
         
         drawerItems.forEach(btn => {
             let pressTimer = null;
@@ -3200,10 +3316,11 @@
 
             const startPress = (e) => {
                 longPressed = false;
+                if (pressTimer) clearTimeout(pressTimer);
                 pressTimer = setTimeout(() => {
                     longPressed = true;
                     if (tooltip) tooltip.classList.add('show');
-                }, 350); // 350ms for responsive long press
+                }, 500); // 500ms for responsive long press tooltip
             };
 
             const endPress = (e) => {
@@ -3217,8 +3334,49 @@
                 }
 
                 if (!longPressed) {
-                    // Short tap - execute tool action
-                    if (actionType) {
+                    if (actionType === 'summary') {
+                        const mk = btn.getAttribute('data-month');
+                        if (mk) openMonthlySummaryModal(mk);
+                    } else if (actionType) {
+                        handleToolAction(actionType);
+                    }
+                }
+                longPressed = false;
+            };
+
+            btn.replaceWith(btn.cloneNode(true));
+        });
+
+        document.querySelectorAll('.tools-popup-drawer .btn-drawer-item, .month-accordion-header .btn-summary-modal').forEach(btn => {
+            let pressTimer = null;
+            let longPressed = false;
+            const tooltip = btn.querySelector('.drawer-tooltip');
+            const actionType = btn.getAttribute('data-action');
+
+            const startPress = (e) => {
+                longPressed = false;
+                if (pressTimer) clearTimeout(pressTimer);
+                pressTimer = setTimeout(() => {
+                    longPressed = true;
+                    if (tooltip) tooltip.classList.add('show');
+                }, 500);
+            };
+
+            const endPress = (e) => {
+                if (pressTimer) {
+                    clearTimeout(pressTimer);
+                    pressTimer = null;
+                }
+
+                if (tooltip && tooltip.classList.contains('show')) {
+                    setTimeout(() => tooltip.classList.remove('show'), 1500);
+                }
+
+                if (!longPressed) {
+                    if (actionType === 'summary') {
+                        const mk = btn.getAttribute('data-month');
+                        if (mk) openMonthlySummaryModal(mk);
+                    } else if (actionType) {
                         handleToolAction(actionType);
                     }
                 }
@@ -3240,36 +3398,6 @@
         });
     }
 
-    // Modal popup for monthly summary
-    window.openMonthlySummaryModal = function(mk) {
-        const mShifts = shifts.filter(s => s.date && s.date.startsWith(mk));
-        let totWorkMins = 0;
-        let totPremMins = 0;
-        let totNaltMins = 0;
-
-        mShifts.forEach(s => {
-             if(s.startTime && s.endTime) {
-                 totWorkMins += calculateDurationMinutes(s.startTime, s.endTime);
-             }
-             if(s.premStartTime && s.premEndTime) {
-                 totPremMins += calculateDurationMinutes(s.premStartTime, s.premEndTime);
-             }
-             totNaltMins += (Number(s.naltStartMinutes)||0) + (Number(s.naltEndMinutes)||0);
-        });
-
-        document.getElementById('summaryModalTitle').textContent = `סיכום חודשי - ${formatMonthName(mk)}`;
-        document.getElementById('modalWorkVal').textContent = formatMinutesToHM(totWorkMins);
-        document.getElementById('modalPremVal').textContent = formatMinutesToHM(totPremMins);
-        document.getElementById('modalNaltVal').textContent = formatMinutesToHM(totNaltMins);
-        document.getElementById('modalExportBtn').setAttribute('onclick', `printMonthReport('${mk}')`);
-
-        document.getElementById('monthlySummaryModal').classList.add('open');
-    };
-
-    window.closeMonthlySummaryModal = function() {
-        document.getElementById('monthlySummaryModal').classList.remove('open');
-    };
-
     window.handleToolAction = function(type) {
         if (type === 'multipanel') toggleMultiPanelMode();
         else if (type === 'sorting') toggleSortingMode();
@@ -3284,7 +3412,7 @@
         if (!select) return;
 
         let monthsSet = new Set();
-        shifts.forEach(s => {
+        window.shifts.forEach(s => {
             if (s.date) monthsSet.add(s.date.substring(0, 7));
         });
 
@@ -3301,9 +3429,9 @@
         const select = document.getElementById('profileMonthSelect');
         const val = select ? select.value : 'annual';
 
-        let targetShifts = shifts;
+        let targetShifts = window.shifts;
         if (val !== 'annual') {
-            targetShifts = shifts.filter(s => s.date && s.date.startsWith(val));
+            targetShifts = window.shifts.filter(s => s.date && s.date.startsWith(val));
         }
 
         let totWorkMins = 0;
@@ -3343,8 +3471,8 @@
     updateLiveClock();
 
     function getActiveShift() {
-        if (!shifts || shifts.length === 0) return null;
-        return shifts.find(s => s.startTime && !s.endTime) || null;
+        if (!window.shifts || window.shifts.length === 0) return null;
+        return window.shifts.find(s => s.startTime && !s.endTime) || null;
     }
 
     function updateActiveShiftUI() {
@@ -3425,7 +3553,7 @@
         const overlappingIds = new Set();
         const intervals = [];
 
-        shifts.forEach(shift => {
+        window.shifts.forEach(shift => {
             if (!shift.date || !shift.startTime) return;
             const [y, m, d] = shift.date.split('-').map(Number);
             const [sh, sm] = shift.startTime.split(':').map(Number);
@@ -3519,9 +3647,9 @@
             notes: ''
         };
 
-        shifts.unshift(newShift);
+        window.shifts.unshift(newShift);
         activeMonthKey = dateStr.substring(0, 7); 
-        autoSortShiftsArray(shifts);
+        autoSortShiftsArray(window.shifts);
         saveShifts(newShift);
     }
 
@@ -3564,8 +3692,8 @@
         if (isSameDay && (durationMins === 0 || active.startTime === timeStr)) {
             showSmartAlertDialog('זמנים זהים זוהו', 'שעת הכניסה ושעת היציאה זהות (משמרת באורך 0 זמן). האם ברצונך לבטל ולמחוק משמרת זו?', 'אישור (מחיקה)', 'ביטול', () => {
                 const targetId = active.id;
-                shifts = shifts.filter(s => String(s.id) !== String(targetId));
-                autoSortShiftsArray(shifts);
+                window.shifts = window.shifts.filter(s => String(s.id) !== String(targetId));
+                autoSortShiftsArray(window.shifts);
                 deleteShiftFromCloudAndLocal(targetId);
                 if (currentView === 'history') renderShifts();
             }, () => {});
@@ -3587,7 +3715,7 @@
                 if (active.fullPrem && active.startTime !== timeStr) {
                     applyFullPremToShift(active);
                 }
-                autoSortShiftsArray(shifts);
+                autoSortShiftsArray(window.shifts);
                 saveShifts(active);
                 if (currentView === 'history') renderShifts();
             }, () => {});
@@ -3598,7 +3726,7 @@
         if (active.fullPrem && active.startTime !== timeStr) {
             applyFullPremToShift(active);
         }
-        autoSortShiftsArray(shifts);
+        autoSortShiftsArray(window.shifts);
         saveShifts(active);
         if (currentView === 'history') renderShifts();
     }
@@ -3607,7 +3735,7 @@
         if (targetShift) {
             saveShiftToCloudAndLocal(targetShift);
         } else {
-            localStorage.setItem('railway_shifts', JSON.stringify(shifts));
+            localStorage.setItem('railway_shifts', JSON.stringify(window.shifts));
         }
         updateActiveShiftUI();
     }
@@ -3826,8 +3954,8 @@
         renderShifts();
     }
 
-    function printMonthReport(mk) {
-        const mShifts = shifts.filter(s => s.date && s.date.startsWith(mk)).reverse(); 
+    window.printMonthReport = function(mk) {
+        const mShifts = window.shifts.filter(s => s.date && s.date.startsWith(mk)).reverse(); 
         if(mShifts.length === 0) return;
         
         let totWorkMins = 0;
@@ -3899,11 +4027,11 @@
             </table>
         `;
         window.print();
-    }
+    };
 
     function sortShiftsByDate() {
-        autoSortShiftsArray(shifts);
-        localStorage.setItem('railway_shifts', JSON.stringify(shifts));
+        autoSortShiftsArray(window.shifts);
+        localStorage.setItem('railway_shifts', JSON.stringify(window.shifts));
         renderShifts();
     }
 
@@ -3914,13 +4042,13 @@
 
         cardElements.forEach(card => {
             const shiftId = card.getAttribute('data-id');
-            const found = shifts.find(s => String(s.id) === String(shiftId));
+            const found = window.shifts.find(s => String(s.id) === String(shiftId));
             if (found) newOrderedShifts.push(found);
         });
 
-        if (newOrderedShifts.length === shifts.length) {
-            shifts = newOrderedShifts;
-            localStorage.setItem('railway_shifts', JSON.stringify(shifts));
+        if (newOrderedShifts.length === window.shifts.length) {
+            window.shifts = newOrderedShifts;
+            localStorage.setItem('railway_shifts', JSON.stringify(window.shifts));
         }
         toggleSortingMode();
     }
@@ -3969,10 +4097,10 @@
     }
 
     function selectAllShifts() {
-        if (selectedShiftIds.size === shifts.length) {
+        if (selectedShiftIds.size === window.shifts.length) {
             selectedShiftIds.clear();
         } else {
-            shifts.forEach(s => selectedShiftIds.add(String(s.id)));
+            window.shifts.forEach(s => selectedShiftIds.add(String(s.id)));
         }
         updateSelectionUI();
         renderShifts();
@@ -3988,9 +4116,9 @@
             'ביטול',
             () => {
                 const idsToDelete = Array.from(selectedShiftIds);
-                shifts = shifts.filter(s => !selectedShiftIds.has(String(s.id)));
+                window.shifts = window.shifts.filter(s => !selectedShiftIds.has(String(s.id)));
                 selectedShiftIds.clear();
-                localStorage.setItem('railway_shifts', JSON.stringify(shifts));
+                localStorage.setItem('railway_shifts', JSON.stringify(window.shifts));
                 idsToDelete.forEach(id => deleteShiftFromCloudAndLocal(id));
                 if (currentView === 'history') renderShifts();
                 updateSelectionUI();
@@ -4175,11 +4303,11 @@
         }
     }
 
-    function handleFullPremClick(event, shiftId) {
+    window.handleFullPremClick = function(event, shiftId) {
         event.stopPropagation();
         event.preventDefault(); 
 
-        const shift = shifts.find(s => String(s.id) === String(shiftId));
+        const shift = window.shifts.find(s => String(s.id) === String(shiftId));
         if (!shift) return;
 
         const isChecking = !shift.fullPrem; 
@@ -4206,7 +4334,7 @@
         } else {
             executeFullPremToggle(shift, isChecking);
         }
-    }
+    };
 
     function executeFullPremToggle(shift, isChecking) {
         shift.fullPrem = isChecking;
@@ -4475,7 +4603,7 @@
         const expandedIds = Array.from(container.querySelectorAll('.shift-details.expanded'))
                                 .map(el => el.closest('.shift-card').getAttribute('data-id'));
 
-        if (shifts.length === 0) {
+        if (window.shifts.length === 0) {
             container.innerHTML = `
                 <div class="empty-state">
                     <p>עדיין אין משמרות מתועדות.<br>לחץ על "כניסה למשמרת" כדי להתחיל.</p>
@@ -4487,7 +4615,7 @@
         const overlappingIds = calculateOverlaps();
         
         let grouped = {};
-        shifts.forEach(s => {
+        window.shifts.forEach(s => {
             const d = s.date || '';
             const monthKey = d.substring(0, 7); 
             if(!grouped[monthKey]) grouped[monthKey] = [];
@@ -4509,10 +4637,13 @@
             <div class="month-accordion-wrapper ${isOpen ? 'open' : ''}">
                 <div class="month-accordion-header" onclick="toggleMonthAccordion('${mk}')">
                     <div class="month-header-left-actions" onclick="event.stopPropagation()">
-                        <button class="btn-summary-modal" onclick="openMonthlySummaryModal('${mk}')" title="סיכום חודשי">
-                            <svg class="svg-icon" width="22" height="22" viewBox="0 0 24 24">
-                                <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/>
+                        <button class="btn-summary-modal" data-action="summary" data-month="${mk}" title="סיכום חודשי">
+                            <svg viewBox="0 0 24 24">
+                                <line x1="6" y1="20" x2="6" y2="10"></line>
+                                <line x1="12" y1="20" x2="12" y2="4"></line>
+                                <line x1="18" y1="20" x2="18" y2="14"></line>
                             </svg>
+                            <span class="drawer-tooltip">סיכום חודשי</span>
                         </button>
                     </div>
                     <span>${formatMonthName(mk)} <span style="font-size: 0.8rem; font-weight: normal; color: var(--text-muted);">(${mShifts.length} משמרות)</span></span>
@@ -4538,72 +4669,6 @@
 
         setupDragAndDrop();
         setupGlobalInteractions();
-    }
-
-    window.openShiftModal = function(shiftId) {
-        const modal = document.getElementById('shiftModal');
-        const title = document.getElementById('modalTitle');
-        const instructorSection = document.getElementById('instructorSectionModal');
-
-        if (window.isUserInstructor) {
-            instructorSection.style.display = 'block';
-        } else {
-            instructorSection.style.display = 'none';
-        }
-
-        if (shiftId) {
-            const shift = shifts.find(s => String(s.id) === String(shiftId));
-            if (!shift) return;
-            title.textContent = 'עריכת משמרת';
-            document.getElementById('editShiftId').value = String(shift.id);
-            document.getElementById('fieldSiddur').value = shift.siddur || '';
-            document.getElementById('fieldDate').value = shift.date || '';
-            document.getElementById('fieldStartTime').value = shift.startTime || '';
-            document.getElementById('fieldEndTime').value = shift.endTime || '';
-            document.getElementById('fieldFullPremModal').checked = Boolean(shift.fullPrem);
-            document.getElementById('fieldNotes').value = shift.notes || '';
-            
-            const nStartMins = shift.naltStartMinutes ?? (shift.naltStartHours ? shift.naltStartHours * 60 : 0);
-            const nEndMins = shift.naltEndMinutes ?? (shift.naltEndHours ? shift.naltEndHours * 60 : 0);
-            
-            setNaltFieldUI('Start', nStartMins);
-            setNaltFieldUI('End', nEndMins);
-            document.getElementById('fieldPremStart').value = shift.premStartTime || '';
-            document.getElementById('fieldPremEnd').value = shift.premEndTime || '';
-            if (window.isUserInstructor) {
-                document.getElementById('fieldInstructorStart').value = shift.instructorStartTime || '';
-                document.getElementById('fieldInstructorEnd').value = shift.instructorEndTime || '';
-            }
-        } else {
-            const now = new Date();
-            const y = now.getFullYear();
-            const m = String(now.getMonth() + 1).padStart(2, '0');
-            const d = String(now.getDate()).padStart(2, '0');
-
-            title.textContent = 'הוספת משמרת ידנית';
-            document.getElementById('editShiftId').value = '';
-            document.getElementById('fieldSiddur').value = '';
-            document.getElementById('fieldDate').value = `${y}-${m}-${d}`;
-            document.getElementById('fieldStartTime').value = '';
-            document.getElementById('fieldEndTime').value = '';
-            document.getElementById('fieldFullPremModal').checked = false;
-            document.getElementById('fieldNotes').value = '';
-            setNaltFieldUI('Start', 0);
-            setNaltFieldUI('End', 0);
-            document.getElementById('fieldPremStart').value = '';
-            document.getElementById('fieldPremEnd').value = '';
-            if (window.isUserInstructor) {
-                document.getElementById('fieldInstructorStart').value = '';
-                document.getElementById('fieldInstructorEnd').value = '';
-            }
-        }
-
-        modal.classList.add('open');
-        validateModalRealtime(false);
-    }
-
-    function closeModal() {
-        document.getElementById('shiftModal').classList.remove('open');
     }
 
     function getValidationState() {
@@ -4739,7 +4804,7 @@
         }
     }
 
-    function saveShiftDirect() {
+    window.saveShiftDirect = function() {
         const editId = document.getElementById('editShiftId').value;
         const siddurVal = document.getElementById('fieldSiddur').value.trim();
         let dateVal = document.getElementById('fieldDate').value;
@@ -4780,10 +4845,10 @@
         let savedShiftObj = null;
 
         if (editId) {
-            const index = shifts.findIndex(s => String(s.id) === String(editId));
+            const index = window.shifts.findIndex(s => String(s.id) === String(editId));
             if (index !== -1) {
-                shifts[index] = {
-                    ...shifts[index],
+                window.shifts[index] = {
+                    ...window.shifts[index],
                     siddur: siddurVal,
                     date: dateVal,
                     startTime: startVal,
@@ -4798,9 +4863,9 @@
                     notes: notesVal
                 };
                 if (fullPremVal && startVal && startVal !== endVal) {
-                    applyFullPremToShift(shifts[index]);
+                    applyFullPremToShift(window.shifts[index]);
                 }
-                savedShiftObj = shifts[index];
+                savedShiftObj = window.shifts[index];
             }
         } else {
             const newShift = {
@@ -4821,17 +4886,17 @@
             if (fullPremVal && startVal && startVal !== endVal) {
                 applyFullPremToShift(newShift);
             }
-            shifts.unshift(newShift);
+            window.shifts.unshift(newShift);
             savedShiftObj = newShift;
         }
         
         activeMonthKey = dateVal.substring(0, 7);
 
-        autoSortShiftsArray(shifts);
+        autoSortShiftsArray(window.shifts);
         saveShifts(savedShiftObj);
         if (currentView === 'history') renderShifts();
         closeModal();
-    }
+    };
     
     function deleteShift(id) {
         showSmartAlertDialog(
@@ -4840,8 +4905,8 @@
             'מחק משמרת',
             'ביטול',
             () => {
-                shifts = shifts.filter(s => !selectedShiftIds.has(String(s.id)) && String(s.id) !== String(id));
-                localStorage.setItem('railway_shifts', JSON.stringify(shifts));
+                window.shifts = window.shifts.filter(s => !selectedShiftIds.has(String(s.id)) && String(s.id) !== String(id));
+                localStorage.setItem('railway_shifts', JSON.stringify(window.shifts));
                 deleteShiftFromCloudAndLocal(id);
                 if (currentView === 'history') renderShifts();
             },
