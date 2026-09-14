@@ -2,7 +2,7 @@
 <html lang="he" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>יומן משמרות</title>
     
     <!-- iOS PWA Settings -->
@@ -42,10 +42,20 @@
             padding: 0;
             -webkit-tap-highlight-color: transparent;
             font-family: 'Assistant', sans-serif;
+            -webkit-user-select: none;
+            user-select: none;
+            -webkit-touch-callout: none;
+        }
+
+        input, textarea {
+            -webkit-user-select: text;
+            user-select: text;
         }
 
         html, body {
             width: 100%;
+            overflow-x: hidden;
+            background-color: var(--bg-primary);
         }
 
         .num-font {
@@ -54,7 +64,6 @@
         }
 
         body {
-            background-color: var(--bg-primary);
             color: var(--text-main);
             min-height: 100vh;
             display: flex;
@@ -71,7 +80,8 @@
             display: flex;
             flex-direction: column;
             gap: 16px;
-            padding-bottom: 100px;
+            padding-top: 90px;
+            padding-bottom: 120px;
             position: relative;
         }
 
@@ -84,30 +94,29 @@
             flex-shrink: 0;
         }
 
-        /* Top Header - Normal state עם overflow hidden כדי לחתוך את פס ההתקדמות לחלוטין בתוך הפינות המעוגלות */
         header {
             display: flex;
             align-items: center;
             justify-content: space-between;
             padding: 10px 14px 14px 14px;
-            background: var(--bg-card);
-            border-radius: 16px;
-            border: 1px solid var(--border-color);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.6);
-            position: relative;
-            z-index: 2500;
-            overflow: hidden;
-        }
-
-        header.sticky-mode {
-            position: sticky;
-            top: 0px; 
-            border-top-left-radius: 0;
-            border-top-right-radius: 0;
-            border-top: none;
             background: rgba(19, 34, 71, 0.95);
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
+            border-top-left-radius: 0;
+            border-top-right-radius: 0;
+            border-bottom-left-radius: 16px;
+            border-bottom-right-radius: 16px;
+            border-top: none;
+            border-left: 1px solid var(--border-color);
+            border-right: 1px solid var(--border-color);
+            border-bottom: 1px solid var(--border-color);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.6);
+            position: fixed;
+            top: 12px;
+            width: 100%;
+            max-width: 480px;
+            z-index: 2500;
+            overflow: hidden;
         }
 
         .header-right {
@@ -349,7 +358,6 @@
             opacity: 1;
         }
 
-        /* תפריט המשתמש ממוקם ב-fixed עם אפקט מגירה חלק (Slide Down/Up) כך שהוא מופיע מתחת לאייקון, מעל ההחשכה, וללא חיתוך */
         .user-dropdown-menu {
             position: fixed;
             background: var(--bg-card);
@@ -407,6 +415,7 @@
             background: rgba(239, 68, 68, 0.2);
         }
 
+        /* Bottom Nav & Floating Action Drawer - Perfectly Centered, Fixed Layout */
         .bottom-nav-wrapper {
             position: fixed;
             bottom: 0; left: 0; right: 0;
@@ -418,6 +427,16 @@
             pointer-events: none; 
         }
 
+        .bottom-nav-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            width: 100%;
+            max-width: 480px;
+            pointer-events: auto;
+        }
+
         .bottom-nav {
             display: flex;
             position: relative;
@@ -426,7 +445,6 @@
             border: 1px solid var(--border-color);
             box-shadow: 0 10px 25px rgba(0,0,0,0.6);
             padding: 5px;
-            pointer-events: auto;
             touch-action: none; 
             user-select: none;
             width: 220px; 
@@ -482,6 +500,154 @@
         .nav-tab.active svg {
             fill: var(--accent-cyan);
             transform: scale(1.15);
+        }
+
+        /* Tools Drawer Button (Moved to right side) */
+        .tools-drawer-wrap {
+            position: absolute;
+            right: 8px;
+            display: none; /* Visible only in history view */
+        }
+
+        .btn-tools-main {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.6);
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .btn-tools-main svg {
+            width: 22px;
+            height: 22px;
+            fill: currentColor;
+            transition: transform 0.3s ease;
+        }
+
+        .tools-drawer-wrap.open .btn-tools-main {
+            background: rgba(0, 210, 255, 0.15);
+            border-color: var(--accent-cyan);
+            color: var(--accent-cyan);
+            box-shadow: 0 0 15px rgba(0, 210, 255, 0.4);
+        }
+
+        .tools-drawer-wrap.open .btn-tools-main svg {
+            transform: rotate(45deg);
+        }
+
+        .tools-popup-drawer {
+            position: absolute;
+            bottom: 58px;
+            right: 0;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 24px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.8);
+            padding: 8px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            opacity: 0;
+            transform: translateY(15px) scale(0.9);
+            pointer-events: none;
+            transition: opacity 0.2s ease, transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+            z-index: 950;
+        }
+
+        .tools-drawer-wrap.open .tools-popup-drawer {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+            pointer-events: auto;
+        }
+
+        .btn-drawer-item {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+        }
+
+        .btn-drawer-item svg {
+            width: 19px;
+            height: 19px;
+            fill: currentColor;
+        }
+
+        .btn-drawer-item.active-mode {
+            background: rgba(0, 210, 255, 0.15);
+            border-color: var(--accent-cyan);
+            color: var(--accent-cyan);
+            box-shadow: 0 0 10px rgba(0, 210, 255, 0.4);
+        }
+
+        /* Larger, clearer tooltips positioned on the LEFT side of buttons for right-handed use */
+        .drawer-tooltip {
+            position: absolute;
+            right: 50px;
+            top: 50%;
+            transform: translateY(-50%) translateX(6px);
+            background: rgba(11, 19, 41, 0.98);
+            border: 1px solid var(--accent-cyan);
+            color: #fff;
+            font-size: 0.85rem;
+            font-weight: 700;
+            padding: 6px 14px;
+            border-radius: 10px;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.15s ease, transform 0.15s ease;
+            box-shadow: 0 6px 16px rgba(0,0,0,0.7);
+            z-index: 1000;
+        }
+
+        .drawer-tooltip.show {
+            opacity: 1;
+            transform: translateY(-50%) translateX(0);
+        }
+
+        /* Floating status bubble above nav */
+        .status-bubble-toast {
+            position: fixed;
+            bottom: 82px;
+            left: 50%;
+            transform: translateX(-50%) translateY(10px);
+            background: rgba(19, 34, 71, 0.95);
+            border: 1px solid var(--accent-cyan);
+            color: var(--accent-cyan);
+            font-size: 0.8rem;
+            font-weight: 700;
+            padding: 6px 14px;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.6);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s ease, transform 0.2s ease;
+            z-index: 2000;
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            white-space: nowrap;
+        }
+
+        .status-bubble-toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
         }
 
         .app-view {
@@ -559,7 +725,6 @@
             justify-content: center;
         }
 
-        /* מעטפת חיצונית עדינה מאחורי הכפתור שיוצרת את מסגרת/פס הכהה הדק הסטטי */
         .well-container {
             width: 220px;
             height: 220px;
@@ -573,7 +738,6 @@
             position: relative;
         }
 
-        /* הכפתור הראשי עגול עם טווח תנועת לחיצה עדין ומקורי */
         .btn-main-circle {
             width: 210px;
             height: 210px;
@@ -630,7 +794,6 @@
         .btn-main-circle.state-active .btn-main-icon { stroke: #881337; }
         .btn-main-circle.state-active .btn-main-text-wrap { color: #fb7185; text-shadow: 0 0 10px rgba(251, 113, 133, 0.3); }
 
-        /* אפקט הלחיצה: רק הסמל זוהר ונדלק בעת לחיצה, עם עומק לחיצה עדין ומדויק כמו בהתחלה */
         .btn-main-circle.state-idle.pressed-effect .btn-main-icon,
         .btn-main-circle.state-idle:active .btn-main-icon,
         .btn-main-circle.state-idle.pressed .btn-main-icon {
@@ -673,101 +836,6 @@
             opacity: 0.5;
         }
 
-        .smart-actions-wrapper {
-            position: relative;
-            z-index: 800;
-            padding: 34px 14px 10px 14px;
-            margin: -40px 0 -10px 0;
-            border-radius: 0 0 16px 16px;
-            background: rgba(11, 19, 41, 0.85);
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-top: none;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.4);
-            transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.35s ease;
-            display: flex;
-            flex-direction: column;
-            gap: 8px; 
-            width: 100%;
-            box-sizing: border-box;
-        }
-
-        .smart-actions-wrapper.fixed-mode {
-            position: fixed;
-            top: 60px;
-            left: 0;
-            right: 0;
-            margin: 0 auto; 
-            width: calc(100% - 24px); 
-            max-width: 456px; 
-            transform: translateY(-150%);
-            opacity: 0;
-            pointer-events: none;
-        }
-
-        .smart-actions-wrapper.fixed-mode.slide-in {
-            transform: translateY(0);
-            opacity: 1;
-            pointer-events: auto;
-        }
-
-        .smart-actions-wrapper.fixed-mode.slide-out {
-            transform: translateY(-150%);
-            opacity: 0;
-            pointer-events: none;
-        }
-
-        .section-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .section-title {
-            font-size: 1rem;
-            font-weight: 700;
-            color: var(--text-main); 
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .header-actions-group {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-        }
-
-        .btn-icon-action {
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            color: var(--text-muted); 
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        .btn-icon-action svg {
-            width: 18px;
-            height: 18px;
-            fill: currentColor;
-            transition: fill 0.2s;
-        }
-
-        .btn-icon-action.active-mode {
-            background: rgba(0, 210, 255, 0.15);
-            border-color: var(--accent-cyan);
-            color: var(--accent-cyan);
-            box-shadow: 0 0 12px rgba(0, 210, 255, 0.4);
-        }
-
         .selection-toolbar {
             display: none;
             background: var(--bg-card);
@@ -777,6 +845,7 @@
             align-items: center;
             justify-content: space-between;
             gap: 8px;
+            margin-bottom: 12px;
         }
 
         .selection-toolbar.active {
@@ -812,16 +881,16 @@
             color: #fff;
         }
 
-        .month-accordion {
+        /* Clean Month Accordion Wrapper with Left-side Graph Icon */
+        .month-accordion-wrapper {
             background: var(--bg-card);
             border-radius: 16px;
             border: 1px solid var(--border-color);
-            overflow: hidden;
-            margin-bottom: 12px;
             box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+            margin-bottom: 12px;
         }
         
-        .month-accordion:last-child {
+        .month-accordion-wrapper:last-child {
             margin-bottom: 0;
         }
 
@@ -831,6 +900,8 @@
             justify-content: space-between;
             align-items: center;
             background: rgba(0, 0, 0, 0.2);
+            border-top-left-radius: 16px;
+            border-top-right-radius: 16px;
             cursor: pointer;
             font-weight: 700;
             font-size: 1.05rem;
@@ -843,12 +914,55 @@
             background: rgba(0, 0, 0, 0.4);
         }
 
+        .month-header-left-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Perfectly matching tool button style for monthly summary */
+        .btn-summary-modal {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-color);
+            color: var(--accent-cyan);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+            outline: none;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+        }
+
+        .btn-summary-modal:active {
+            transform: scale(0.85);
+            background: rgba(0, 210, 255, 0.15);
+            border-color: var(--accent-cyan);
+        }
+
+        .btn-summary-modal svg {
+            width: 18px;
+            height: 18px;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 2.2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
         .chevron-icon {
             fill: currentColor;
+            stroke: none;
+            width: 20px;
+            height: 20px;
             transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
-        .month-accordion.open .chevron-icon {
+        .month-accordion-wrapper.open .chevron-icon {
             transform: rotate(180deg);
         }
 
@@ -857,83 +971,77 @@
             display: none;
             border-top: 1px solid rgba(255, 255, 255, 0.08);
             background: #0e1836;
+            border-bottom-left-radius: 16px;
+            border-bottom-right-radius: 16px;
         }
 
-        .month-accordion.open .month-accordion-body {
+        .month-accordion-wrapper.open .month-accordion-body {
             display: block;
         }
 
-        .month-summary-bar {
+        /* Monthly Summary Modal Sheet */
+        .summary-modal-content {
             display: flex;
-            gap: 12px;
-            background: rgba(255, 255, 255, 0.04);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            padding: 14px;
-            border-radius: 16px;
-            margin-bottom: 14px;
-            align-items: center;
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            flex-direction: column;
+            gap: 14px;
+            padding: 8px 0;
         }
 
-        .summary-stats-grid {
-            display: flex;
-            flex: 1;
-            gap: 8px;
+        .summary-stats-grid-modal {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 10px;
         }
 
-        .summary-stat-block {
-            flex: 1;
+        .summary-stat-block-modal {
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            background: rgba(0, 0, 0, 0.25);
+            background: rgba(0, 0, 0, 0.3);
             border-radius: 12px;
-            padding: 8px 4px;
-            border: 1px solid rgba(255, 255, 255, 0.04);
+            padding: 12px 6px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
         }
 
-        .stat-label {
-            font-size: 0.75rem;
+        .stat-label-modal {
+            font-size: 0.8rem;
             font-weight: 700;
             margin-bottom: 4px;
         }
 
-        .stat-val {
-            font-size: 1rem;
+        .stat-val-modal {
+            font-size: 1.1rem;
             font-weight: 800;
             font-family: 'Inter', sans-serif;
             font-variant-numeric: tabular-nums;
             color: #fff;
         }
 
-        .stat-work .stat-label { color: var(--accent-cyan); }
-        .stat-prem .stat-label { color: var(--accent-purple); }
-        .stat-nalt .stat-label { color: var(--accent-taxi); }
+        .stat-work .stat-label-modal { color: var(--accent-cyan); }
+        .stat-prem .stat-label-modal { color: var(--accent-purple); }
+        .stat-nalt .stat-label-modal { color: var(--accent-taxi); }
 
-        .btn-export-icon {
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            color: var(--text-muted);
+        .btn-export-full {
+            width: 100%;
+            background: rgba(0, 210, 255, 0.15);
+            border: 1px solid var(--accent-cyan);
+            color: var(--accent-cyan);
+            padding: 12px;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            font-weight: 700;
+            cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            cursor: pointer;
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-            -webkit-tap-highlight-color: transparent;
-            flex-shrink: 0;
+            gap: 8px;
+            transition: transform 0.1s ease, background 0.2s;
         }
-        
-        .btn-export-icon svg {
-            width: 18px;
-            height: 18px;
-            fill: currentColor;
-            transition: fill 0.2s;
+
+        .btn-export-full:active {
+            transform: scale(0.97);
+            background: rgba(0, 210, 255, 0.3);
         }
 
         .shifts-list {
@@ -1867,7 +1975,6 @@
 
 <div id="menuBackdrop" class="menu-backdrop" onclick="closeUserMenu(event)"></div>
 
-<!-- תפריט המשתמש ממוקם ב-fixed עם אפקט מגירה חלק (Slide Down/Up) כך שהוא מופיע מתחת לאייקון, מעל ההחשכה, וללא חיתוך -->
 <div id="userDropdownMenu" class="user-dropdown-menu">
     <button class="dropdown-item" onclick="goToProfileView()">פרופיל אישי</button>
     <button class="dropdown-item" onclick="openSettingsModal()">הגדרות</button>
@@ -1987,48 +2094,19 @@
     </div>
 
     <div id="viewHistory" class="app-view" style="display: none;">
-        <div id="smartActionsPlaceholder" style="display: none;"></div>
-        <div class="smart-actions-wrapper" id="smartActionsWrapper">
-            <div class="section-header">
-                <div class="section-title">
-                    <svg class="svg-icon" width="18" height="18" viewBox="0 0 24 24">
-                        <path d="M19 3h-4.18C14.4 1.84 13.3 1 12 1c-1.3 0-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm2 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/>
-                    </svg>
-                    היסטוריית משמרות
-                </div>
-                <div class="header-actions-group">
-                    <button id="btnToggleMultiPanel" class="btn-icon-action" onclick="toggleMultiPanelMode()" title="ריבוי פאנלים">
-                        <svg viewBox="0 0 24 24">
-                            <path d="M11.99 18.54l-7.37-5.73L3 14.07l9 7 9-7-1.63-1.27-7.38 5.74zM12 16l7.36-5.73L21 9l-9-7-9 7 1.63 1.27L12 16z"/>
-                        </svg>
-                    </button>
-                    <button id="btnToggleSorting" class="btn-icon-action" onclick="toggleSortingMode()" title="מיון">
-                        <svg viewBox="0 0 24 24">
-                            <path d="M9 3L5 6.99h3V14h2V6.99h3L9 3zm7 14.01V10h-2v7.01h-3L15 21l4-3.99h-3z"/>
-                        </svg>
-                    </button>
-                    <button id="btnToggleSelection" class="btn-icon-action" onclick="toggleSelectionMode()" title="בחירה">
-                        <svg viewBox="0 0 24 24">
-                            <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-9 14l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
-                        </svg>
-                    </button>
-                </div>
+        <div id="selectionToolbar" class="selection-toolbar">
+            <span id="selectedCountText" style="font-size: 0.85rem; font-weight: 700; color: var(--accent-cyan);">0 נבחרו</span>
+            <div class="toolbar-buttons">
+                <button class="btn-toolbar btn-toolbar-select" onclick="selectAllShifts()">בחר הכל</button>
+                <button class="btn-toolbar btn-toolbar-delete" onclick="deleteSelectedShifts()">מחק נבחרים</button>
             </div>
+        </div>
 
-            <div id="selectionToolbar" class="selection-toolbar">
-                <span id="selectedCountText" style="font-size: 0.85rem; font-weight: 700; color: var(--accent-cyan);">0 נבחרו</span>
-                <div class="toolbar-buttons">
-                    <button class="btn-toolbar btn-toolbar-select" onclick="selectAllShifts()">בחר הכל</button>
-                    <button class="btn-toolbar btn-toolbar-delete" onclick="deleteSelectedShifts()">מחק נבחרים</button>
-                </div>
-            </div>
-
-            <div id="sortingToolbar" class="selection-toolbar">
-                <span style="font-size: 0.85rem; font-weight: 700; color: var(--accent-cyan);">גרור לסידור מחדש</span>
-                <div class="toolbar-buttons">
-                    <button class="btn-toolbar btn-toolbar-select" onclick="sortShiftsByDate()">איפוס לתאריכים</button>
-                    <button class="btn-toolbar btn-toolbar-save" onclick="saveManualSorting()">שמור סדר</button>
-                </div>
+        <div id="sortingToolbar" class="selection-toolbar">
+            <span style="font-size: 0.85rem; font-weight: 700; color: var(--accent-cyan);">גרור לסידור מחדש</span>
+            <div class="toolbar-buttons">
+                <button class="btn-toolbar btn-toolbar-select" onclick="sortShiftsByDate()">איפוס לתאריכים</button>
+                <button class="btn-toolbar btn-toolbar-save" onclick="saveManualSorting()">שמור סדר</button>
             </div>
         </div>
 
@@ -2040,7 +2118,7 @@
         <div class="clock-screen-card" style="align-items: stretch; gap: 14px;">
             <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 10px;">
                 <h2 style="font-size: 1.2rem; color: #fff;">פרופיל אישי</h2>
-                <button class="btn-icon-action" style="background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border-color); color: var(--text-main);" onclick="navigateTo('clock')" title="חזרה">
+                <button class="btn-icon-action" style="background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border-color); color: var(--text-main); width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer;" onclick="navigateTo('clock')" title="חזרה">
                     <svg class="svg-icon" width="18" height="18" viewBox="0 0 24 24">
                         <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
                     </svg>
@@ -2056,7 +2134,6 @@
                 <p id="profileEmail" style="font-size: 1rem; font-weight: 600; color: var(--accent-cyan);"></p>
             </div>
 
-            <!-- כפתור ניהול מיוחד למנהל העל בלבד -->
             <div id="ownerAdminBtnContainer" style="display: none;">
                 <button class="btn-secondary" style="width: 100%; background: rgba(0, 210, 255, 0.15); border-color: var(--accent-cyan); color: var(--accent-cyan); font-weight: 700; padding: 12px; display: flex; align-items: center; justify-content: center; gap: 8px;" onclick="navigateTo('admin')">
                     <svg class="svg-icon" width="18" height="18" viewBox="0 0 24 24">
@@ -2090,7 +2167,6 @@
                 </div>
             </div>
 
-            <!-- מתג פרמיית הדרכה למנהל העל בלבד -->
             <div id="ownerInstructorToggleContainer" style="display: none;">
                 <div class="toggle-switch-container">
                     <span class="toggle-label-text">
@@ -2118,7 +2194,7 @@
                     </svg>
                     פאנל ניהול הרשאות
                 </h2>
-                <button class="btn-icon-action" style="background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border-color); color: var(--text-main);" onclick="navigateTo('profile')" title="חזרה">
+                <button class="btn-icon-action" style="background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border-color); color: var(--text-main); width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer;" onclick="navigateTo('profile')" title="חזרה">
                     <svg class="svg-icon" width="18" height="18" viewBox="0 0 24 24">
                         <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
                     </svg>
@@ -2136,19 +2212,88 @@
 </div>
 
 <div class="bottom-nav-wrapper">
-    <div class="bottom-nav" id="bottomNav">
-        <div class="nav-indicator" id="navIndicator"></div>
-        <div class="nav-tab active" data-target="clock" onclick="handleNavClick('clock')">
-            <svg viewBox="0 0 24 24">
-                <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
-            </svg>
-            <span>ראשי</span>
+    <div class="bottom-nav-container">
+        <!-- Floating Tools Drawer (Moved to right corner) -->
+        <div id="toolsDrawerWrap" class="tools-drawer-wrap">
+            <button id="btnToolsMain" class="btn-tools-main" onclick="toggleToolsDrawer()" title="כלים">
+                <svg viewBox="0 0 24 24">
+                    <path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/>
+                </svg>
+            </button>
+            <div class="tools-popup-drawer">
+                <button id="btnToggleMultiPanel" class="btn-drawer-item" data-action="multipanel" data-tooltip="ריבוי פאנלים">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M11.99 18.54l-7.37-5.73L3 14.07l9 7 9-7-1.63-1.27-7.38 5.74zM12 16l7.36-5.73L21 9l-9-7-9 7 1.63 1.27L12 16z"/>
+                    </svg>
+                    <span class="drawer-tooltip">ריבוי פאנלים</span>
+                </button>
+                <button id="btnToggleSorting" class="btn-drawer-item" data-action="sorting" data-tooltip="מיון">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M9 3L5 6.99h3V14h2V6.99h3L9 3zm7 14.01V10h-2v7.01h-3L15 21l4-3.99h-3z"/>
+                    </svg>
+                    <span class="drawer-tooltip">מיון</span>
+                </button>
+                <button id="btnToggleSelection" class="btn-drawer-item" data-action="selection" data-tooltip="בחירה">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-9 14l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                    </svg>
+                    <span class="drawer-tooltip">בחירה</span>
+                </button>
+            </div>
         </div>
-        <div class="nav-tab" data-target="history" onclick="handleNavClick('history')">
-            <svg viewBox="0 0 24 24">
-                <path d="M19 3h-4.18C14.4 1.84 13.3 1 12 1c-1.3 0-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm2 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/>
-            </svg>
-            <span>משמרות</span>
+
+        <div class="bottom-nav" id="bottomNav">
+            <div class="nav-indicator" id="navIndicator"></div>
+            <div class="nav-tab active" data-target="clock" onclick="handleNavClick('clock')">
+                <svg viewBox="0 0 24 24">
+                    <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+                </svg>
+                <span>ראשי</span>
+            </div>
+            <div class="nav-tab" data-target="history" onclick="handleNavClick('history')">
+                <svg viewBox="0 0 24 24">
+                    <path d="M19 3h-4.18C14.4 1.84 13.3 1 12 1c-1.3 0-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm2 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/>
+                </svg>
+                <span>משמרות</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="statusBubbleToast" class="status-bubble-toast"></div>
+
+<!-- Modal for Monthly Summary -->
+<div class="modal-overlay" id="monthlySummaryModal">
+    <div class="modal-sheet">
+        <div class="modal-header">
+            <h2 class="modal-title" id="summaryModalTitle">סיכום חודשי</h2>
+            <button class="btn-close" onclick="closeMonthlySummaryModal()">
+                <svg class="svg-icon" width="22" height="22" viewBox="0 0 24 24">
+                    <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+                </svg>
+            </button>
+        </div>
+        <div class="summary-modal-content">
+            <div class="summary-stats-grid-modal">
+                <div class="summary-stat-block-modal stat-work">
+                    <span class="stat-label-modal">עבודה</span>
+                    <span class="stat-val-modal" id="modalWorkVal">0 שעות</span>
+                </div>
+                <div class="summary-stat-block-modal stat-prem">
+                    <span class="stat-label-modal">פרמיה</span>
+                    <span class="stat-val-modal" id="modalPremVal">0 שעות</span>
+                </div>
+                <div class="summary-stat-block-modal stat-nalt">
+                    <span class="stat-label-modal">נל״ת</span>
+                    <span class="stat-val-modal" id="modalNaltVal">0 שעות</span>
+                </div>
+            </div>
+            <button class="btn-export-full" id="modalExportBtn" onclick="">
+                <svg class="svg-icon" width="18" height="18" viewBox="0 0 24 24">
+                    <path d="M16 5l-4-4-4 4h3v8h2V5h3zm4 4v11c0 1.1-.9 2-2 2H6c-1.1 0-2-.9-2-2V9c0-1.1.9-2 2-2h3v2H6v11h12V9h-3V7h3c1.1 0 2 .9 2 2z"/>
+                </svg>
+                פקד / שתף דוח חודשי
+            </button>
         </div>
     </div>
 </div>
@@ -2374,6 +2519,10 @@
 <div id="printArea" style="display: none;"></div>
 
 <script>
+    // Global Constants
+    const PRESET_NALT_MINUTES = [0, 40, 45, 60, 90, 120, 270];
+
+    // Global UI helper functions
     window.closeUserMenu = function(e) {
         if(e) {
             e.stopPropagation();
@@ -2397,11 +2546,17 @@
                 }
             }
         }
+        
+        const toolsWrap = document.getElementById('toolsDrawerWrap');
+        if (toolsWrap && toolsWrap.classList.contains('open')) {
+            if (!toolsWrap.contains(e.target)) {
+                toolsWrap.classList.remove('open');
+            }
+        }
     });
 
     window.handleAuthClick = async function(event) {
         event.stopPropagation();
-        
         if (currentView === 'profile' || currentView === 'admin') return;
 
         if (window.currentUser) {
@@ -2415,16 +2570,107 @@
             } else {
                 const authContainer = document.getElementById('headerAuthContainer');
                 const rect = authContainer.getBoundingClientRect();
-                
                 dropdown.style.top = (rect.bottom + 8) + 'px';
                 dropdown.style.left = rect.left + 'px';
-                
                 dropdown.classList.add('open');
                 backdrop.classList.add('open');
             }
-        } else {
-            // תטופל בהמשך ב-Firebase
         }
+    };
+
+    window.openMonthlySummaryModal = function(mk) {
+        const mShifts = window.shifts.filter(s => s.date && s.date.startsWith(mk));
+        let totWorkMins = 0;
+        let totPremMins = 0;
+        let totNaltMins = 0;
+
+        mShifts.forEach(s => {
+             if(s.startTime && s.endTime) {
+                 totWorkMins += calculateDurationMinutes(s.startTime, s.endTime);
+             }
+             if(s.premStartTime && s.premEndTime) {
+                 totPremMins += calculateDurationMinutes(s.premStartTime, s.premEndTime);
+             }
+             totNaltMins += (Number(s.naltStartMinutes)||0) + (Number(s.naltEndMinutes)||0);
+        });
+
+        document.getElementById('summaryModalTitle').textContent = `סיכום חודשי - ${formatMonthName(mk)}`;
+        document.getElementById('modalWorkVal').textContent = formatMinutesToHM(totWorkMins);
+        document.getElementById('modalPremVal').textContent = formatMinutesToHM(totPremMins);
+        document.getElementById('modalNaltVal').textContent = formatMinutesToHM(totNaltMins);
+        document.getElementById('modalExportBtn').setAttribute('onclick', `printMonthReport('${mk}')`);
+
+        document.getElementById('monthlySummaryModal').classList.add('open');
+    };
+
+    window.closeMonthlySummaryModal = function() {
+        document.getElementById('monthlySummaryModal').classList.remove('open');
+    };
+
+    window.openShiftModal = function(shiftId) {
+        const modal = document.getElementById('shiftModal');
+        const title = document.getElementById('modalTitle');
+        const instructorSection = document.getElementById('instructorSectionModal');
+
+        if (window.isUserInstructor) {
+            instructorSection.style.display = 'block';
+        } else {
+            instructorSection.style.display = 'none';
+        }
+
+        if (shiftId) {
+            const shift = window.shifts.find(s => String(s.id) === String(shiftId));
+            if (!shift) return;
+            title.textContent = 'עריכת משמרת';
+            document.getElementById('editShiftId').value = String(shift.id);
+            document.getElementById('fieldSiddur').value = shift.siddur || '';
+            document.getElementById('fieldDate').value = shift.date || '';
+            document.getElementById('fieldStartTime').value = shift.startTime || '';
+            document.getElementById('fieldEndTime').value = shift.endTime || '';
+            document.getElementById('fieldFullPremModal').checked = Boolean(shift.fullPrem);
+            document.getElementById('fieldNotes').value = shift.notes || '';
+            
+            const nStartMins = shift.naltStartMinutes ?? (shift.naltStartHours ? shift.naltStartHours * 60 : 0);
+            const nEndMins = shift.naltEndMinutes ?? (shift.naltEndHours ? shift.naltEndHours * 60 : 0);
+            
+            setNaltFieldUI('Start', nStartMins);
+            setNaltFieldUI('End', nEndMins);
+            document.getElementById('fieldPremStart').value = shift.premStartTime || '';
+            document.getElementById('fieldPremEnd').value = shift.premEndTime || '';
+            if (window.isUserInstructor) {
+                document.getElementById('fieldInstructorStart').value = shift.instructorStartTime || '';
+                document.getElementById('fieldInstructorEnd').value = shift.instructorEndTime || '';
+            }
+        } else {
+            const now = new Date();
+            const y = now.getFullYear();
+            const m = String(now.getMonth() + 1).padStart(2, '0');
+            const d = String(now.getDate()).padStart(2, '0');
+
+            title.textContent = 'הוספת משמרת ידנית';
+            document.getElementById('editShiftId').value = '';
+            document.getElementById('fieldSiddur').value = '';
+            document.getElementById('fieldDate').value = `${y}-${m}-${d}`;
+            document.getElementById('fieldStartTime').value = '';
+            document.getElementById('fieldEndTime').value = '';
+            document.getElementById('fieldFullPremModal').checked = false;
+            document.getElementById('fieldNotes').value = '';
+            setNaltFieldUI('Start', 0);
+            setNaltFieldUI('End', 0);
+            document.getElementById('fieldPremStart').value = '';
+            document.getElementById('fieldPremEnd').value = '';
+            if (window.isUserInstructor) {
+                document.getElementById('fieldInstructorStart').value = '';
+                document.getElementById('fieldInstructorEnd').value = '';
+            }
+        }
+
+        modal.classList.add('open');
+        validateModalRealtime(false);
+    };
+
+    window.closeModal = function() {
+        document.getElementById('shiftModal').classList.remove('open');
     };
 </script>
 
@@ -2533,18 +2779,18 @@
             let isSameUser = (lastUser === uid);
 
             if (isSameUser) {
-                shifts = cloudShifts.length > 0 ? cloudShifts : localShifts;
-                autoSortShiftsArray(shifts);
-                localStorage.setItem('railway_shifts', JSON.stringify(shifts));
+                window.shifts = cloudShifts.length > 0 ? cloudShifts : localShifts;
+                autoSortShiftsArray(window.shifts);
+                localStorage.setItem('railway_shifts', JSON.stringify(window.shifts));
                 localStorage.setItem('railway_last_user', uid);
                 refreshUIAfterSync();
                 return;
             }
 
             if (cloudShifts.length > 0 && localShifts.length === 0) {
-                shifts = cloudShifts;
-                autoSortShiftsArray(shifts);
-                localStorage.setItem('railway_shifts', JSON.stringify(shifts));
+                window.shifts = cloudShifts;
+                autoSortShiftsArray(window.shifts);
+                localStorage.setItem('railway_shifts', JSON.stringify(window.shifts));
                 localStorage.setItem('railway_last_user', uid);
                 refreshUIAfterSync();
             }
@@ -2555,14 +2801,14 @@
                     'טען ענן (דרוס מקומי)',
                     'השאר מידע מקומי',
                     () => {
-                        shifts = cloudShifts;
-                        autoSortShiftsArray(shifts);
-                        localStorage.setItem('railway_shifts', JSON.stringify(shifts));
+                        window.shifts = cloudShifts;
+                        autoSortShiftsArray(window.shifts);
+                        localStorage.setItem('railway_shifts', JSON.stringify(window.shifts));
                         localStorage.setItem('railway_last_user', uid);
                         refreshUIAfterSync();
                     },
                     () => {
-                        shifts = localShifts;
+                        window.shifts = localShifts;
                         localStorage.setItem('railway_last_user', uid);
                         (async () => {
                             for (let shift of localShifts) {
@@ -2583,19 +2829,19 @@
                         for (let shift of localShifts) {
                             await setDoc(doc(db, 'users', uid, 'shifts', String(shift.id)), shift);
                         }
-                        shifts = localShifts;
+                        window.shifts = localShifts;
                         localStorage.setItem('railway_last_user', uid);
                         refreshUIAfterSync();
                     },
                     () => {
-                        shifts = localShifts;
+                        window.shifts = localShifts;
                         localStorage.setItem('railway_last_user', uid);
                         refreshUIAfterSync();
                     }
                 );
             }
             else {
-                shifts = [];
+                window.shifts = [];
                 localStorage.setItem('railway_last_user', uid);
                 refreshUIAfterSync();
             }
@@ -2669,7 +2915,7 @@
                     if (dropdown) dropdown.classList.remove('open');
 
                     await signOut(auth);
-                    shifts = [];
+                    window.shifts = [];
                     window.isUserInstructor = false;
                     localStorage.removeItem('railway_shifts');
                     localStorage.removeItem('railway_last_user');
@@ -2686,7 +2932,7 @@
     };
 
     window.loadLocalShifts = function() {
-        shifts = JSON.parse(localStorage.getItem('railway_shifts') || '[]');
+        window.shifts = JSON.parse(localStorage.getItem('railway_shifts') || '[]');
         if (typeof renderShifts === 'function' && currentView === 'history') {
             renderShifts();
         }
@@ -2696,7 +2942,7 @@
     };
 
     window.saveShiftToCloudAndLocal = async function(shiftObj) {
-        localStorage.setItem('railway_shifts', JSON.stringify(shifts));
+        localStorage.setItem('railway_shifts', JSON.stringify(window.shifts));
         
         if (window.currentUser) {
             localStorage.setItem('railway_last_user', window.currentUser.uid);
@@ -2709,7 +2955,7 @@
     };
 
     window.deleteShiftFromCloudAndLocal = async function(shiftId) {
-        localStorage.setItem('railway_shifts', JSON.stringify(shifts));
+        localStorage.setItem('railway_shifts', JSON.stringify(window.shifts));
         
         if (window.currentUser) {
             try {
@@ -2883,7 +3129,7 @@
         document.getElementById('dynamic-favicon').href = iconUrl;
     })();
 
-    let shifts = JSON.parse(localStorage.getItem('railway_shifts') || '[]');
+    window.shifts = JSON.parse(localStorage.getItem('railway_shifts') || '[]');
     let currentView = sessionStorage.getItem('railway_active_view') || 'clock';
     let isSelectionMode = false;
     let isSortingMode = false;
@@ -2891,116 +3137,6 @@
     let selectedShiftIds = new Set();
     let draggedElement = null;
     let activeMonthKey = ''; 
-
-    let lastScrollY = window.scrollY;
-    let isActionsFixed = false;
-    let isActionsVisible = false;
-
-    window.addEventListener('scroll', () => {
-        if (currentView !== 'history') return;
-        
-        const wrapper = document.getElementById('smartActionsWrapper');
-        const placeholder = document.getElementById('smartActionsPlaceholder');
-        if (!wrapper || !placeholder) return;
-        
-        const currentScrollY = window.scrollY;
-        const maxScroll = Math.max(document.body.scrollHeight, document.documentElement.scrollHeight) - window.innerHeight;
-        
-        if (currentScrollY <= 0) {
-            if (isActionsFixed) {
-                wrapper.classList.remove('fixed-mode', 'slide-in', 'slide-out');
-                placeholder.style.display = 'none';
-                placeholder.style.height = '0px';
-                placeholder.style.marginTop = '0';
-                placeholder.style.marginBottom = '0';
-                isActionsFixed = false;
-                isActionsVisible = true; 
-            }
-            lastScrollY = currentScrollY;
-            return;
-        }
-        
-        if (currentScrollY >= maxScroll - 10) {
-            lastScrollY = currentScrollY;
-            return;
-        }
-        
-        const stealthThreshold = 120; 
-        const releaseThreshold = 10; 
-
-        if (currentScrollY > stealthThreshold && !isActionsFixed) {
-            placeholder.style.height = wrapper.offsetHeight + 'px';
-            placeholder.style.marginTop = '-40px';
-            placeholder.style.marginBottom = '-10px';
-            placeholder.style.display = 'block';
-            wrapper.classList.add('fixed-mode', 'slide-out');
-            wrapper.classList.remove('slide-in');
-            isActionsFixed = true;
-            isActionsVisible = false;
-        } 
-        else if (currentScrollY <= releaseThreshold && isActionsFixed) {
-            wrapper.classList.remove('fixed-mode', 'slide-in', 'slide-out');
-            placeholder.style.display = 'none';
-            placeholder.style.height = '0px';
-            placeholder.style.marginTop = '0';
-            placeholder.style.marginBottom = '0';
-            isActionsFixed = false;
-            isActionsVisible = true; 
-        }
-
-        if (isActionsFixed) {
-            if (currentScrollY < lastScrollY - 5) {
-                if (!isActionsVisible) {
-                    wrapper.classList.add('slide-in');
-                    wrapper.classList.remove('slide-out');
-                    isActionsVisible = true;
-                }
-            } else if (currentScrollY > lastScrollY + 5) {
-                if (isActionsVisible) {
-                    wrapper.classList.add('slide-out');
-                    wrapper.classList.remove('slide-in');
-                    isActionsVisible = false;
-                }
-            }
-        }
-        
-        lastScrollY = currentScrollY;
-    }, { passive: true });
-
-    const PRESET_NALT_MINUTES = [0, 30, 40, 45, 60, 90, 150, 270];
-
-    function addPressEffect(el, className = 'pressed-effect') {
-        if(!el) return;
-        const press = () => el.classList.add(className);
-        const unpress = () => el.classList.remove(className);
-        
-        el.addEventListener('touchstart', press, {passive: true});
-        el.addEventListener('touchend', unpress);
-        el.addEventListener('touchcancel', unpress);
-        el.addEventListener('mousedown', press);
-        el.addEventListener('mouseup', unpress);
-        el.addEventListener('mouseleave', unpress);
-    }
-
-    addPressEffect(document.getElementById('btnMainAction'), 'pressed-effect');
-    addPressEffect(document.getElementById('btnPlusManual'), 'plus-pressed-effect');
-    addPressEffect(document.getElementById('btnToggleMultiPanel'), 'plus-pressed-effect');
-    addPressEffect(document.getElementById('btnToggleSorting'), 'plus-pressed-effect');
-    addPressEffect(document.getElementById('btnToggleSelection'), 'plus-pressed-effect');
-    addPressEffect(document.getElementById('headerAuthContainer'), 'pressed-effect');
-
-    function smoothScrollToReveal(el, delay = 400) {
-        setTimeout(() => {
-            if (!el) return;
-            const rect = el.getBoundingClientRect();
-            const viewHeight = Math.max(document.documentElement.clientHeight, window.innerHeight);
-            
-            if (rect.bottom > viewHeight || rect.top < 0) {
-                const alignBlock = rect.height > viewHeight ? 'start' : 'nearest';
-                el.scrollIntoView({ behavior: 'smooth', block: alignBlock });
-            }
-        }, delay);
-    }
 
     const bottomNav = document.getElementById('bottomNav');
     const navIndicator = document.getElementById('navIndicator');
@@ -3032,7 +3168,6 @@
 
         bottomNav.addEventListener('touchmove', (e) => {
             if (!navTouchActive) return;
-            
             const deltaX = e.touches[0].clientX - navStartX;
             const deltaY = e.touches[0].clientY - navStartY;
             
@@ -3041,7 +3176,6 @@
             }
 
             if (!isNavDragging) return;
-            
             if (e.cancelable) e.preventDefault();
             
             const navRect = bottomNav.getBoundingClientRect();
@@ -3070,7 +3204,7 @@
                 const movePercent = (-deltaX / (navRect.width / 2)) * 100;
                 let finalOffset = navCurrentOffsetPercent + movePercent;
 
-                if (finalOffset > 60) {
+                if (finalOffset > 55) {
                     navigateTo('history', false); 
                 } else {
                     navigateTo('clock', false); 
@@ -3108,6 +3242,8 @@
         sessionStorage.setItem('railway_active_view', viewName);
 
         window.closeUserMenu();
+        const toolsWrap = document.getElementById('toolsDrawerWrap');
+        if (toolsWrap) toolsWrap.classList.remove('open');
 
         const authContainer = document.getElementById('headerAuthContainer');
         if (authContainer) {
@@ -3133,36 +3269,17 @@
             if (targetTab) targetTab.classList.add('active');
         }
 
-        const mainHeader = document.getElementById('mainHeader');
+        const toolsWrapEl = document.getElementById('toolsDrawerWrap');
         if (viewName === 'history') {
-            mainHeader.classList.add('sticky-mode');
+            if (toolsWrapEl) toolsWrapEl.style.display = 'block';
         } else {
-            mainHeader.classList.remove('sticky-mode');
-            
-            const wrapper = document.getElementById('smartActionsWrapper');
-            const placeholder = document.getElementById('smartActionsPlaceholder');
-            if(wrapper) {
-                wrapper.classList.remove('fixed-mode', 'slide-in', 'slide-out');
-                isActionsFixed = false;
-                isActionsVisible = false;
-            }
-            if(placeholder) {
-                placeholder.style.display = 'none';
-                placeholder.style.height = '0px';
-                placeholder.style.marginTop = '0';
-                placeholder.style.marginBottom = '0';
-            }
+            if (toolsWrapEl) toolsWrapEl.style.display = 'none';
         }
 
         requestAnimationFrame(() => updateIndicatorPosition(true));
         updateActiveShiftUI(); 
 
         if (viewName === 'history') {
-            const wrapper = document.getElementById('smartActionsWrapper');
-            if (wrapper) {
-                wrapper.classList.remove('slide-out');
-                wrapper.classList.remove('slide-in');
-            }
             renderShifts();
         }
 
@@ -3171,12 +3288,130 @@
         }
     }
 
+    function toggleToolsDrawer() {
+        const wrap = document.getElementById('toolsDrawerWrap');
+        if (wrap) wrap.classList.toggle('open');
+    }
+
+    function showStatusBubbleToast(msg) {
+        const toast = document.getElementById('statusBubbleToast');
+        if (!toast) return;
+        toast.textContent = msg;
+        toast.classList.add('show');
+        setTimeout(() => {
+            toast.classList.remove('show');
+        }, 2200);
+    }
+
+    // Robust, safe interaction mechanism for tools and summary buttons (Tooltip on long press 500ms)
+    function setupGlobalInteractions() {
+        const drawerItems = document.querySelectorAll('.tools-popup-drawer .btn-drawer-item, .month-accordion-header .btn-summary-modal');
+        
+        drawerItems.forEach(btn => {
+            let pressTimer = null;
+            let longPressed = false;
+            const tooltip = btn.querySelector('.drawer-tooltip');
+            const actionType = btn.getAttribute('data-action');
+
+            const startPress = (e) => {
+                longPressed = false;
+                if (pressTimer) clearTimeout(pressTimer);
+                pressTimer = setTimeout(() => {
+                    longPressed = true;
+                    if (tooltip) tooltip.classList.add('show');
+                }, 500); // 500ms for responsive long press tooltip
+            };
+
+            const endPress = (e) => {
+                if (pressTimer) {
+                    clearTimeout(pressTimer);
+                    pressTimer = null;
+                }
+
+                if (tooltip && tooltip.classList.contains('show')) {
+                    setTimeout(() => tooltip.classList.remove('show'), 1500);
+                }
+
+                if (!longPressed) {
+                    if (actionType === 'summary') {
+                        const mk = btn.getAttribute('data-month');
+                        if (mk) openMonthlySummaryModal(mk);
+                    } else if (actionType) {
+                        handleToolAction(actionType);
+                    }
+                }
+                longPressed = false;
+            };
+
+            btn.replaceWith(btn.cloneNode(true));
+        });
+
+        document.querySelectorAll('.tools-popup-drawer .btn-drawer-item, .month-accordion-header .btn-summary-modal').forEach(btn => {
+            let pressTimer = null;
+            let longPressed = false;
+            const tooltip = btn.querySelector('.drawer-tooltip');
+            const actionType = btn.getAttribute('data-action');
+
+            const startPress = (e) => {
+                longPressed = false;
+                if (pressTimer) clearTimeout(pressTimer);
+                pressTimer = setTimeout(() => {
+                    longPressed = true;
+                    if (tooltip) tooltip.classList.add('show');
+                }, 500);
+            };
+
+            const endPress = (e) => {
+                if (pressTimer) {
+                    clearTimeout(pressTimer);
+                    pressTimer = null;
+                }
+
+                if (tooltip && tooltip.classList.contains('show')) {
+                    setTimeout(() => tooltip.classList.remove('show'), 1500);
+                }
+
+                if (!longPressed) {
+                    if (actionType === 'summary') {
+                        const mk = btn.getAttribute('data-month');
+                        if (mk) openMonthlySummaryModal(mk);
+                    } else if (actionType) {
+                        handleToolAction(actionType);
+                    }
+                }
+                longPressed = false;
+            };
+
+            btn.addEventListener('touchstart', startPress, {passive: true});
+            btn.addEventListener('touchend', endPress);
+            btn.addEventListener('touchcancel', () => {
+                if (pressTimer) clearTimeout(pressTimer);
+                if (tooltip) tooltip.classList.remove('show');
+            });
+            btn.addEventListener('mousedown', startPress);
+            btn.addEventListener('mouseup', endPress);
+            btn.addEventListener('mouseleave', () => {
+                if (pressTimer) clearTimeout(pressTimer);
+                if (tooltip) tooltip.classList.remove('show');
+            });
+        });
+    }
+
+    window.handleToolAction = function(type) {
+        if (type === 'multipanel') toggleMultiPanelMode();
+        else if (type === 'sorting') toggleSortingMode();
+        else if (type === 'selection') toggleSelectionMode();
+        
+        const toolsWrap = document.getElementById('toolsDrawerWrap');
+        if (toolsWrap) toolsWrap.classList.remove('open');
+    };
+
     function populateProfileMonthSelector() {
         const select = document.getElementById('profileMonthSelect');
         if (!select) return;
 
         let monthsSet = new Set();
-        shifts.forEach(s => {
+        window.shifts.forEach(s => {
             if (s.date) monthsSet.add(s.date.substring(0, 7));
         });
 
@@ -3193,9 +3428,9 @@
         const select = document.getElementById('profileMonthSelect');
         const val = select ? select.value : 'annual';
 
-        let targetShifts = shifts;
+        let targetShifts = window.shifts;
         if (val !== 'annual') {
-            targetShifts = shifts.filter(s => s.date && s.date.startsWith(val));
+            targetShifts = window.shifts.filter(s => s.date && s.date.startsWith(val));
         }
 
         let totWorkMins = 0;
@@ -3235,8 +3470,8 @@
     updateLiveClock();
 
     function getActiveShift() {
-        if (!shifts || shifts.length === 0) return null;
-        return shifts.find(s => s.startTime && !s.endTime) || null;
+        if (!window.shifts || window.shifts.length === 0) return null;
+        return window.shifts.find(s => s.startTime && !s.endTime) || null;
     }
 
     function updateActiveShiftUI() {
@@ -3283,7 +3518,6 @@
             statusIndicator.className = 'status-badge idle';
             statusText.textContent = 'במנוחה';
             headerTimer.style.display = 'none';
-            
             headerPWrap.style.display = 'none';
 
             btnMainAction.className = 'btn-main-circle state-idle';
@@ -3318,7 +3552,7 @@
         const overlappingIds = new Set();
         const intervals = [];
 
-        shifts.forEach(shift => {
+        window.shifts.forEach(shift => {
             if (!shift.date || !shift.startTime) return;
             const [y, m, d] = shift.date.split('-').map(Number);
             const [sh, sm] = shift.startTime.split(':').map(Number);
@@ -3412,9 +3646,9 @@
             notes: ''
         };
 
-        shifts.unshift(newShift);
+        window.shifts.unshift(newShift);
         activeMonthKey = dateStr.substring(0, 7); 
-        autoSortShiftsArray(shifts);
+        autoSortShiftsArray(window.shifts);
         saveShifts(newShift);
     }
 
@@ -3457,8 +3691,8 @@
         if (isSameDay && (durationMins === 0 || active.startTime === timeStr)) {
             showSmartAlertDialog('זמנים זהים זוהו', 'שעת הכניסה ושעת היציאה זהות (משמרת באורך 0 זמן). האם ברצונך לבטל ולמחוק משמרת זו?', 'אישור (מחיקה)', 'ביטול', () => {
                 const targetId = active.id;
-                shifts = shifts.filter(s => String(s.id) !== String(targetId));
-                autoSortShiftsArray(shifts);
+                window.shifts = window.shifts.filter(s => String(s.id) !== String(targetId));
+                autoSortShiftsArray(window.shifts);
                 deleteShiftFromCloudAndLocal(targetId);
                 if (currentView === 'history') renderShifts();
             }, () => {});
@@ -3480,7 +3714,7 @@
                 if (active.fullPrem && active.startTime !== timeStr) {
                     applyFullPremToShift(active);
                 }
-                autoSortShiftsArray(shifts);
+                autoSortShiftsArray(window.shifts);
                 saveShifts(active);
                 if (currentView === 'history') renderShifts();
             }, () => {});
@@ -3491,7 +3725,7 @@
         if (active.fullPrem && active.startTime !== timeStr) {
             applyFullPremToShift(active);
         }
-        autoSortShiftsArray(shifts);
+        autoSortShiftsArray(window.shifts);
         saveShifts(active);
         if (currentView === 'history') renderShifts();
     }
@@ -3500,7 +3734,7 @@
         if (targetShift) {
             saveShiftToCloudAndLocal(targetShift);
         } else {
-            localStorage.setItem('railway_shifts', JSON.stringify(shifts));
+            localStorage.setItem('railway_shifts', JSON.stringify(window.shifts));
         }
         updateActiveShiftUI();
     }
@@ -3658,10 +3892,12 @@
             btn.classList.add('active-mode');
             toolbar.classList.add('active');
             container.classList.add('mode-selection');
+            showStatusBubbleToast("מצב בחירה פעיל");
         } else {
             btn.classList.remove('active-mode');
             toolbar.classList.remove('active');
             container.classList.remove('mode-selection');
+            showStatusBubbleToast("מצב בחירה כבוי");
         }
         
         updateSelectionUI();
@@ -3680,10 +3916,12 @@
             btn.classList.add('active-mode');
             toolbar.classList.add('active');
             container.classList.add('mode-sorting');
+            showStatusBubbleToast("מיון משמרות פעיל");
         } else {
             btn.classList.remove('active-mode');
             toolbar.classList.remove('active');
             container.classList.remove('mode-sorting');
+            showStatusBubbleToast("מיון משמרות כבוי");
         }
 
         renderShifts();
@@ -3696,7 +3934,10 @@
             btn.classList.toggle('active-mode', isMultiPanelMode);
         }
 
-        if (!isMultiPanelMode) {
+        if (isMultiPanelMode) {
+            showStatusBubbleToast("ריבוי פאנלים פעיל");
+        } else {
+            showStatusBubbleToast("ריבוי פאנלים כבוי");
             document.querySelectorAll('.shift-details.expanded').forEach(el => {
                 el.classList.remove('expanded');
             });
@@ -3710,21 +3951,15 @@
             activeMonthKey = mk; 
         }
         renderShifts();
-        
-        if (activeMonthKey !== 'NONE') {
-            const openAcc = document.querySelector('.month-accordion.open');
-            smoothScrollToReveal(openAcc, 100); 
-        }
     }
 
-    function printMonthReport(mk) {
-        const mShifts = shifts.filter(s => s.date && s.date.startsWith(mk)).reverse(); 
+    window.printMonthReport = function(mk) {
+        const mShifts = window.shifts.filter(s => s.date && s.date.startsWith(mk)).reverse(); 
         if(mShifts.length === 0) return;
         
         let totWorkMins = 0;
         let totPremMins = 0;
         let totNaltMins = 0;
-        
         let tableRows = '';
 
         mShifts.forEach(s => {
@@ -3733,13 +3968,11 @@
                  wMins = calculateDurationMinutes(s.startTime, s.endTime);
                  totWorkMins += wMins;
              }
-             
              let pMins = 0;
              if(s.premStartTime && s.premEndTime) {
                  pMins = calculateDurationMinutes(s.premStartTime, s.premEndTime);
                  totPremMins += pMins;
              }
-             
              const naltMins = (Number(s.naltStartMinutes)||0) + (Number(s.naltEndMinutes)||0);
              totNaltMins += naltMins;
 
@@ -3759,7 +3992,6 @@
         });
 
         const monthName = formatMonthName(mk);
-        
         const printDiv = document.getElementById('printArea');
         printDiv.innerHTML = `
             <div class="print-header">רכבת ישראל - סיכום משמרות לחודש ${monthName}</div>
@@ -3793,13 +4025,12 @@
                 </tbody>
             </table>
         `;
-
         window.print();
-    }
+    };
 
     function sortShiftsByDate() {
-        autoSortShiftsArray(shifts);
-        localStorage.setItem('railway_shifts', JSON.stringify(shifts));
+        autoSortShiftsArray(window.shifts);
+        localStorage.setItem('railway_shifts', JSON.stringify(window.shifts));
         renderShifts();
     }
 
@@ -3810,15 +4041,14 @@
 
         cardElements.forEach(card => {
             const shiftId = card.getAttribute('data-id');
-            const found = shifts.find(s => String(s.id) === String(shiftId));
+            const found = window.shifts.find(s => String(s.id) === String(shiftId));
             if (found) newOrderedShifts.push(found);
         });
 
-        if (newOrderedShifts.length === shifts.length) {
-            shifts = newOrderedShifts;
-            localStorage.setItem('railway_shifts', JSON.stringify(shifts));
+        if (newOrderedShifts.length === window.shifts.length) {
+            window.shifts = newOrderedShifts;
+            localStorage.setItem('railway_shifts', JSON.stringify(window.shifts));
         }
-
         toggleSortingMode();
     }
 
@@ -3854,9 +4084,8 @@
             }
 
             detailsEl.classList.toggle('expanded');
-            
             if (detailsEl.classList.contains('expanded')) {
-                smoothScrollToReveal(cardEl, 400);
+                setTimeout(() => cardEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 300);
             }
         }
     }
@@ -3867,10 +4096,10 @@
     }
 
     function selectAllShifts() {
-        if (selectedShiftIds.size === shifts.length) {
+        if (selectedShiftIds.size === window.shifts.length) {
             selectedShiftIds.clear();
         } else {
-            shifts.forEach(s => selectedShiftIds.add(String(s.id)));
+            window.shifts.forEach(s => selectedShiftIds.add(String(s.id)));
         }
         updateSelectionUI();
         renderShifts();
@@ -3886,9 +4115,9 @@
             'ביטול',
             () => {
                 const idsToDelete = Array.from(selectedShiftIds);
-                shifts = shifts.filter(s => !selectedShiftIds.has(String(s.id)));
+                window.shifts = window.shifts.filter(s => !selectedShiftIds.has(String(s.id)));
                 selectedShiftIds.clear();
-                localStorage.setItem('railway_shifts', JSON.stringify(shifts));
+                localStorage.setItem('railway_shifts', JSON.stringify(window.shifts));
                 idsToDelete.forEach(id => deleteShiftFromCloudAndLocal(id));
                 if (currentView === 'history') renderShifts();
                 updateSelectionUI();
@@ -3899,10 +4128,8 @@
 
     function setupDragAndDrop() {
         const lists = document.querySelectorAll('.shifts-list-inner');
-        
         lists.forEach(container => {
             const cards = container.querySelectorAll('.shift-card');
-
             cards.forEach(card => {
                 card.addEventListener('dragstart', (e) => {
                     if (!isSortingMode) return;
@@ -3947,7 +4174,6 @@
                 const handle = card.querySelector('.drag-handle-container');
                 if (handle) {
                     let activeTouchCard = null;
-
                     handle.addEventListener('touchstart', (e) => {
                         if (!isSortingMode) return;
                         e.stopPropagation();
@@ -3982,7 +4208,6 @@
                             activeTouchCard = null;
                         }
                     };
-
                     handle.addEventListener('touchend', stopTouch);
                     handle.addEventListener('touchcancel', stopTouch);
                 }
@@ -4077,11 +4302,11 @@
         }
     }
 
-    function handleFullPremClick(event, shiftId) {
+    window.handleFullPremClick = function(event, shiftId) {
         event.stopPropagation();
         event.preventDefault(); 
 
-        const shift = shifts.find(s => String(s.id) === String(shiftId));
+        const shift = window.shifts.find(s => String(s.id) === String(shiftId));
         if (!shift) return;
 
         const isChecking = !shift.fullPrem; 
@@ -4108,7 +4333,7 @@
         } else {
             executeFullPremToggle(shift, isChecking);
         }
-    }
+    };
 
     function executeFullPremToggle(shift, isChecking) {
         shift.fullPrem = isChecking;
@@ -4260,7 +4485,7 @@
                                 ${hasNotes ? `
                                 <span class="tag tag-notes" title="קיימות הערות למשמרת">
                                     <svg class="svg-icon" width="13" height="13" viewBox="0 0 24 24">
-                                        <path d="M20 2H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/>
+                                        <path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"/>
                                     </svg>
                                 </span>` : ''}
                             </div>
@@ -4377,7 +4602,7 @@
         const expandedIds = Array.from(container.querySelectorAll('.shift-details.expanded'))
                                 .map(el => el.closest('.shift-card').getAttribute('data-id'));
 
-        if (shifts.length === 0) {
+        if (window.shifts.length === 0) {
             container.innerHTML = `
                 <div class="empty-state">
                     <p>עדיין אין משמרות מתועדות.<br>לחץ על "כניסה למשמרת" כדי להתחיל.</p>
@@ -4389,7 +4614,7 @@
         const overlappingIds = calculateOverlaps();
         
         let grouped = {};
-        shifts.forEach(s => {
+        window.shifts.forEach(s => {
             const d = s.date || '';
             const monthKey = d.substring(0, 7); 
             if(!grouped[monthKey]) grouped[monthKey] = [];
@@ -4406,48 +4631,24 @@
         monthKeys.forEach(mk => {
             const mShifts = grouped[mk];
             const isOpen = (mk === activeMonthKey);
-            
-            let totWorkMins = 0;
-            let totPremMins = 0;
-            let totNaltMins = 0;
-            
-            mShifts.forEach(s => {
-                 if(s.startTime && s.endTime) {
-                     totWorkMins += calculateDurationMinutes(s.startTime, s.endTime);
-                 }
-                 if(s.premStartTime && s.premEndTime) {
-                     totPremMins += calculateDurationMinutes(s.premStartTime, s.premEndTime);
-                 }
-                 totNaltMins += (Number(s.naltStartMinutes)||0) + (Number(s.naltEndMinutes)||0);
-            });
 
-            html += `<div class="month-accordion ${isOpen ? 'open' : ''}">
+            html += `
+            <div class="month-accordion-wrapper ${isOpen ? 'open' : ''}">
                 <div class="month-accordion-header" onclick="toggleMonthAccordion('${mk}')">
+                    <div class="month-header-left-actions" onclick="event.stopPropagation()">
+                        <button class="btn-summary-modal" data-action="summary" data-month="${mk}" title="סיכום חודשי">
+                            <svg viewBox="0 0 24 24">
+                                <line x1="6" y1="20" x2="6" y2="10"></line>
+                                <line x1="12" y1="20" x2="12" y2="4"></line>
+                                <line x1="18" y1="20" x2="18" y2="14"></line>
+                            </svg>
+                            <span class="drawer-tooltip">סיכום חודשי</span>
+                        </button>
+                    </div>
                     <span>${formatMonthName(mk)} <span style="font-size: 0.8rem; font-weight: normal; color: var(--text-muted);">(${mShifts.length} משמרות)</span></span>
                     <svg class="chevron-icon" width="20" height="20" viewBox="0 0 24 24"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/></svg>
                 </div>
                 <div class="month-accordion-body">
-                    <div class="month-summary-bar">
-                        <div class="summary-stats-grid">
-                            <div class="summary-stat-block stat-work">
-                                <span class="stat-label">עבודה</span>
-                                <span class="stat-val">${formatMinutesToHM(totWorkMins)}</span>
-                            </div>
-                            <div class="summary-stat-block stat-prem">
-                                <span class="stat-label">פרמיה</span>
-                                <span class="stat-val">${formatMinutesToHM(totPremMins)}</span>
-                            </div>
-                            <div class="summary-stat-block stat-nalt">
-                                <span class="stat-label">נל״ת</span>
-                                <span class="stat-val">${formatMinutesToHM(totNaltMins)}</span>
-                            </div>
-                        </div>
-                        <button class="btn-export-icon" onclick="printMonthReport('${mk}')" title="שתף / הפק דוח">
-                            <svg class="svg-icon" viewBox="0 0 24 24">
-                                <path d="M16 5l-4-4-4 4h3v8h2V5h3zm4 4v11c0 1.1-.9 2-2 2H6c-1.1 0-2-.9-2-2V9c0-1.1.9-2 2-2h3v2H6v11h12V9h-3V7h3c1.1 0 2 .9 2 2z"/>
-                            </svg>
-                        </button>
-                    </div>
                     <div class="shifts-list-inner">
                         ${mShifts.map(shift => buildShiftCardHTML(shift, overlappingIds)).join('')}
                     </div>
@@ -4466,76 +4667,7 @@
         });
 
         setupDragAndDrop();
-
-        container.querySelectorAll('.btn-export-icon').forEach(btn => {
-            addPressEffect(btn, 'plus-pressed-effect');
-        });
-    }
-
-    function openShiftModal(shiftId) {
-        const modal = document.getElementById('shiftModal');
-        const title = document.getElementById('modalTitle');
-        const instructorSection = document.getElementById('instructorSectionModal');
-
-        if (window.isUserInstructor) {
-            instructorSection.style.display = 'block';
-        } else {
-            instructorSection.style.display = 'none';
-        }
-
-        if (shiftId) {
-            const shift = shifts.find(s => String(s.id) === String(shiftId));
-            if (!shift) return;
-            title.textContent = 'עריכת משמרת';
-            document.getElementById('editShiftId').value = String(shift.id);
-            document.getElementById('fieldSiddur').value = shift.siddur || '';
-            document.getElementById('fieldDate').value = shift.date || '';
-            document.getElementById('fieldStartTime').value = shift.startTime || '';
-            document.getElementById('fieldEndTime').value = shift.endTime || '';
-            document.getElementById('fieldFullPremModal').checked = Boolean(shift.fullPrem);
-            document.getElementById('fieldNotes').value = shift.notes || '';
-            
-            const nStartMins = shift.naltStartMinutes ?? (shift.naltStartHours ? shift.naltStartHours * 60 : 0);
-            const nEndMins = shift.naltEndMinutes ?? (shift.naltEndHours ? shift.naltEndHours * 60 : 0);
-            
-            setNaltFieldUI('Start', nStartMins);
-            setNaltFieldUI('End', nEndMins);
-            document.getElementById('fieldPremStart').value = shift.premStartTime || '';
-            document.getElementById('fieldPremEnd').value = shift.premEndTime || '';
-            if (window.isUserInstructor) {
-                document.getElementById('fieldInstructorStart').value = shift.instructorStartTime || '';
-                document.getElementById('fieldInstructorEnd').value = shift.instructorEndTime || '';
-            }
-        } else {
-            const now = new Date();
-            const y = now.getFullYear();
-            const m = String(now.getMonth() + 1).padStart(2, '0');
-            const d = String(now.getDate()).padStart(2, '0');
-
-            title.textContent = 'הוספת משמרת ידנית';
-            document.getElementById('editShiftId').value = '';
-            document.getElementById('fieldSiddur').value = '';
-            document.getElementById('fieldDate').value = `${y}-${m}-${d}`;
-            document.getElementById('fieldStartTime').value = '';
-            document.getElementById('fieldEndTime').value = '';
-            document.getElementById('fieldFullPremModal').checked = false;
-            document.getElementById('fieldNotes').value = '';
-            setNaltFieldUI('Start', 0);
-            setNaltFieldUI('End', 0);
-            document.getElementById('fieldPremStart').value = '';
-            document.getElementById('fieldPremEnd').value = '';
-            if (window.isUserInstructor) {
-                document.getElementById('fieldInstructorStart').value = '';
-                document.getElementById('fieldInstructorEnd').value = '';
-            }
-        }
-
-        modal.classList.add('open');
-        validateModalRealtime(false);
-    }
-
-    function closeModal() {
-        document.getElementById('shiftModal').classList.remove('open');
+        setupGlobalInteractions();
     }
 
     function getValidationState() {
@@ -4671,7 +4803,7 @@
         }
     }
 
-    function saveShiftDirect() {
+    window.saveShiftDirect = function() {
         const editId = document.getElementById('editShiftId').value;
         const siddurVal = document.getElementById('fieldSiddur').value.trim();
         let dateVal = document.getElementById('fieldDate').value;
@@ -4712,10 +4844,10 @@
         let savedShiftObj = null;
 
         if (editId) {
-            const index = shifts.findIndex(s => String(s.id) === String(editId));
+            const index = window.shifts.findIndex(s => String(s.id) === String(editId));
             if (index !== -1) {
-                shifts[index] = {
-                    ...shifts[index],
+                window.shifts[index] = {
+                    ...window.shifts[index],
                     siddur: siddurVal,
                     date: dateVal,
                     startTime: startVal,
@@ -4730,9 +4862,9 @@
                     notes: notesVal
                 };
                 if (fullPremVal && startVal && startVal !== endVal) {
-                    applyFullPremToShift(shifts[index]);
+                    applyFullPremToShift(window.shifts[index]);
                 }
-                savedShiftObj = shifts[index];
+                savedShiftObj = window.shifts[index];
             }
         } else {
             const newShift = {
@@ -4753,17 +4885,17 @@
             if (fullPremVal && startVal && startVal !== endVal) {
                 applyFullPremToShift(newShift);
             }
-            shifts.unshift(newShift);
+            window.shifts.unshift(newShift);
             savedShiftObj = newShift;
         }
         
         activeMonthKey = dateVal.substring(0, 7);
 
-        autoSortShiftsArray(shifts);
+        autoSortShiftsArray(window.shifts);
         saveShifts(savedShiftObj);
         if (currentView === 'history') renderShifts();
         closeModal();
-    }
+    };
     
     function deleteShift(id) {
         showSmartAlertDialog(
@@ -4772,8 +4904,8 @@
             'מחק משמרת',
             'ביטול',
             () => {
-                shifts = shifts.filter(s => !selectedShiftIds.has(String(s.id)) && String(s.id) !== String(id));
-                localStorage.setItem('railway_shifts', JSON.stringify(shifts));
+                window.shifts = window.shifts.filter(s => !selectedShiftIds.has(String(s.id)) && String(s.id) !== String(id));
+                localStorage.setItem('railway_shifts', JSON.stringify(window.shifts));
                 deleteShiftFromCloudAndLocal(id);
                 if (currentView === 'history') renderShifts();
             },
@@ -4781,6 +4913,7 @@
         );
     }
 
+    setupGlobalInteractions();
     navigateTo(currentView, false);
 </script>
 </body>
