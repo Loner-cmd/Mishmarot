@@ -71,7 +71,7 @@
             display: flex;
             flex-direction: column;
             gap: 16px;
-            padding-bottom: 100px;
+            padding-bottom: 120px;
             position: relative;
         }
 
@@ -84,7 +84,6 @@
             flex-shrink: 0;
         }
 
-        /* Top Header - Normal state עם overflow hidden כדי לחתוך את פס ההתקדמות לחלוטין בתוך הפינות המעוגלות */
         header {
             display: flex;
             align-items: center;
@@ -101,7 +100,13 @@
 
         header.sticky-mode {
             position: sticky;
-            top: 8px; 
+            top: 0px; 
+            border-top-left-radius: 0;
+            border-top-right-radius: 0;
+            border-top: none;
+            background: rgba(19, 34, 71, 0.95);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
         }
 
         .header-right {
@@ -343,7 +348,6 @@
             opacity: 1;
         }
 
-        /* תפריט המשתמש ממוקם ב-fixed עם אפקט מגירה חלק (Slide Down/Up) כך שהוא מופיע מתחת לאייקון, מעל ההחשכה, וללא חיתוך */
         .user-dropdown-menu {
             position: fixed;
             background: var(--bg-card);
@@ -401,6 +405,7 @@
             background: rgba(239, 68, 68, 0.2);
         }
 
+        /* Bottom Nav & Floating Action Drawer */
         .bottom-nav-wrapper {
             position: fixed;
             bottom: 0; left: 0; right: 0;
@@ -412,6 +417,13 @@
             pointer-events: none; 
         }
 
+        .bottom-nav-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            pointer-events: auto;
+        }
+
         .bottom-nav {
             display: flex;
             position: relative;
@@ -420,7 +432,6 @@
             border: 1px solid var(--border-color);
             box-shadow: 0 10px 25px rgba(0,0,0,0.6);
             padding: 5px;
-            pointer-events: auto;
             touch-action: none; 
             user-select: none;
             width: 220px; 
@@ -476,6 +487,153 @@
         .nav-tab.active svg {
             fill: var(--accent-cyan);
             transform: scale(1.15);
+        }
+
+        /* Tools Drawer Button & Popup */
+        .tools-drawer-wrap {
+            position: relative;
+            display: none; /* Visible only in history view */
+        }
+
+        .btn-tools-main {
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.6);
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .btn-tools-main svg {
+            width: 22px;
+            height: 22px;
+            fill: currentColor;
+            transition: transform 0.3s ease;
+        }
+
+        .tools-drawer-wrap.open .btn-tools-main {
+            background: rgba(0, 210, 255, 0.15);
+            border-color: var(--accent-cyan);
+            color: var(--accent-cyan);
+            box-shadow: 0 0 15px rgba(0, 210, 255, 0.4);
+        }
+
+        .tools-drawer-wrap.open .btn-tools-main svg {
+            transform: rotate(45deg);
+        }
+
+        .tools-popup-drawer {
+            position: absolute;
+            bottom: 64px;
+            right: 0;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 24px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.8);
+            padding: 8px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            opacity: 0;
+            transform: translateY(15px) scale(0.9);
+            pointer-events: none;
+            transition: opacity 0.2s ease, transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+            z-index: 950;
+        }
+
+        .tools-drawer-wrap.open .tools-popup-drawer {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+            pointer-events: auto;
+        }
+
+        .btn-drawer-item {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+        }
+
+        .btn-drawer-item svg {
+            width: 20px;
+            height: 20px;
+            fill: currentColor;
+        }
+
+        .btn-drawer-item.active-mode {
+            background: rgba(0, 210, 255, 0.15);
+            border-color: var(--accent-cyan);
+            color: var(--accent-cyan);
+            box-shadow: 0 0 10px rgba(0, 210, 255, 0.4);
+        }
+
+        /* Tooltip style beside button on long press */
+        .drawer-tooltip {
+            position: absolute;
+            right: 56px;
+            top: 50%;
+            transform: translateY(-50%) translateX(6px);
+            background: rgba(11, 19, 41, 0.95);
+            border: 1px solid var(--border-color);
+            color: #fff;
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 8px;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.15s ease, transform 0.15s ease;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+            z-index: 1000;
+        }
+
+        .drawer-tooltip.show {
+            opacity: 1;
+            transform: translateY(-50%) translateX(0);
+        }
+
+        /* Floating status bubble above nav */
+        .status-bubble-toast {
+            position: fixed;
+            bottom: 82px;
+            left: 50%;
+            transform: translateX(-50%) translateY(10px);
+            background: rgba(19, 34, 71, 0.95);
+            border: 1px solid var(--accent-cyan);
+            color: var(--accent-cyan);
+            font-size: 0.8rem;
+            font-weight: 700;
+            padding: 6px 14px;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.6);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s ease, transform 0.2s ease;
+            z-index: 2000;
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            white-space: nowrap;
+        }
+
+        .status-bubble-toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
         }
 
         .app-view {
@@ -553,7 +711,6 @@
             justify-content: center;
         }
 
-        /* מעטפת חיצונית עדינה מאחורי הכפתור שיוצרת את מסגרת/פס הכהה הדק הסטטי */
         .well-container {
             width: 220px;
             height: 220px;
@@ -567,7 +724,6 @@
             position: relative;
         }
 
-        /* הכפתור הראשי עגול עם טווח תנועת לחיצה עדין ומקורי */
         .btn-main-circle {
             width: 210px;
             height: 210px;
@@ -624,7 +780,6 @@
         .btn-main-circle.state-active .btn-main-icon { stroke: #881337; }
         .btn-main-circle.state-active .btn-main-text-wrap { color: #fb7185; text-shadow: 0 0 10px rgba(251, 113, 133, 0.3); }
 
-        /* אפקט הלחיצה: רק הסמל זוהר ונדלק בעת לחיצה, עם עומק לחיצה עדין ומדויק כמו בהתחלה */
         .btn-main-circle.state-idle.pressed-effect .btn-main-icon,
         .btn-main-circle.state-idle:active .btn-main-icon,
         .btn-main-circle.state-idle.pressed .btn-main-icon {
@@ -667,101 +822,6 @@
             opacity: 0.5;
         }
 
-        .smart-actions-wrapper {
-            position: relative;
-            z-index: 800;
-            padding: 34px 14px 10px 14px;
-            margin: -40px 0 -10px 0;
-            border-radius: 0 0 16px 16px;
-            background: rgba(11, 19, 41, 0.85);
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-top: none;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.4);
-            transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.35s ease;
-            display: flex;
-            flex-direction: column;
-            gap: 8px; 
-            width: 100%;
-            box-sizing: border-box;
-        }
-
-        .smart-actions-wrapper.fixed-mode {
-            position: fixed;
-            top: 52px;
-            left: 0;
-            right: 0;
-            margin: 0 auto; 
-            width: calc(100% - 24px); 
-            max-width: 456px; 
-            transform: translateY(-150%);
-            opacity: 0;
-            pointer-events: none;
-        }
-
-        .smart-actions-wrapper.fixed-mode.slide-in {
-            transform: translateY(0);
-            opacity: 1;
-            pointer-events: auto;
-        }
-
-        .smart-actions-wrapper.fixed-mode.slide-out {
-            transform: translateY(-150%);
-            opacity: 0;
-            pointer-events: none;
-        }
-
-        .section-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .section-title {
-            font-size: 1rem;
-            font-weight: 700;
-            color: var(--text-main); 
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .header-actions-group {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-        }
-
-        .btn-icon-action {
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            color: var(--text-muted); 
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        .btn-icon-action svg {
-            width: 18px;
-            height: 18px;
-            fill: currentColor;
-            transition: fill 0.2s;
-        }
-
-        .btn-icon-action.active-mode {
-            background: rgba(0, 210, 255, 0.15);
-            border-color: var(--accent-cyan);
-            color: var(--accent-cyan);
-            box-shadow: 0 0 12px rgba(0, 210, 255, 0.4);
-        }
-
         .selection-toolbar {
             display: none;
             background: var(--bg-card);
@@ -771,6 +831,7 @@
             align-items: center;
             justify-content: space-between;
             gap: 8px;
+            margin-bottom: 12px;
         }
 
         .selection-toolbar.active {
@@ -806,17 +867,49 @@
             color: #fff;
         }
 
+        /* Flip Card Accordion for Month */
         .month-accordion {
-            background: var(--bg-card);
-            border-radius: 16px;
-            border: 1px solid var(--border-color);
-            overflow: hidden;
+            background: transparent;
+            perspective: 1000px;
             margin-bottom: 12px;
-            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
         }
         
         .month-accordion:last-child {
             margin-bottom: 0;
+        }
+
+        .month-accordion-card-inner {
+            position: relative;
+            width: 100%;
+            transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            transform-style: preserve-3d;
+            background: var(--bg-card);
+            border-radius: 16px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+
+        .month-accordion.flipped .month-accordion-card-inner {
+            transform: rotateY(180deg);
+        }
+
+        .month-accordion-front, .month-accordion-back {
+            position: relative;
+            width: 100%;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+        }
+
+        .month-accordion-back {
+            position: absolute;
+            top: 0; right: 0; left: 0; bottom: 0;
+            transform: rotateY(180deg);
+            padding: 14px 16px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            background: var(--bg-card);
+            border-radius: 16px;
         }
 
         .month-accordion-header {
@@ -825,6 +918,8 @@
             justify-content: space-between;
             align-items: center;
             background: rgba(0, 0, 0, 0.2);
+            border-top-left-radius: 16px;
+            border-top-right-radius: 16px;
             cursor: pointer;
             font-weight: 700;
             font-size: 1.05rem;
@@ -835,6 +930,57 @@
 
         .month-accordion-header:active {
             background: rgba(0, 0, 0, 0.4);
+        }
+
+        .month-header-left-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-summary-flip {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: rgba(0, 210, 255, 0.1);
+            border: 1px solid rgba(0, 210, 255, 0.25);
+            color: var(--accent-cyan);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+        }
+
+        .btn-summary-flip:active {
+            transform: scale(0.9);
+            background: rgba(0, 210, 255, 0.25);
+        }
+
+        .summary-flip-tooltip {
+            position: absolute;
+            left: 40px;
+            top: 50%;
+            transform: translateY(-50%) translateX(-6px);
+            background: rgba(11, 19, 41, 0.95);
+            border: 1px solid var(--border-color);
+            color: #fff;
+            font-size: 0.72rem;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 8px;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.15s ease, transform 0.15s ease;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+            z-index: 1000;
+        }
+
+        .summary-flip-tooltip.show {
+            opacity: 1;
+            transform: translateY(-50%) translateX(0);
         }
 
         .chevron-icon {
@@ -851,6 +997,8 @@
             display: none;
             border-top: 1px solid rgba(255, 255, 255, 0.08);
             background: #0e1836;
+            border-bottom-left-radius: 16px;
+            border-bottom-right-radius: 16px;
         }
 
         .month-accordion.open .month-accordion-body {
@@ -865,7 +1013,6 @@
             -webkit-backdrop-filter: blur(10px);
             padding: 14px;
             border-radius: 16px;
-            margin-bottom: 14px;
             align-items: center;
             border: 1px solid rgba(255, 255, 255, 0.08);
             box-shadow: 0 4px 15px rgba(0,0,0,0.1);
@@ -1861,7 +2008,6 @@
 
 <div id="menuBackdrop" class="menu-backdrop" onclick="closeUserMenu(event)"></div>
 
-<!-- תפריט המשתמש ממוקם ב-fixed עם אפקט מגירה חלק (Slide Down/Up) כך שהוא מופיע מתחת לאייקון, מעל ההחשכה, וללא חיתוך -->
 <div id="userDropdownMenu" class="user-dropdown-menu">
     <button class="dropdown-item" onclick="goToProfileView()">פרופיל אישי</button>
     <button class="dropdown-item" onclick="openSettingsModal()">הגדרות</button>
@@ -1981,48 +2127,19 @@
     </div>
 
     <div id="viewHistory" class="app-view" style="display: none;">
-        <div id="smartActionsPlaceholder" style="display: none;"></div>
-        <div class="smart-actions-wrapper" id="smartActionsWrapper">
-            <div class="section-header">
-                <div class="section-title">
-                    <svg class="svg-icon" width="18" height="18" viewBox="0 0 24 24">
-                        <path d="M19 3h-4.18C14.4 1.84 13.3 1 12 1c-1.3 0-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm2 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/>
-                    </svg>
-                    היסטוריית משמרות
-                </div>
-                <div class="header-actions-group">
-                    <button id="btnToggleMultiPanel" class="btn-icon-action" onclick="toggleMultiPanelMode()" title="ריבוי פאנלים">
-                        <svg viewBox="0 0 24 24">
-                            <path d="M11.99 18.54l-7.37-5.73L3 14.07l9 7 9-7-1.63-1.27-7.38 5.74zM12 16l7.36-5.73L21 9l-9-7-9 7 1.63 1.27L12 16z"/>
-                        </svg>
-                    </button>
-                    <button id="btnToggleSorting" class="btn-icon-action" onclick="toggleSortingMode()" title="מיון">
-                        <svg viewBox="0 0 24 24">
-                            <path d="M9 3L5 6.99h3V14h2V6.99h3L9 3zm7 14.01V10h-2v7.01h-3L15 21l4-3.99h-3z"/>
-                        </svg>
-                    </button>
-                    <button id="btnToggleSelection" class="btn-icon-action" onclick="toggleSelectionMode()" title="בחירה">
-                        <svg viewBox="0 0 24 24">
-                            <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-9 14l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
-                        </svg>
-                    </button>
-                </div>
+        <div id="selectionToolbar" class="selection-toolbar">
+            <span id="selectedCountText" style="font-size: 0.85rem; font-weight: 700; color: var(--accent-cyan);">0 נבחרו</span>
+            <div class="toolbar-buttons">
+                <button class="btn-toolbar btn-toolbar-select" onclick="selectAllShifts()">בחר הכל</button>
+                <button class="btn-toolbar btn-toolbar-delete" onclick="deleteSelectedShifts()">מחק נבחרים</button>
             </div>
+        </div>
 
-            <div id="selectionToolbar" class="selection-toolbar">
-                <span id="selectedCountText" style="font-size: 0.85rem; font-weight: 700; color: var(--accent-cyan);">0 נבחרו</span>
-                <div class="toolbar-buttons">
-                    <button class="btn-toolbar btn-toolbar-select" onclick="selectAllShifts()">בחר הכל</button>
-                    <button class="btn-toolbar btn-toolbar-delete" onclick="deleteSelectedShifts()">מחק נבחרים</button>
-                </div>
-            </div>
-
-            <div id="sortingToolbar" class="selection-toolbar">
-                <span style="font-size: 0.85rem; font-weight: 700; color: var(--accent-cyan);">גרור לסידור מחדש</span>
-                <div class="toolbar-buttons">
-                    <button class="btn-toolbar btn-toolbar-select" onclick="sortShiftsByDate()">איפוס לתאריכים</button>
-                    <button class="btn-toolbar btn-toolbar-save" onclick="saveManualSorting()">שמור סדר</button>
-                </div>
+        <div id="sortingToolbar" class="selection-toolbar">
+            <span style="font-size: 0.85rem; font-weight: 700; color: var(--accent-cyan);">גרור לסידור מחדש</span>
+            <div class="toolbar-buttons">
+                <button class="btn-toolbar btn-toolbar-select" onclick="sortShiftsByDate()">איפוס לתאריכים</button>
+                <button class="btn-toolbar btn-toolbar-save" onclick="saveManualSorting()">שמור סדר</button>
             </div>
         </div>
 
@@ -2034,7 +2151,7 @@
         <div class="clock-screen-card" style="align-items: stretch; gap: 14px;">
             <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 10px;">
                 <h2 style="font-size: 1.2rem; color: #fff;">פרופיל אישי</h2>
-                <button class="btn-icon-action" style="background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border-color); color: var(--text-main);" onclick="navigateTo('clock')" title="חזרה">
+                <button class="btn-icon-action" style="background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border-color); color: var(--text-main); width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer;" onclick="navigateTo('clock')" title="חזרה">
                     <svg class="svg-icon" width="18" height="18" viewBox="0 0 24 24">
                         <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
                     </svg>
@@ -2050,7 +2167,6 @@
                 <p id="profileEmail" style="font-size: 1rem; font-weight: 600; color: var(--accent-cyan);"></p>
             </div>
 
-            <!-- כפתור ניהול מיוחד למנהל העל בלבד -->
             <div id="ownerAdminBtnContainer" style="display: none;">
                 <button class="btn-secondary" style="width: 100%; background: rgba(0, 210, 255, 0.15); border-color: var(--accent-cyan); color: var(--accent-cyan); font-weight: 700; padding: 12px; display: flex; align-items: center; justify-content: center; gap: 8px;" onclick="navigateTo('admin')">
                     <svg class="svg-icon" width="18" height="18" viewBox="0 0 24 24">
@@ -2084,7 +2200,6 @@
                 </div>
             </div>
 
-            <!-- מתג פרמיית הדרכה למנהל העל בלבד -->
             <div id="ownerInstructorToggleContainer" style="display: none;">
                 <div class="toggle-switch-container">
                     <span class="toggle-label-text">
@@ -2112,7 +2227,7 @@
                     </svg>
                     פאנל ניהול הרשאות
                 </h2>
-                <button class="btn-icon-action" style="background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border-color); color: var(--text-main);" onclick="navigateTo('profile')" title="חזרה">
+                <button class="btn-icon-action" style="background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border-color); color: var(--text-main); width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer;" onclick="navigateTo('profile')" title="חזרה">
                     <svg class="svg-icon" width="18" height="18" viewBox="0 0 24 24">
                         <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
                     </svg>
@@ -2130,22 +2245,55 @@
 </div>
 
 <div class="bottom-nav-wrapper">
-    <div class="bottom-nav" id="bottomNav">
-        <div class="nav-indicator" id="navIndicator"></div>
-        <div class="nav-tab active" data-target="clock" onclick="handleNavClick('clock')">
-            <svg viewBox="0 0 24 24">
-                <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
-            </svg>
-            <span>ראשי</span>
+    <div class="bottom-nav-container">
+        <!-- Floating Tools Drawer -->
+        <div id="toolsDrawerWrap" class="tools-drawer-wrap">
+            <button id="btnToolsMain" class="btn-tools-main" onclick="toggleToolsDrawer()" title="כלים">
+                <svg viewBox="0 0 24 24">
+                    <path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/>
+                </svg>
+            </button>
+            <div class="tools-popup-drawer">
+                <button id="btnToggleMultiPanel" class="btn-drawer-item" onclick="handleToolAction('multipanel')" data-tooltip="ריבוי פאנלים">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M11.99 18.54l-7.37-5.73L3 14.07l9 7 9-7-1.63-1.27-7.38 5.74zM12 16l7.36-5.73L21 9l-9-7-9 7 1.63 1.27L12 16z"/>
+                    </svg>
+                    <span class="drawer-tooltip">ריבוי פאנלים</span>
+                </button>
+                <button id="btnToggleSorting" class="btn-drawer-item" onclick="handleToolAction('sorting')" data-tooltip="מיון">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M9 3L5 6.99h3V14h2V6.99h3L9 3zm7 14.01V10h-2v7.01h-3L15 21l4-3.99h-3z"/>
+                    </svg>
+                    <span class="drawer-tooltip">מיון</span>
+                </button>
+                <button id="btnToggleSelection" class="btn-drawer-item" onclick="handleToolAction('selection')" data-tooltip="בחירה">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-9 14l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                    </svg>
+                    <span class="drawer-tooltip">בחירה</span>
+                </button>
+            </div>
         </div>
-        <div class="nav-tab" data-target="history" onclick="handleNavClick('history')">
-            <svg viewBox="0 0 24 24">
-                <path d="M19 3h-4.18C14.4 1.84 13.3 1 12 1c-1.3 0-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm2 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/>
-            </svg>
-            <span>משמרות</span>
+
+        <div class="bottom-nav" id="bottomNav">
+            <div class="nav-indicator" id="navIndicator"></div>
+            <div class="nav-tab active" data-target="clock" onclick="handleNavClick('clock')">
+                <svg viewBox="0 0 24 24">
+                    <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+                </svg>
+                <span>ראשי</span>
+            </div>
+            <div class="nav-tab" data-target="history" onclick="handleNavClick('history')">
+                <svg viewBox="0 0 24 24">
+                    <path d="M19 3h-4.18C14.4 1.84 13.3 1 12 1c-1.3 0-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm2 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/>
+                </svg>
+                <span>משמרות</span>
+            </div>
         </div>
     </div>
 </div>
+
+<div id="statusBubbleToast" class="status-bubble-toast"></div>
 
 <div class="modal-overlay" id="shiftModal">
     <div class="modal-sheet">
@@ -2260,7 +2408,7 @@
                     <div class="form-group">
                         <label class="form-label">משעה</label>
                         <div class="input-wrapper">
-                            <input type="time" id="fieldPremStart" class="form-control" onchange="validateModalRealtime(true)" oninput="validateModalRealtime(false)">
+                            <input type="time" id="fieldPremStart" class="form-control" onchange="handleManualPremChange(); validateModalRealtime(true);" oninput="handleManualPremChange(); validateModalRealtime(false);">
                             <svg class="field-error-icon" viewBox="0 0 24 24">
                                 <path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
                             </svg>
@@ -2269,7 +2417,7 @@
                     <div class="form-group">
                         <label class="form-label">עד שעה</label>
                         <div class="input-wrapper">
-                            <input type="time" id="fieldPremEnd" class="form-control" onchange="validateModalRealtime(true)" oninput="validateModalRealtime(false)">
+                            <input type="time" id="fieldPremEnd" class="form-control" onchange="handleManualPremChange(); validateModalRealtime(true);" oninput="handleManualPremChange(); validateModalRealtime(false);">
                             <svg class="field-error-icon" viewBox="0 0 24 24">
                                 <path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
                             </svg>
@@ -2391,11 +2539,17 @@
                 }
             }
         }
+        
+        const toolsWrap = document.getElementById('toolsDrawerWrap');
+        if (toolsWrap && toolsWrap.classList.contains('open')) {
+            if (!toolsWrap.contains(e.target)) {
+                toolsWrap.classList.remove('open');
+            }
+        }
     });
 
     window.handleAuthClick = async function(event) {
         event.stopPropagation();
-        
         if (currentView === 'profile' || currentView === 'admin') return;
 
         if (window.currentUser) {
@@ -2409,15 +2563,11 @@
             } else {
                 const authContainer = document.getElementById('headerAuthContainer');
                 const rect = authContainer.getBoundingClientRect();
-                
                 dropdown.style.top = (rect.bottom + 8) + 'px';
                 dropdown.style.left = rect.left + 'px';
-                
                 dropdown.classList.add('open');
                 backdrop.classList.add('open');
             }
-        } else {
-            // תטופל בהמשך ב-Firebase
         }
     };
 </script>
@@ -2886,116 +3036,6 @@
     let draggedElement = null;
     let activeMonthKey = ''; 
 
-    let lastScrollY = window.scrollY;
-    let isActionsFixed = false;
-    let isActionsVisible = false;
-
-    window.addEventListener('scroll', () => {
-        if (currentView !== 'history') return;
-        
-        const wrapper = document.getElementById('smartActionsWrapper');
-        const placeholder = document.getElementById('smartActionsPlaceholder');
-        if (!wrapper || !placeholder) return;
-        
-        const currentScrollY = window.scrollY;
-        const maxScroll = Math.max(document.body.scrollHeight, document.documentElement.scrollHeight) - window.innerHeight;
-        
-        if (currentScrollY <= 0) {
-            if (isActionsFixed) {
-                wrapper.classList.remove('fixed-mode', 'slide-in', 'slide-out');
-                placeholder.style.display = 'none';
-                placeholder.style.height = '0px';
-                placeholder.style.marginTop = '0';
-                placeholder.style.marginBottom = '0';
-                isActionsFixed = false;
-                isActionsVisible = true; 
-            }
-            lastScrollY = currentScrollY;
-            return;
-        }
-        
-        if (currentScrollY >= maxScroll - 10) {
-            lastScrollY = currentScrollY;
-            return;
-        }
-        
-        const stealthThreshold = 120; 
-        const releaseThreshold = 10; 
-
-        if (currentScrollY > stealthThreshold && !isActionsFixed) {
-            placeholder.style.height = wrapper.offsetHeight + 'px';
-            placeholder.style.marginTop = '-40px';
-            placeholder.style.marginBottom = '-10px';
-            placeholder.style.display = 'block';
-            wrapper.classList.add('fixed-mode', 'slide-out');
-            wrapper.classList.remove('slide-in');
-            isActionsFixed = true;
-            isActionsVisible = false;
-        } 
-        else if (currentScrollY <= releaseThreshold && isActionsFixed) {
-            wrapper.classList.remove('fixed-mode', 'slide-in', 'slide-out');
-            placeholder.style.display = 'none';
-            placeholder.style.height = '0px';
-            placeholder.style.marginTop = '0';
-            placeholder.style.marginBottom = '0';
-            isActionsFixed = false;
-            isActionsVisible = true; 
-        }
-
-        if (isActionsFixed) {
-            if (currentScrollY < lastScrollY - 5) {
-                if (!isActionsVisible) {
-                    wrapper.classList.add('slide-in');
-                    wrapper.classList.remove('slide-out');
-                    isActionsVisible = true;
-                }
-            } else if (currentScrollY > lastScrollY + 5) {
-                if (isActionsVisible) {
-                    wrapper.classList.add('slide-out');
-                    wrapper.classList.remove('slide-in');
-                    isActionsVisible = false;
-                }
-            }
-        }
-        
-        lastScrollY = currentScrollY;
-    }, { passive: true });
-
-    const PRESET_NALT_MINUTES = [0, 30, 40, 45, 60, 90, 150, 270];
-
-    function addPressEffect(el, className = 'pressed-effect') {
-        if(!el) return;
-        const press = () => el.classList.add(className);
-        const unpress = () => el.classList.remove(className);
-        
-        el.addEventListener('touchstart', press, {passive: true});
-        el.addEventListener('touchend', unpress);
-        el.addEventListener('touchcancel', unpress);
-        el.addEventListener('mousedown', press);
-        el.addEventListener('mouseup', unpress);
-        el.addEventListener('mouseleave', unpress);
-    }
-
-    addPressEffect(document.getElementById('btnMainAction'), 'pressed-effect');
-    addPressEffect(document.getElementById('btnPlusManual'), 'plus-pressed-effect');
-    addPressEffect(document.getElementById('btnToggleMultiPanel'), 'plus-pressed-effect');
-    addPressEffect(document.getElementById('btnToggleSorting'), 'plus-pressed-effect');
-    addPressEffect(document.getElementById('btnToggleSelection'), 'plus-pressed-effect');
-    addPressEffect(document.getElementById('headerAuthContainer'), 'pressed-effect');
-
-    function smoothScrollToReveal(el, delay = 400) {
-        setTimeout(() => {
-            if (!el) return;
-            const rect = el.getBoundingClientRect();
-            const viewHeight = Math.max(document.documentElement.clientHeight, window.innerHeight);
-            
-            if (rect.bottom > viewHeight || rect.top < 0) {
-                const alignBlock = rect.height > viewHeight ? 'start' : 'nearest';
-                el.scrollIntoView({ behavior: 'smooth', block: alignBlock });
-            }
-        }, delay);
-    }
-
     const bottomNav = document.getElementById('bottomNav');
     const navIndicator = document.getElementById('navIndicator');
     let isNavDragging = false;
@@ -3026,7 +3066,6 @@
 
         bottomNav.addEventListener('touchmove', (e) => {
             if (!navTouchActive) return;
-            
             const deltaX = e.touches[0].clientX - navStartX;
             const deltaY = e.touches[0].clientY - navStartY;
             
@@ -3035,7 +3074,6 @@
             }
 
             if (!isNavDragging) return;
-            
             if (e.cancelable) e.preventDefault();
             
             const navRect = bottomNav.getBoundingClientRect();
@@ -3064,7 +3102,7 @@
                 const movePercent = (-deltaX / (navRect.width / 2)) * 100;
                 let finalOffset = navCurrentOffsetPercent + movePercent;
 
-                if (finalOffset > 50) {
+                if (finalOffset > 55) {
                     navigateTo('history', false); 
                 } else {
                     navigateTo('clock', false); 
@@ -3102,6 +3140,8 @@
         sessionStorage.setItem('railway_active_view', viewName);
 
         window.closeUserMenu();
+        const toolsWrap = document.getElementById('toolsDrawerWrap');
+        if (toolsWrap) toolsWrap.classList.remove('open');
 
         const authContainer = document.getElementById('headerAuthContainer');
         if (authContainer) {
@@ -3130,33 +3170,16 @@
         const mainHeader = document.getElementById('mainHeader');
         if (viewName === 'history') {
             mainHeader.classList.add('sticky-mode');
+            if (toolsWrap) toolsWrap.style.display = 'block';
         } else {
             mainHeader.classList.remove('sticky-mode');
-            
-            const wrapper = document.getElementById('smartActionsWrapper');
-            const placeholder = document.getElementById('smartActionsPlaceholder');
-            if(wrapper) {
-                wrapper.classList.remove('fixed-mode', 'slide-in', 'slide-out');
-                isActionsFixed = false;
-                isActionsVisible = false;
-            }
-            if(placeholder) {
-                placeholder.style.display = 'none';
-                placeholder.style.height = '0px';
-                placeholder.style.marginTop = '0';
-                placeholder.style.marginBottom = '0';
-            }
+            if (toolsWrap) toolsWrap.style.display = 'none';
         }
 
         requestAnimationFrame(() => updateIndicatorPosition(true));
         updateActiveShiftUI(); 
 
         if (viewName === 'history') {
-            const wrapper = document.getElementById('smartActionsWrapper');
-            if (wrapper) {
-                wrapper.classList.remove('slide-out');
-                wrapper.classList.remove('slide-in');
-            }
             renderShifts();
         }
 
@@ -3164,6 +3187,163 @@
             loadAdminUsersList();
         }
     }
+
+    function toggleToolsDrawer() {
+        const wrap = document.getElementById('toolsDrawerWrap');
+        if (wrap) wrap.classList.toggle('open');
+    }
+
+    function showStatusBubbleToast(msg) {
+        const toast = document.getElementById('statusBubbleToast');
+        if (!toast) return;
+        toast.textContent = msg;
+        toast.classList.add('show');
+        setTimeout(() => {
+            toast.classList.remove('show');
+        }, 2200);
+    }
+
+    // Long press & tap logic for drawer buttons with strict separation
+    function setupDrawerButtonInteractions() {
+        const items = document.querySelectorAll('.tools-popup-drawer .btn-drawer-item');
+        items.forEach(btn => {
+            let pressTimer = null;
+            let isLongPressTriggered = false;
+            const tooltip = btn.querySelector('.drawer-tooltip');
+
+            const startAction = (e) => {
+                isLongPressTriggered = false;
+                pressTimer = setTimeout(() => {
+                    isLongPressTriggered = true;
+                    if (tooltip) tooltip.classList.add('show');
+                }, 500); // 500ms for long press
+            };
+
+            const endAction = (e) => {
+                if (pressTimer) {
+                    clearTimeout(pressTimer);
+                    pressTimer = null;
+                }
+                
+                if (tooltip && tooltip.classList.contains('show')) {
+                    setTimeout(() => {
+                        tooltip.classList.remove('show');
+                    }, 1500);
+                }
+
+                if (!isLongPressTriggered) {
+                    // Quick tap - execute action
+                    const onclickAttr = btn.getAttribute('onclick');
+                    if (onclickAttr) {
+                        // Action is handled by onclick directly
+                    }
+                }
+                isLongPressTriggered = false;
+            };
+
+            btn.addEventListener('touchstart', startAction, {passive: true});
+            btn.addEventListener('touchend', endAction);
+            btn.addEventListener('touchcancel', () => {
+                if (pressTimer) clearTimeout(pressTimer);
+                if (tooltip) tooltip.classList.remove('show');
+            });
+            btn.addEventListener('mousedown', startAction);
+            btn.addEventListener('mouseup', endAction);
+            btn.addEventListener('mouseleave', () => {
+                if (pressTimer) clearTimeout(pressTimer);
+                if (tooltip) tooltip.classList.remove('show');
+            });
+        });
+    }
+
+    // Long press & tap logic for summary flip button
+    function setupSummaryFlipButtonInteractions() {
+        document.addEventListener('touchstart', (e) => {
+            const btn = e.target.closest('.btn-summary-flip');
+            if (!btn) return;
+            
+            let pressTimer = setTimeout(() => {
+                const tooltip = btn.querySelector('.summary-flip-tooltip');
+                if (tooltip) {
+                    tooltip.classList.add('show');
+                    setTimeout(() => tooltip.classList.remove('show'), 1500);
+                }
+                btn.dataset.longPressed = 'true';
+            }, 500);
+            
+            btn.dataset.pressTimer = pressTimer;
+        }, {passive: true});
+
+        document.addEventListener('touchend', (e) => {
+            const btn = e.target.closest('.btn-summary-flip');
+            if (!btn) return;
+            
+            if (btn.dataset.pressTimer) {
+                clearTimeout(Number(btn.dataset.pressTimer));
+                delete btn.dataset.pressTimer;
+            }
+            
+            if (btn.dataset.longPressed === 'true') {
+                delete btn.dataset.longPressed;
+                e.stopPropagation();
+                e.preventDefault();
+                return;
+            }
+            
+            // Quick tap - flip accordion
+            const mk = btn.getAttribute('data-mk');
+            if (mk) {
+                toggleMonthAccordionFlip(mk);
+            }
+        });
+
+        document.addEventListener('mousedown', (e) => {
+            const btn = e.target.closest('.btn-summary-flip');
+            if (!btn) return;
+            
+            let pressTimer = setTimeout(() => {
+                const tooltip = btn.querySelector('.summary-flip-tooltip');
+                if (tooltip) {
+                    tooltip.classList.add('show');
+                    setTimeout(() => tooltip.classList.remove('show'), 1500);
+                }
+                btn.dataset.longPressed = 'true';
+            }, 500);
+            
+            btn.dataset.pressTimer = pressTimer;
+        });
+
+        document.addEventListener('mouseup', (e) => {
+            const btn = e.target.closest('.btn-summary-flip');
+            if (!btn) return;
+            
+            if (btn.dataset.pressTimer) {
+                clearTimeout(Number(btn.dataset.pressTimer));
+                delete btn.dataset.pressTimer;
+            }
+            
+            if (btn.dataset.longPressed === 'true') {
+                delete btn.dataset.longPressed;
+                e.stopPropagation();
+                e.preventDefault();
+                return;
+            }
+            
+            const mk = btn.getAttribute('data-mk');
+            if (mk) {
+                toggleMonthAccordionFlip(mk);
+            }
+        });
+    }
+
+    window.handleToolAction = function(type) {
+        if (type === 'multipanel') toggleMultiPanelMode();
+        else if (type === 'sorting') toggleSortingMode();
+        else if (type === 'selection') toggleSelectionMode();
+        
+        const toolsWrap = document.getElementById('toolsDrawerWrap');
+        if (toolsWrap) toolsWrap.classList.remove('open');
+    };
 
     function populateProfileMonthSelector() {
         const select = document.getElementById('profileMonthSelect');
@@ -3277,7 +3457,6 @@
             statusIndicator.className = 'status-badge idle';
             statusText.textContent = 'במנוחה';
             headerTimer.style.display = 'none';
-            
             headerPWrap.style.display = 'none';
 
             btnMainAction.className = 'btn-main-circle state-idle';
@@ -3652,10 +3831,12 @@
             btn.classList.add('active-mode');
             toolbar.classList.add('active');
             container.classList.add('mode-selection');
+            showStatusBubbleToast("מצב בחירה פעיל");
         } else {
             btn.classList.remove('active-mode');
             toolbar.classList.remove('active');
             container.classList.remove('mode-selection');
+            showStatusBubbleToast("מצב בחירה כבוי");
         }
         
         updateSelectionUI();
@@ -3674,10 +3855,12 @@
             btn.classList.add('active-mode');
             toolbar.classList.add('active');
             container.classList.add('mode-sorting');
+            showStatusBubbleToast("מיון משמרות פעיל");
         } else {
             btn.classList.remove('active-mode');
             toolbar.classList.remove('active');
             container.classList.remove('mode-sorting');
+            showStatusBubbleToast("מיון משמרות כבוי");
         }
 
         renderShifts();
@@ -3690,7 +3873,10 @@
             btn.classList.toggle('active-mode', isMultiPanelMode);
         }
 
-        if (!isMultiPanelMode) {
+        if (isMultiPanelMode) {
+            showStatusBubbleToast("ריבוי פאנלים פעיל");
+        } else {
+            showStatusBubbleToast("ריבוי פאנלים כבוי");
             document.querySelectorAll('.shift-details.expanded').forEach(el => {
                 el.classList.remove('expanded');
             });
@@ -3704,10 +3890,20 @@
             activeMonthKey = mk; 
         }
         renderShifts();
+    }
+
+    let flippedMonths = new Set();
+
+    function toggleMonthAccordionFlip(mk) {
+        const accordionEl = document.getElementById(`accordion_${mk}`);
+        if (!accordionEl) return;
         
-        if (activeMonthKey !== 'NONE') {
-            const openAcc = document.querySelector('.month-accordion.open');
-            smoothScrollToReveal(openAcc, 100); 
+        if (flippedMonths.has(mk)) {
+            flippedMonths.delete(mk);
+            accordionEl.classList.remove('flipped');
+        } else {
+            flippedMonths.add(mk);
+            accordionEl.classList.add('flipped');
         }
     }
 
@@ -3718,7 +3914,6 @@
         let totWorkMins = 0;
         let totPremMins = 0;
         let totNaltMins = 0;
-        
         let tableRows = '';
 
         mShifts.forEach(s => {
@@ -3727,13 +3922,11 @@
                  wMins = calculateDurationMinutes(s.startTime, s.endTime);
                  totWorkMins += wMins;
              }
-             
              let pMins = 0;
              if(s.premStartTime && s.premEndTime) {
                  pMins = calculateDurationMinutes(s.premStartTime, s.premEndTime);
                  totPremMins += pMins;
              }
-             
              const naltMins = (Number(s.naltStartMinutes)||0) + (Number(s.naltEndMinutes)||0);
              totNaltMins += naltMins;
 
@@ -3753,7 +3946,6 @@
         });
 
         const monthName = formatMonthName(mk);
-        
         const printDiv = document.getElementById('printArea');
         printDiv.innerHTML = `
             <div class="print-header">רכבת ישראל - סיכום משמרות לחודש ${monthName}</div>
@@ -3787,7 +3979,6 @@
                 </tbody>
             </table>
         `;
-
         window.print();
     }
 
@@ -3812,7 +4003,6 @@
             shifts = newOrderedShifts;
             localStorage.setItem('railway_shifts', JSON.stringify(shifts));
         }
-
         toggleSortingMode();
     }
 
@@ -3848,9 +4038,8 @@
             }
 
             detailsEl.classList.toggle('expanded');
-            
             if (detailsEl.classList.contains('expanded')) {
-                smoothScrollToReveal(cardEl, 400);
+                setTimeout(() => cardEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 300);
             }
         }
     }
@@ -3893,10 +4082,8 @@
 
     function setupDragAndDrop() {
         const lists = document.querySelectorAll('.shifts-list-inner');
-        
         lists.forEach(container => {
             const cards = container.querySelectorAll('.shift-card');
-
             cards.forEach(card => {
                 card.addEventListener('dragstart', (e) => {
                     if (!isSortingMode) return;
@@ -3941,7 +4128,6 @@
                 const handle = card.querySelector('.drag-handle-container');
                 if (handle) {
                     let activeTouchCard = null;
-
                     handle.addEventListener('touchstart', (e) => {
                         if (!isSortingMode) return;
                         e.stopPropagation();
@@ -3976,7 +4162,6 @@
                             activeTouchCard = null;
                         }
                     };
-
                     handle.addEventListener('touchend', stopTouch);
                     handle.addEventListener('touchcancel', stopTouch);
                 }
@@ -4064,6 +4249,13 @@
         }
     }
 
+    function handleManualPremChange() {
+        const checkbox = document.getElementById('fieldFullPremModal');
+        if (checkbox && checkbox.checked) {
+            checkbox.checked = false;
+        }
+    }
+
     function handleFullPremClick(event, shiftId) {
         event.stopPropagation();
         event.preventDefault(); 
@@ -4077,7 +4269,7 @@
         if (isChecking && hasManualPrem) {
             showSmartAlertDialog(
                 'עדכון נתוני פרמיה',
-                'שים לב, קיימים נתוני פרמיה שהוזנו מראש. הפעלת "פרמיה מלאה" תעדכן נתונים אלו ותסנכרן אותם אוטומטית עם שעות המשמרת. האם להמשיך?',
+                'שים לב, קיימות נתוני פרמיה שהוזנו מראש. הפעלת "פרמיה מלאה" תעדכן נתונים אלו ותסנכרן אותם אוטומטית עם שעות המשמרת. האם להמשיך?',
                 'עדכן וסנכרן',
                 'ביטול',
                 () => executeFullPremToggle(shift, true),
@@ -4393,6 +4585,7 @@
         monthKeys.forEach(mk => {
             const mShifts = grouped[mk];
             const isOpen = (mk === activeMonthKey);
+            const isFlipped = flippedMonths.has(mk);
             
             let totWorkMins = 0;
             let totPremMins = 0;
@@ -4408,35 +4601,63 @@
                  totNaltMins += (Number(s.naltStartMinutes)||0) + (Number(s.naltEndMinutes)||0);
             });
 
-            html += `<div class="month-accordion ${isOpen ? 'open' : ''}">
-                <div class="month-accordion-header" onclick="toggleMonthAccordion('${mk}')">
-                    <span>${formatMonthName(mk)} <span style="font-size: 0.8rem; font-weight: normal; color: var(--text-muted);">(${mShifts.length} משמרות)</span></span>
-                    <svg class="chevron-icon" width="20" height="20" viewBox="0 0 24 24"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/></svg>
-                </div>
-                <div class="month-accordion-body">
-                    <div class="month-summary-bar">
-                        <div class="summary-stats-grid">
-                            <div class="summary-stat-block stat-work">
-                                <span class="stat-label">עבודה</span>
-                                <span class="stat-val">${formatMinutesToHM(totWorkMins)}</span>
-                            </div>
-                            <div class="summary-stat-block stat-prem">
-                                <span class="stat-label">פרמיה</span>
-                                <span class="stat-val">${formatMinutesToHM(totPremMins)}</span>
-                            </div>
-                            <div class="summary-stat-block stat-nalt">
-                                <span class="stat-label">נל״ת</span>
-                                <span class="stat-val">${formatMinutesToHM(totNaltMins)}</span>
+            html += `
+            <div id="accordion_${mk}" class="month-accordion ${isOpen ? 'open' : ''} ${isFlipped ? 'flipped' : ''}">
+                <div class="month-accordion-card-inner">
+                    <!-- FRONT SIDE: Header & Shift List -->
+                    <div class="month-accordion-front">
+                        <div class="month-accordion-header" onclick="toggleMonthAccordion('${mk}')">
+                            <span>${formatMonthName(mk)} <span style="font-size: 0.8rem; font-weight: normal; color: var(--text-muted);">(${mShifts.length} משמרות)</span></span>
+                            <div class="month-header-left-actions" onclick="event.stopPropagation()">
+                                <button class="btn-summary-flip" data-mk="${mk}">
+                                    <svg class="svg-icon" width="16" height="16" viewBox="0 0 24 24">
+                                        <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/>
+                                    </svg>
+                                    <span class="summary-flip-tooltip">סיכום חודשי</span>
+                                </button>
+                                <svg class="chevron-icon" width="20" height="20" viewBox="0 0 24 24"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/></svg>
                             </div>
                         </div>
-                        <button class="btn-export-icon" onclick="printMonthReport('${mk}')" title="שתף / הפק דוח">
-                            <svg class="svg-icon" viewBox="0 0 24 24">
-                                <path d="M16 5l-4-4-4 4h3v8h2V5h3zm4 4v11c0 1.1-.9 2-2 2H6c-1.1 0-2-.9-2-2V9c0-1.1.9-2 2-2h3v2H6v11h12V9h-3V7h3c1.1 0 2 .9 2 2z"/>
-                            </svg>
-                        </button>
+                        <div class="month-accordion-body">
+                            <div class="shifts-list-inner">
+                                ${mShifts.map(shift => buildShiftCardHTML(shift, overlappingIds)).join('')}
+                            </div>
+                        </div>
                     </div>
-                    <div class="shifts-list-inner">
-                        ${mShifts.map(shift => buildShiftCardHTML(shift, overlappingIds)).join('')}
+
+                    <!-- BACK SIDE: Monthly Summary & Report Export -->
+                    <div class="month-accordion-back">
+                        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 8px;">
+                            <span style="font-size: 1.05rem; font-weight: 700; color: var(--accent-cyan);">סיכום חודשי - ${formatMonthName(mk)}</span>
+                            <button class="btn-summary-flip" data-mk="${mk}">
+                                <svg class="svg-icon" width="16" height="16" viewBox="0 0 24 24">
+                                    <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/>
+                                </svg>
+                                <span class="summary-flip-tooltip">סיכום חודשי</span>
+                            </button>
+                        </div>
+                        
+                        <div class="month-summary-bar" style="margin-top: 10px; margin-bottom: 0;">
+                            <div class="summary-stats-grid">
+                                <div class="summary-stat-block stat-work">
+                                    <span class="stat-label">עבודה</span>
+                                    <span class="stat-val">${formatMinutesToHM(totWorkMins)}</span>
+                                </div>
+                                <div class="summary-stat-block stat-prem">
+                                    <span class="stat-label">פרמיה</span>
+                                    <span class="stat-val">${formatMinutesToHM(totPremMins)}</span>
+                                </div>
+                                <div class="summary-stat-block stat-nalt">
+                                    <span class="stat-label">נל״ת</span>
+                                    <span class="stat-val">${formatMinutesToHM(totNaltMins)}</span>
+                                </div>
+                            </div>
+                            <button class="btn-export-icon" onclick="printMonthReport('${mk}')" title="שתף / הפק דוח">
+                                <svg class="svg-icon" viewBox="0 0 24 24">
+                                    <path d="M16 5l-4-4-4 4h3v8h2V5h3zm4 4v11c0 1.1-.9 2-2 2H6c-1.1 0-2-.9-2-2V9c0-1.1.9-2 2-2h3v2H6v11h12V9h-3V7h3c1.1 0 2 .9 2 2z"/>
+                                </svg>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>`;
@@ -4453,10 +4674,7 @@
         });
 
         setupDragAndDrop();
-
-        container.querySelectorAll('.btn-export-icon').forEach(btn => {
-            addPressEffect(btn, 'plus-pressed-effect');
-        });
+        setupSummaryFlipButtonInteractions();
     }
 
     function openShiftModal(shiftId) {
@@ -4768,6 +4986,7 @@
         );
     }
 
+    setupDrawerButtonInteractions();
     navigateTo(currentView, false);
 </script>
 </body>
