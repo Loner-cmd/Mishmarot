@@ -1347,7 +1347,6 @@
             border: 1px solid rgba(56, 189, 248, 0.35);
         }
 
-        /* מתן ריפוד אנכי מותאם לטאג ההערות כדי שיהיה בגובה אחיד בדיוק כמו שאר הטאגים */
         .tag-notes {
             background: rgba(148, 163, 184, 0.12);
             color: var(--text-muted);
@@ -1367,7 +1366,6 @@
             border: 1px solid rgba(239, 68, 68, 0.4);
         }
 
-        /* חלק נפתח - כשהוא סגור הוא אפס אמיתי בלי גבול עליון שיוצר כפילות */
         .shift-details {
             max-height: 0;
             overflow: hidden;
@@ -4457,6 +4455,18 @@
                                 <stop offset="50%" stop-color="#0ea5e9"/>
                                 <stop offset="100%" stop-color="#0369a1"/>
                             </linearGradient>
+                            <linearGradient id="combined-grad-${shiftIdStr}" x1="0%" y1="0%" x2="0%" y2="100%">
+                                <stop offset="0%" stop-color="#fde047"/>
+                                <stop offset="25%" stop-color="#fb923c"/>
+                                <stop offset="50%" stop-color="#ef4444"/>
+                                <stop offset="51%" stop-color="#38bdf8"/>
+                                <stop offset="100%" stop-color="#0369a1"/>
+                            </linearGradient>
+                            <linearGradient id="sun-grad-${shiftIdStr}" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" stop-color="#fde047"/>
+                                <stop offset="35%" stop-color="#f97316"/>
+                                <stop offset="100%" stop-color="#e11d48"/>
+                            </linearGradient>
                             <linearGradient id="noon-grad-${shiftIdStr}" x1="0%" y1="0%" x2="100%" y2="100%">
                                 <stop offset="0%" stop-color="#fed7aa"/>
                                 <stop offset="50%" stop-color="#f97316"/>
@@ -4473,10 +4483,10 @@
                             </mask>
                         </defs>
                         ${shiftTypeClass === 'type-morning' ? `
-                        <g fill="url(#morning-grad-${shiftIdStr})" stroke="url(#morning-grad-${shiftIdStr})">
-                            <path d="M3 14h18M7 14a5 5 0 0 1 10 0" fill="none" stroke-width="2" stroke-linecap="round"/>
-                            <path d="M12 3v4M6.34 5.34l2.12 2.12M17.66 5.34l-2.12 2.12M3.5 10h3M20.5 10h-3" fill="none" stroke-width="2" stroke-linecap="round"/>
-                            <path d="M5 18h14M8 21h8" fill="none" stroke-width="2" stroke-linecap="round"/>
+                        <g fill="none" stroke-width="2" stroke-linecap="round">
+                            <path d="M3 14h18M7 14a5 5 0 0 1 10 0" stroke="url(#combined-grad-${shiftIdStr})"/>
+                            <path d="M12 3v4M6.34 5.34l2.12 2.12M17.66 5.34l-2.12 2.12M3.5 10h3M20.5 10h-3" stroke="url(#sun-grad-${shiftIdStr})"/>
+                            <path d="M5 18h14M8 21h8" stroke="url(#morning-grad-${shiftIdStr})"/>
                         </g>` : ''}
                         ${shiftTypeClass === 'type-noon' ? `
                         <g fill="url(#noon-grad-${shiftIdStr})" stroke="url(#noon-grad-${shiftIdStr})">
