@@ -98,24 +98,22 @@
             align-items: center;
             justify-content: space-between;
             padding: 10px 14px 14px 14px;
-            background: var(--bg-card);
-            border-radius: 16px;
-            border: 1px solid var(--border-color);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.6);
-            position: relative;
-            z-index: 2500;
-            overflow: hidden;
-        }
-
-        header.sticky-mode {
-            position: sticky;
-            top: 0px; 
-            border-top-left-radius: 0;
-            border-top-right-radius: 0;
-            border-top: none;
             background: rgba(19, 34, 71, 0.95);
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
+            border-bottom-left-radius: 16px;
+            border-bottom-right-radius: 16px;
+            border-top-left-radius: 0;
+            border-top-right-radius: 0;
+            border-top: none;
+            border-left: 1px solid var(--border-color);
+            border-right: 1px solid var(--border-color);
+            border-bottom: 1px solid var(--border-color);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.6);
+            position: sticky;
+            top: 0px;
+            z-index: 2500;
+            overflow: hidden;
         }
 
         .header-right {
@@ -3270,10 +3268,8 @@
 
         const mainHeader = document.getElementById('mainHeader');
         if (viewName === 'history') {
-            mainHeader.classList.add('sticky-mode');
             if (toolsWrap) toolsWrap.style.display = 'block';
         } else {
-            mainHeader.classList.remove('sticky-mode');
             if (toolsWrap) toolsWrap.style.display = 'none';
         }
 
@@ -4654,7 +4650,7 @@
                         ${mShifts.map(shift => buildShiftCardHTML(shift, overlappingIds)).join('')}
                     </div>
                 </div>
-            </div>`;
+            `;
         });
 
         container.innerHTML = html;
