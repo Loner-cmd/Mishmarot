@@ -68,10 +68,22 @@
             min-height: 100vh;
             display: flex;
             justify-content: center;
-            padding: 12px;
+            padding: 0 12px 12px 12px;
             background-image: 
                 radial-gradient(circle at 10% 20%, rgba(0, 136, 255, 0.08) 0%, transparent 40%),
                 radial-gradient(circle at 90% 80%, rgba(0, 210, 255, 0.05) 0%, transparent 40%);
+        }
+
+        /* כיסוי רקע קבוע לסטטוס-בר של הפלאפון למעלה */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: env(safe-area-inset-top, 20px);
+            background: rgba(11, 19, 41, 0.95);
+            z-index: 3000;
         }
 
         .app-container {
@@ -80,6 +92,7 @@
             display: flex;
             flex-direction: column;
             gap: 16px;
+            padding-top: calc(92px + env(safe-area-inset-top, 20px));
             padding-bottom: 120px;
             position: relative;
         }
@@ -97,7 +110,7 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 10px 14px 14px 14px;
+            padding: calc(8px + env(safe-area-inset-top, 0px)) 14px 14px 14px;
             background: rgba(19, 34, 71, 0.95);
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
@@ -110,8 +123,12 @@
             border-right: 1px solid var(--border-color);
             border-bottom: 1px solid var(--border-color);
             box-shadow: 0 10px 25px rgba(0,0,0,0.6);
-            position: sticky;
-            top: -1px; 
+            position: fixed;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 480px;
             z-index: 2500;
             overflow: hidden;
         }
