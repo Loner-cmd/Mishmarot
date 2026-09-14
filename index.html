@@ -101,17 +101,17 @@
             background: rgba(19, 34, 71, 0.95);
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
-            border-bottom-left-radius: 16px;
-            border-bottom-right-radius: 16px;
             border-top-left-radius: 0;
             border-top-right-radius: 0;
+            border-bottom-left-radius: 16px;
+            border-bottom-right-radius: 16px;
             border-top: none;
             border-left: 1px solid var(--border-color);
             border-right: 1px solid var(--border-color);
             border-bottom: 1px solid var(--border-color);
             box-shadow: 0 10px 25px rgba(0,0,0,0.6);
             position: sticky;
-            top: 0px;
+            top: 0px; 
             z-index: 2500;
             overflow: hidden;
         }
@@ -3266,11 +3266,11 @@
             if (targetTab) targetTab.classList.add('active');
         }
 
-        const mainHeader = document.getElementById('mainHeader');
+        const toolsWrapEl = document.getElementById('toolsDrawerWrap');
         if (viewName === 'history') {
-            if (toolsWrap) toolsWrap.style.display = 'block';
+            if (toolsWrapEl) toolsWrapEl.style.display = 'block';
         } else {
-            if (toolsWrap) toolsWrap.style.display = 'none';
+            if (toolsWrapEl) toolsWrapEl.style.display = 'none';
         }
 
         requestAnimationFrame(() => updateIndicatorPosition(true));
@@ -4650,7 +4650,7 @@
                         ${mShifts.map(shift => buildShiftCardHTML(shift, overlappingIds)).join('')}
                     </div>
                 </div>
-            `;
+            </div>`;
         });
 
         container.innerHTML = html;
