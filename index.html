@@ -919,7 +919,7 @@
             gap: 10px;
         }
 
-        /* Pure blue graph icon without any inner background or box */
+        /* Pure blue vector graph icon without any background box or border */
         .btn-summary-modal {
             width: 36px;
             height: 36px;
@@ -3188,7 +3188,7 @@
         }, 2200);
     }
 
-    // Strict separation: Long press shows tooltip ONLY without triggering action; short tap triggers action ONLY without tooltip
+    // Strict separation: Long press shows tooltip ONLY (~350ms) without triggering action; short tap triggers action ONLY without tooltip
     function setupGlobalInteractions() {
         const drawerItems = document.querySelectorAll('.tools-popup-drawer .btn-drawer-item');
         
@@ -3203,7 +3203,7 @@
                 pressTimer = setTimeout(() => {
                     longPressed = true;
                     if (tooltip) tooltip.classList.add('show');
-                }, 500); // 500ms for long press
+                }, 350); // 350ms for responsive long press
             };
 
             const endPress = (e) => {
