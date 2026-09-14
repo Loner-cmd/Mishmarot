@@ -501,7 +501,7 @@
             transform: scale(1.15);
         }
 
-        /* Tools Drawer Button (Moved to right side as requested) */
+        /* Tools Drawer Button (Moved to right side) */
         .tools-drawer-wrap {
             position: absolute;
             right: 8px;
@@ -919,26 +919,24 @@
             gap: 10px;
         }
 
-        /* Large clean circular graph icon button */
+        /* Pure blue graph icon without any inner background or box */
         .btn-summary-modal {
             width: 36px;
             height: 36px;
             border-radius: 50%;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.15);
+            background: transparent;
+            border: none;
             color: var(--accent-cyan);
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: transform 0.2s;
             position: relative;
         }
 
         .btn-summary-modal:active {
-            transform: scale(0.9);
-            background: rgba(0, 210, 255, 0.25);
-            border-color: var(--accent-cyan);
+            transform: scale(0.85);
         }
 
         .chevron-icon {
@@ -2197,7 +2195,7 @@
 
 <div class="bottom-nav-wrapper">
     <div class="bottom-nav-container">
-        <!-- Floating Tools Drawer (Moved to right corner as requested) -->
+        <!-- Floating Tools Drawer (Moved to right corner) -->
         <div id="toolsDrawerWrap" class="tools-drawer-wrap">
             <button id="btnToolsMain" class="btn-tools-main" onclick="toggleToolsDrawer()" title="כלים">
                 <svg viewBox="0 0 24 24">
@@ -2205,19 +2203,19 @@
                 </svg>
             </button>
             <div class="tools-popup-drawer">
-                <button id="btnToggleMultiPanel" class="btn-drawer-item" onclick="handleToolAction('multipanel')" data-tooltip="ריבוי פאנלים">
+                <button id="btnToggleMultiPanel" class="btn-drawer-item" data-action="multipanel" data-tooltip="ריבוי פאנלים">
                     <svg viewBox="0 0 24 24">
                         <path d="M11.99 18.54l-7.37-5.73L3 14.07l9 7 9-7-1.63-1.27-7.38 5.74zM12 16l7.36-5.73L21 9l-9-7-9 7 1.63 1.27L12 16z"/>
                     </svg>
                     <span class="drawer-tooltip">ריבוי פאנלים</span>
                 </button>
-                <button id="btnToggleSorting" class="btn-drawer-item" onclick="handleToolAction('sorting')" data-tooltip="מיון">
+                <button id="btnToggleSorting" class="btn-drawer-item" data-action="sorting" data-tooltip="מיון">
                     <svg viewBox="0 0 24 24">
                         <path d="M9 3L5 6.99h3V14h2V6.99h3L9 3zm7 14.01V10h-2v7.01h-3L15 21l4-3.99h-3z"/>
                     </svg>
                     <span class="drawer-tooltip">מיון</span>
                 </button>
-                <button id="btnToggleSelection" class="btn-drawer-item" onclick="handleToolAction('selection')" data-tooltip="בחירה">
+                <button id="btnToggleSelection" class="btn-drawer-item" data-action="selection" data-tooltip="בחירה">
                     <svg viewBox="0 0 24 24">
                         <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-9 14l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
                     </svg>
@@ -3190,38 +3188,55 @@
         }, 2200);
     }
 
-    // Strict Long Press & Tap handling for Drawer items (with tooltips safely on the left)
+    // Strict separation: Long press shows tooltip ONLY without triggering action; short tap triggers action ONLY without tooltip
     function setupGlobalInteractions() {
-        const interactiveElements = document.querySelectorAll('.tools-popup-drawer .btn-drawer-item');
-        interactiveElements.forEach(btn => {
+        const drawerItems = document.querySelectorAll('.tools-popup-drawer .btn-drawer-item');
+        
+        drawerItems.forEach(btn => {
             let pressTimer = null;
-            let isLongPress = false;
+            let longPressed = false;
             const tooltip = btn.querySelector('.drawer-tooltip');
+            const actionType = btn.getAttribute('data-action');
 
-            const start = (e) => {
-                isLongPress = false;
+            const startPress = (e) => {
+                longPressed = false;
                 pressTimer = setTimeout(() => {
-                    isLongPress = true;
+                    longPressed = true;
                     if (tooltip) tooltip.classList.add('show');
-                }, 500);
+                }, 500); // 500ms for long press
             };
 
-            const end = (e) => {
+            const endPress = (e) => {
                 if (pressTimer) {
                     clearTimeout(pressTimer);
                     pressTimer = null;
                 }
+
                 if (tooltip && tooltip.classList.contains('show')) {
                     setTimeout(() => tooltip.classList.remove('show'), 1500);
                 }
+
+                if (!longPressed) {
+                    // Short tap - execute tool action
+                    if (actionType) {
+                        handleToolAction(actionType);
+                    }
+                }
+                longPressed = false;
             };
 
-            btn.addEventListener('touchstart', start, {passive: true});
-            btn.addEventListener('touchend', end);
-            btn.addEventListener('touchcancel', end);
-            btn.addEventListener('mousedown', start);
-            btn.addEventListener('mouseup', end);
-            btn.addEventListener('mouseleave', end);
+            btn.addEventListener('touchstart', startPress, {passive: true});
+            btn.addEventListener('touchend', endPress);
+            btn.addEventListener('touchcancel', () => {
+                if (pressTimer) clearTimeout(pressTimer);
+                if (tooltip) tooltip.classList.remove('show');
+            });
+            btn.addEventListener('mousedown', startPress);
+            btn.addEventListener('mouseup', endPress);
+            btn.addEventListener('mouseleave', () => {
+                if (pressTimer) clearTimeout(pressTimer);
+                if (tooltip) tooltip.classList.remove('show');
+            });
         });
     }
 
@@ -4494,8 +4509,8 @@
             <div class="month-accordion-wrapper ${isOpen ? 'open' : ''}">
                 <div class="month-accordion-header" onclick="toggleMonthAccordion('${mk}')">
                     <div class="month-header-left-actions" onclick="event.stopPropagation()">
-                        <button class="btn-summary-modal" onclick="openMonthlySummaryModal('${mk}')">
-                            <svg class="svg-icon" width="20" height="20" viewBox="0 0 24 24">
+                        <button class="btn-summary-modal" onclick="openMonthlySummaryModal('${mk}')" title="סיכום חודשי">
+                            <svg class="svg-icon" width="22" height="22" viewBox="0 0 24 24">
                                 <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/>
                             </svg>
                         </button>
@@ -4525,7 +4540,7 @@
         setupGlobalInteractions();
     }
 
-    function openShiftModal(shiftId) {
+    window.openShiftModal = function(shiftId) {
         const modal = document.getElementById('shiftModal');
         const title = document.getElementById('modalTitle');
         const instructorSection = document.getElementById('instructorSectionModal');
