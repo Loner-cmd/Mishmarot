@@ -54,8 +54,10 @@
 
         html, body {
             width: 100%;
+            height: 100%;
             overflow-x: hidden;
             background-color: var(--bg-primary);
+            /* מאפשר את אפקט הגומיה הטבעי של הדפדפן לקצוות */
         }
 
         .num-font {
@@ -65,7 +67,10 @@
 
         body {
             color: var(--text-main);
-            min-height: 100vh;
+            /* במסכים גדולים ננעל גובה למניעת גלילה ריקה, במסכים קטנים נאפשר גלילה חכמה */
+            min-height: 100%;
+            height: 100%;
+            overflow-y: auto;
             display: flex;
             justify-content: center;
             padding: 0 12px 12px 12px;
@@ -95,6 +100,8 @@
             padding-top: calc(92px + env(safe-area-inset-top, 20px));
             padding-bottom: 120px;
             position: relative;
+            /* מונע גלילה מיותרת ומבטיח תצוגה נקייה ללא רווחים ריקים מתחת לפאנל */
+            min-height: calc(100% - env(safe-area-inset-top, 20px));
         }
 
         .svg-icon {
@@ -832,6 +839,7 @@
             opacity: 0.7 !important;
         }
 
+        /* עיצוב פלוס חופשי נקי לחלוטין ללא רקע ריבועי, עם צללית עומק שחורה לימין-למטה והילה ממוקדת עדינה */
         .svg-plus-btn {
             position: absolute;
             top: 15px; 
@@ -839,15 +847,32 @@
             width: 38px;
             height: 38px;
             cursor: pointer;
-            filter: drop-shadow(0 0 6px rgba(52, 211, 153, 0.4));
+            overflow: visible;
+            filter: drop-shadow(2px 2px 2px rgba(0, 0, 0, 0.85)) drop-shadow(0 0 4px rgba(52, 211, 153, 0.3));
             transition: transform 0.15s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.15s ease, filter 0.15s ease;
             -webkit-tap-highlight-color: transparent;
             z-index: 15;
+            background: transparent;
+            border: none;
+            padding: 0;
         }
 
-        .svg-plus-btn:active {
-            transform: scale(0.75);
-            opacity: 0.5;
+        .svg-plus-btn line {
+            stroke: #34d399;
+            stroke-width: 4.5;
+            stroke-linecap: round;
+            filter: drop-shadow(1px 1px 1px rgba(0, 0, 0, 0.95)) drop-shadow(0px -1.5px 1px rgba(255, 255, 255, 0.2));
+            transition: stroke 0.15s ease, filter 0.15s ease;
+        }
+
+        .svg-plus-btn:active, .svg-plus-btn.pressed {
+            transform: scale(0.88);
+            opacity: 0.85;
+            filter: drop-shadow(1px 1px 1px rgba(0, 0, 0, 0.95)) drop-shadow(0 0 6px rgba(52, 211, 153, 0.6));
+        }
+
+        .svg-plus-btn:active line, .svg-plus-btn.pressed line {
+            stroke: #6ee7b7;
         }
 
         .selection-toolbar {
@@ -1366,10 +1391,11 @@
             border: 1px solid rgba(239, 68, 68, 0.4);
         }
 
+        /* תיקון אנימציית פתיחה/סגירה באמצעות Grid Rows לאנימציה חלקה, ישירה וללא השהיות */
         .shift-details {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.4s ease-in-out;
+            display: grid;
+            grid-template-rows: 0fr;
+            transition: grid-template-rows 0.3s cubic-bezier(0.16, 1, 0.3, 1);
             background: var(--bg-card-inner);
             border-top: none;
             margin: 0 12px 0 12px;
@@ -1377,9 +1403,13 @@
         }
 
         .shift-details.expanded {
-            max-height: 1500px;
+            grid-template-rows: 1fr;
             border-top: 1px solid var(--border-color);
             margin-bottom: 12px;
+        }
+
+        .shift-details > div {
+            overflow: hidden;
         }
 
         .details-inner {
@@ -1959,39 +1989,57 @@
         }
 
         @media print {
+            @page {
+                size: A4;
+                margin: 10mm;
+            }
             body { 
                 background: #ffffff !important; 
                 color: #000000 !important; 
-                padding: 0; margin: 0;
+                padding: 0 !important; 
+                margin: 0 !important;
+                display: block !important;
             }
-            .app-container { display: none !important; }
-            .bottom-nav-wrapper { display: none !important; }
+            .app-container, .bottom-nav-wrapper, header, .modal-overlay, .error-dialog-overlay, .menu-backdrop { 
+                display: none !important; 
+            }
             #printArea { 
                 display: block !important; 
-                position: absolute; left: 0; top: 0; 
-                width: 100%; direction: rtl; 
-                background: #fff; padding: 20px;
+                width: 100% !important; 
+                direction: rtl !important; 
+                background: #ffffff !important; 
+                padding: 0 !important;
+                margin: 0 !important;
             }
             .print-header { 
                 font-family: 'Assistant', sans-serif;
-                font-size: 24px; font-weight: 800; 
-                border-bottom: 3px solid #132247; 
-                padding-bottom: 10px; margin-bottom: 20px; 
+                font-size: 20px; font-weight: 800; 
+                border-bottom: 2px solid #132247; 
+                padding-bottom: 6px; margin-bottom: 12px; 
                 text-align: center; color: #132247;
             }
             .print-summary-box {
                 display: flex; justify-content: space-around; 
-                background: #f1f5f9; padding: 15px; 
-                border-radius: 10px; margin-bottom: 25px;
+                background: #f8fafc; padding: 10px; 
+                border-radius: 8px; margin-bottom: 15px;
                 border: 1px solid #cbd5e1;
             }
             .print-summary-item { text-align: center; font-family: 'Assistant', sans-serif; }
-            .print-summary-title { font-size: 14px; color: #475569; font-weight: 700; }
-            .print-summary-val { font-size: 18px; font-weight: 800; color: #0f172a; margin-top: 4px; }
-            .print-table { width: 100%; border-collapse: collapse; font-family: 'Assistant', sans-serif; font-size: 13px; }
-            .print-table th, .print-table td { border: 1px solid #cbd5e1; padding: 10px; text-align: right; }
-            .print-table th { background-color: #f8fafc; color: #334155; font-weight: 700; }
-            .print-table tr:nth-child(even) { background-color: #f8fafc; }
+            .print-summary-title { font-size: 12px; color: #475569; font-weight: 700; }
+            .print-summary-val { font-size: 15px; font-weight: 800; color: #0f172a; margin-top: 2px; }
+            .print-table { 
+                width: 100% !important; 
+                border-collapse: collapse !important; 
+                font-family: 'Assistant', sans-serif; 
+                font-size: 11.5px !important; 
+            }
+            .print-table th, .print-table td { 
+                border: 1px solid #cbd5e1 !important; 
+                padding: 6px 8px !important; 
+                text-align: right !important; 
+            }
+            .print-table th { background-color: #f1f5f9 !important; color: #1e293b !important; font-weight: 700; }
+            .print-table tr:nth-child(even) { background-color: #f8fafc !important; }
         }
     </style>
 </head>
@@ -2097,7 +2145,7 @@
 
             <div class="main-action-wrapper">
                 <div class="well-container">
-                    <button id="btnMainAction" class="btn-main-circle state-idle" onclick="handleMainAction()">
+                    <button id="btnMainAction" class="btn-main-circle state-idle" onclick="handleMainAction()" ontouchstart="this.classList.add('pressed')" ontouchend="this.classList.remove('pressed')" ontouchcancel="this.classList.remove('pressed')" onmousedown="this.classList.add('pressed')" onmouseup="this.classList.remove('pressed')" onmouseleave="this.classList.remove('pressed')">
                         <svg class="btn-main-icon" viewBox="0 0 24 24">
                             <path d="M18.36 6.64a9 9 0 1 1-12.73 0"></path>
                             <line x1="12" y1="2" x2="12" y2="12"></line>
@@ -2109,9 +2157,9 @@
                     </button>
                 </div>
 
-                <svg id="btnPlusManual" class="svg-plus-btn" viewBox="0 0 36 36" onclick="openShiftModal(null)">
-                    <line x1="18" y1="4" x2="18" y2="32" stroke="#34d399" stroke-width="4.5" stroke-linecap="round"/>
-                    <line x1="4" y1="18" x2="32" y2="18" stroke="#34d399" stroke-width="4.5" stroke-linecap="round"/>
+                <svg id="btnPlusManual" class="svg-plus-btn" viewBox="0 0 36 36" onclick="openShiftModal(null)" ontouchstart="this.classList.add('pressed')" ontouchend="this.classList.remove('pressed')" ontouchcancel="this.classList.remove('pressed')" onmousedown="this.classList.add('pressed')" onmouseup="this.classList.remove('pressed')" onmouseleave="this.classList.remove('pressed')">
+                    <line x1="18" y1="4" x2="18" y2="32"/>
+                    <line x1="4" y1="18" x2="32" y2="18"/>
                 </svg>
             </div>
         </div>
@@ -3327,7 +3375,7 @@
         }, 2200);
     }
 
-    // Robust, safe interaction mechanism for tools and summary buttons (Tooltip on long press 500ms)
+    // Robust, safe interaction mechanism for tools and summary buttons (Tooltip on long press 500ms) - strictly for drawer/summary buttons only!
     function setupGlobalInteractions() {
         const drawerItems = document.querySelectorAll('.tools-popup-drawer .btn-drawer-item, .month-accordion-header .btn-summary-modal');
         
@@ -3343,7 +3391,7 @@
                 pressTimer = setTimeout(() => {
                     longPressed = true;
                     if (tooltip) tooltip.classList.add('show');
-                }, 500); // 500ms for responsive long press tooltip
+                }, 500); 
             };
 
             const endPress = (e) => {
@@ -4592,78 +4640,80 @@
                 </div>
 
                 <div class="shift-details" id="details_${shiftIdStr}">
-                    <div class="details-inner">
-                        ${isOverlap ? `
-                        <div class="sub-breakdown" style="border-color: rgba(234, 179, 8, 0.3);">
-                            <div class="breakdown-item" style="color: var(--accent-yellow); border-bottom: none; padding-bottom: 0;">
-                                <span class="breakdown-label" style="color: var(--accent-yellow); display: flex; align-items: center; gap: 4px;">
-                                    <svg class="svg-icon" width="14" height="14" viewBox="0 0 24 24"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/></svg>
-                                    שים לב:
-                                </span>
-                                <span class="breakdown-value" style="color: var(--accent-yellow); font-family: 'Assistant', sans-serif;">קיימת חפיפת שעות עם משמרת נוספת</span>
-                            </div>
-                        </div>` : ''}
-
-                        <div class="sub-breakdown">
-                            ${hasSiddur ? `
-                            <div class="breakdown-item-siddur">
-                                <span class="breakdown-label">סידור:</span>
-                                <span class="breakdown-value-center">${shift.siddur}</span>
-                                <div></div>
-                            </div>` : ''}
-                            <div class="breakdown-item-duo" style="display: flex; justify-content: space-between; align-items: center;">
-                                <div class="duo-col" style="flex: 1;">
-                                    <span class="breakdown-label">כניסה:</span>
-                                    <span class="breakdown-value">${shift.startTime || 'לא הוזן'}</span>
-                                    <span class="breakdown-label" style="margin-right: 8px;">יציאה:</span>
-                                    <span class="breakdown-value">${shift.endTime || 'לא הוזן'}</span>
+                    <div>
+                        <div class="details-inner">
+                            ${isOverlap ? `
+                            <div class="sub-breakdown" style="border-color: rgba(234, 179, 8, 0.3);">
+                                <div class="breakdown-item" style="color: var(--accent-yellow); border-bottom: none; padding-bottom: 0;">
+                                    <span class="breakdown-label" style="color: var(--accent-yellow); display: flex; align-items: center; gap: 4px;">
+                                        <svg class="svg-icon" width="14" height="14" viewBox="0 0 24 24"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/></svg>
+                                        שים לב:
+                                    </span>
+                                    <span class="breakdown-value" style="color: var(--accent-yellow); font-family: 'Assistant', sans-serif;">קיימת חפיפת שעות עם משמרת נוספת</span>
                                 </div>
-                                <div class="checkbox-label-container" onclick="handleFullPremClick(event, '${shiftIdStr}')" style="margin-right: auto;">
-                                    <input type="checkbox" ${shift.fullPrem ? 'checked' : ''} style="pointer-events: none;" tabindex="-1">
-                                    <span>פרמיה מלאה</span>
+                            </div>` : ''}
+
+                            <div class="sub-breakdown">
+                                ${hasSiddur ? `
+                                <div class="breakdown-item-siddur">
+                                    <span class="breakdown-label">סידור:</span>
+                                    <span class="breakdown-value-center">${shift.siddur}</span>
+                                    <div></div>
+                                </div>` : ''}
+                                <div class="breakdown-item-duo" style="display: flex; justify-content: space-between; align-items: center;">
+                                    <div class="duo-col" style="flex: 1;">
+                                        <span class="breakdown-label">כניסה:</span>
+                                        <span class="breakdown-value">${shift.startTime || 'לא הוזן'}</span>
+                                        <span class="breakdown-label" style="margin-right: 8px;">יציאה:</span>
+                                        <span class="breakdown-value">${shift.endTime || 'לא הוזן'}</span>
+                                    </div>
+                                    <div class="checkbox-label-container" onclick="handleFullPremClick(event, '${shiftIdStr}')" style="margin-right: auto;">
+                                        <input type="checkbox" ${shift.fullPrem ? 'checked' : ''} style="pointer-events: none;" tabindex="-1">
+                                        <span>פרמיה מלאה</span>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
 
-                        ${hasNalt ? `
-                        <div class="sub-breakdown">
-                            ${naltStart > 0 ? `
-                            <div class="breakdown-item">
-                                <span class="breakdown-label">נל״ת הלוך (${formatMinutesToHM(naltStart)}):</span>
-                                <span class="breakdown-value">${naltStartRange}</span>
+                            ${hasNalt ? `
+                            <div class="sub-breakdown">
+                                ${naltStart > 0 ? `
+                                <div class="breakdown-item">
+                                    <span class="breakdown-label">נל״ת הלוך (${formatMinutesToHM(naltStart)}):</span>
+                                    <span class="breakdown-value">${naltStartRange}</span>
+                                </div>` : ''}
+                                ${naltEnd > 0 ? `
+                                <div class="breakdown-item">
+                                    <span class="breakdown-label">נל״ת חזור (${formatMinutesToHM(naltEnd)}):</span>
+                                    <span class="breakdown-value">${naltEndRange}</span>
+                                </div>` : ''}
                             </div>` : ''}
-                            ${naltEnd > 0 ? `
-                            <div class="breakdown-item">
-                                <span class="breakdown-label">נל״ת חזור (${formatMinutesToHM(naltEnd)}):</span>
-                                <span class="breakdown-value">${naltEndRange}</span>
+
+                            ${hasPrem ? `
+                            <div class="sub-breakdown">
+                                <div class="breakdown-item">
+                                    <span class="breakdown-label">פרמיה ${premDurationMins > 0 ? '(' + formatMinutesToHM(premDurationMins) + ')' : ''}:</span>
+                                    <span class="breakdown-value">${shift.premStartTime || '---'} – ${shift.premEndTime || '---'}</span>
+                                </div>
                             </div>` : ''}
-                        </div>` : ''}
 
-                        ${hasPrem ? `
-                        <div class="sub-breakdown">
-                            <div class="breakdown-item">
-                                <span class="breakdown-label">פרמיה ${premDurationMins > 0 ? '(' + formatMinutesToHM(premDurationMins) + ')' : ''}:</span>
-                                <span class="breakdown-value">${shift.premStartTime || '---'} – ${shift.premEndTime || '---'}</span>
+                            ${window.isUserInstructor && hasInstructor ? `
+                            <div class="sub-breakdown" style="border-color: rgba(56, 189, 248, 0.2);">
+                                <div class="breakdown-item">
+                                    <span class="breakdown-label" style="color: var(--accent-instructor);">פרמיית הדרכה ${instructorDurationMins > 0 ? '(' + formatMinutesToHM(instructorDurationMins) + ')' : ''}:</span>
+                                    <span class="breakdown-value">${shift.instructorStartTime || '---'} – ${shift.instructorEndTime || '---'}</span>
+                                </div>
+                            </div>` : ''}
+                            
+                            ${hasNotes ? `
+                            <div class="notes-display-box">
+                                <svg class="svg-icon" width="14" height="14" viewBox="0 0 24 24" style="flex-shrink: 0; margin-top: 2px; color: var(--text-muted);"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"/></svg>
+                                <span style="flex: 1;">${shift.notes}</span>
+                            </div>` : ''}
+
+                            <div class="card-actions-bar">
+                                <button class="btn-secondary" onclick="event.stopPropagation(); openShiftModal('${shiftIdStr}')">עריכה / השלמת חוסר</button>
+                                <button class="btn-secondary btn-danger-outline" onclick="event.stopPropagation(); deleteShift('${shiftIdStr}')">מחיקה</button>
                             </div>
-                        </div>` : ''}
-
-                        ${window.isUserInstructor && hasInstructor ? `
-                        <div class="sub-breakdown" style="border-color: rgba(56, 189, 248, 0.2);">
-                            <div class="breakdown-item">
-                                <span class="breakdown-label" style="color: var(--accent-instructor);">פרמיית הדרכה ${instructorDurationMins > 0 ? '(' + formatMinutesToHM(instructorDurationMins) + ')' : ''}:</span>
-                                <span class="breakdown-value">${shift.instructorStartTime || '---'} – ${shift.instructorEndTime || '---'}</span>
-                            </div>
-                        </div>` : ''}
-                        
-                        ${hasNotes ? `
-                        <div class="notes-display-box">
-                            <svg class="svg-icon" width="14" height="14" viewBox="0 0 24 24" style="flex-shrink: 0; margin-top: 2px; color: var(--text-muted);"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"/></svg>
-                            <span style="flex: 1;">${shift.notes}</span>
-                        </div>` : ''}
-
-                        <div class="card-actions-bar">
-                            <button class="btn-secondary" onclick="event.stopPropagation(); openShiftModal('${shiftIdStr}')">עריכה / השלמת חוסר</button>
-                            <button class="btn-secondary btn-danger-outline" onclick="event.stopPropagation(); deleteShift('${shiftIdStr}')">מחיקה</button>
                         </div>
                     </div>
                 </div>
@@ -4994,4 +5044,3 @@
 </script>
 </body>
 </html>
-
