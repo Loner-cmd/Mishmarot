@@ -2735,7 +2735,7 @@
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getAuth, GoogleAuthProvider, signInWithRedirect, getRedirectResult, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import { getAuth, GoogleAuthProvider, signInWithPopup, setPersistence, browserLocalPersistence, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
     import { getFirestore, collection, doc, setDoc, getDocs, deleteDoc, getDoc, enableIndexedDbPersistence } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
     const firebaseConfig = {
@@ -2752,6 +2752,11 @@
     const db = getFirestore(app);
     const googleProvider = new GoogleAuthProvider();
 
+    // הגדרת אחסון מבוסס LocalStorage כדי למנוע איבוד סשן בפופאפ
+    setPersistence(auth, browserLocalPersistence).catch((err) => {
+        console.error("Persistence error:", err);
+    });
+
     enableIndexedDbPersistence(db).catch((err) => {
         console.log("Offline persistence not available", err);
     });
@@ -2760,16 +2765,14 @@
     window.isUserInstructor = false;
     const OWNER_UID = "ShasTZArs9Uqddy973BmlW4oP7T2";
 
-    // טיפול בתוצאת החזרה מהפניית ההתחברות (Redirect)
-    getRedirectResult(auth).catch((error) => {
-        console.error("Redirect error:", error);
-    });
-
     window.triggerGoogleSignIn = async function() {
         try {
-            await signInWithRedirect(auth, googleProvider);
+            await signInWithPopup(auth, googleProvider);
         } catch (error) {
             console.error("שגיאה בתהליך ההתחברות:", error);
+            if (error.code === 'auth/popup-blocked') {
+                alert('החלון הקופץ נחסם על ידי הדפדפן. אנא אפשר חלונות קופצים עבור אתר זה.');
+            }
         }
     };
 
