@@ -832,6 +832,7 @@
             opacity: 0.7 !important;
         }
 
+        /* עיצוב פלוס חופשי נקי לחלוטין ללא רקע ריבועי, עם צללית עומק שחורה לימין-למטה והילה ממוקדת עדינה */
         .svg-plus-btn {
             position: absolute;
             top: 15px; 
@@ -839,15 +840,32 @@
             width: 38px;
             height: 38px;
             cursor: pointer;
-            filter: drop-shadow(0 0 6px rgba(52, 211, 153, 0.4));
+            overflow: visible;
+            filter: drop-shadow(2px 2px 2px rgba(0, 0, 0, 0.85)) drop-shadow(0 0 4px rgba(52, 211, 153, 0.3));
             transition: transform 0.15s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.15s ease, filter 0.15s ease;
             -webkit-tap-highlight-color: transparent;
             z-index: 15;
+            background: transparent;
+            border: none;
+            padding: 0;
         }
 
-        .svg-plus-btn:active {
-            transform: scale(0.75);
-            opacity: 0.5;
+        .svg-plus-btn line {
+            stroke: #34d399;
+            stroke-width: 4.5;
+            stroke-linecap: round;
+            filter: drop-shadow(1px 1px 1px rgba(0, 0, 0, 0.95)) drop-shadow(0px -1px 1px rgba(255, 255, 255, 0.25));
+            transition: stroke 0.15s ease, filter 0.15s ease;
+        }
+
+        .svg-plus-btn:active, .svg-plus-btn.pressed {
+            transform: scale(0.88);
+            opacity: 0.85;
+            filter: drop-shadow(1px 1px 1px rgba(0, 0, 0, 0.95)) drop-shadow(0 0 6px rgba(52, 211, 153, 0.6));
+        }
+
+        .svg-plus-btn:active line, .svg-plus-btn.pressed line {
+            stroke: #6ee7b7;
         }
 
         .selection-toolbar {
@@ -2115,7 +2133,7 @@
 
             <div class="main-action-wrapper">
                 <div class="well-container">
-                    <button id="btnMainAction" class="btn-main-circle state-idle" onclick="handleMainAction()">
+                    <button id="btnMainAction" class="btn-main-circle state-idle" onclick="handleMainAction()" ontouchstart="this.classList.add('pressed')" ontouchend="this.classList.remove('pressed')" ontouchcancel="this.classList.remove('pressed')" onmousedown="this.classList.add('pressed')" onmouseup="this.classList.remove('pressed')" onmouseleave="this.classList.remove('pressed')">
                         <svg class="btn-main-icon" viewBox="0 0 24 24">
                             <path d="M18.36 6.64a9 9 0 1 1-12.73 0"></path>
                             <line x1="12" y1="2" x2="12" y2="12"></line>
@@ -2127,9 +2145,9 @@
                     </button>
                 </div>
 
-                <svg id="btnPlusManual" class="svg-plus-btn" viewBox="0 0 36 36" onclick="openShiftModal(null)">
-                    <line x1="18" y1="4" x2="18" y2="32" stroke="#34d399" stroke-width="4.5" stroke-linecap="round"/>
-                    <line x1="4" y1="18" x2="32" y2="18" stroke="#34d399" stroke-width="4.5" stroke-linecap="round"/>
+                <svg id="btnPlusManual" class="svg-plus-btn" viewBox="0 0 36 36" onclick="openShiftModal(null)" ontouchstart="this.classList.add('pressed')" ontouchend="this.classList.remove('pressed')" ontouchcancel="this.classList.remove('pressed')" onmousedown="this.classList.add('pressed')" onmouseup="this.classList.remove('pressed')" onmouseleave="this.classList.remove('pressed')">
+                    <line x1="18" y1="4" x2="18" y2="32"/>
+                    <line x1="4" y1="18" x2="32" y2="18"/>
                 </svg>
             </div>
         </div>
@@ -3345,7 +3363,7 @@
         }, 2200);
     }
 
-    // Robust, safe interaction mechanism for tools and summary buttons (Tooltip on long press 500ms)
+    // Robust, safe interaction mechanism for tools and summary buttons (Tooltip on long press 500ms) - strictly for drawer/summary buttons only!
     function setupGlobalInteractions() {
         const drawerItems = document.querySelectorAll('.tools-popup-drawer .btn-drawer-item, .month-accordion-header .btn-summary-modal');
         
@@ -3361,7 +3379,7 @@
                 pressTimer = setTimeout(() => {
                     longPressed = true;
                     if (tooltip) tooltip.classList.add('show');
-                }, 500); // 500ms for responsive long press tooltip
+                }, 500); 
             };
 
             const endPress = (e) => {
