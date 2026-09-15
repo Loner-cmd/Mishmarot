@@ -2735,7 +2735,7 @@
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getAuth, GoogleAuthProvider, signInWithRedirect, getRedirectResult, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import { getAuth, GoogleAuthProvider, signInWithPopup, setPersistence, browserLocalPersistence, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
     import { getFirestore, collection, doc, setDoc, getDocs, deleteDoc, getDoc, enableIndexedDbPersistence } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
     const firebaseConfig = {
@@ -2752,8 +2752,10 @@
     const db = getFirestore(app);
     const googleProvider = new GoogleAuthProvider();
 
-    // חשיפה גלובלית לצורך בדיקה ב-Console
-    window.globalAuth = auth;
+    // הגדרת אחסון מבוסס LocalStorage כדי למנוע איבוד סשן בפופאפ
+    setPersistence(auth, browserLocalPersistence).catch((err) => {
+        console.error("Persistence error:", err);
+    });
 
     enableIndexedDbPersistence(db).catch((err) => {
         console.log("Offline persistence not available", err);
@@ -2763,24 +2765,14 @@
     window.isUserInstructor = false;
     const OWNER_UID = "ShasTZArs9Uqddy973BmlW4oP7T2";
 
-    // בדיקה והדפסה של תוצאת ההתחברות מיד בחזרה מהפניה
-    getRedirectResult(auth).then((result) => {
-        if (result && result.user) {
-            console.log("SUCCESS Redirect Login User:", result.user.email);
-        } else {
-            console.log("Redirect result was empty (normal if not returning from sign-in)");
-        }
-    }).catch((error) => {
-        console.error("Redirect Login Error Code:", error.code);
-        console.error("Redirect Login Error Message:", error.message);
-    });
-
     window.triggerGoogleSignIn = async function() {
         try {
-            console.log("Starting Google Sign-In Redirect...");
-            await signInWithRedirect(auth, googleProvider);
+            await signInWithPopup(auth, googleProvider);
         } catch (error) {
             console.error("שגיאה בתהליך ההתחברות:", error);
+            if (error.code === 'auth/popup-blocked') {
+                alert('החלון הקופץ נחסם על ידי הדפדפן. אנא אפשר חלונות קופצים עבור אתר זה.');
+            }
         }
     };
 
@@ -2824,7 +2816,6 @@
         const authContainer = document.getElementById('headerAuthContainer');
 
         if (user) {
-            console.log("Auth State Changed: User is LOGGED IN ->", user.email);
             const displayName = user.displayName ? user.displayName.split(' ')[0] : 'מחובר';
             btnText.textContent = displayName;
             authContainer.classList.add('logged-in');
@@ -2843,7 +2834,6 @@
             }
 
         } else {
-            console.log("Auth State Changed: User is LOGGED OUT");
             window.isUserInstructor = false;
             btnText.textContent = 'התחברות';
             authContainer.classList.remove('logged-in');
