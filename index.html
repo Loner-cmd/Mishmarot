@@ -1959,39 +1959,57 @@
         }
 
         @media print {
+            @page {
+                size: A4;
+                margin: 10mm;
+            }
             body { 
                 background: #ffffff !important; 
                 color: #000000 !important; 
-                padding: 0; margin: 0;
+                padding: 0 !important; 
+                margin: 0 !important;
+                display: block !important;
             }
-            .app-container { display: none !important; }
-            .bottom-nav-wrapper { display: none !important; }
+            .app-container, .bottom-nav-wrapper, header, .modal-overlay, .error-dialog-overlay, .menu-backdrop { 
+                display: none !important; 
+            }
             #printArea { 
                 display: block !important; 
-                position: absolute; left: 0; top: 0; 
-                width: 100%; direction: rtl; 
-                background: #fff; padding: 20px;
+                width: 100% !important; 
+                direction: rtl !important; 
+                background: #ffffff !important; 
+                padding: 0 !important;
+                margin: 0 !important;
             }
             .print-header { 
                 font-family: 'Assistant', sans-serif;
-                font-size: 24px; font-weight: 800; 
-                border-bottom: 3px solid #132247; 
-                padding-bottom: 10px; margin-bottom: 20px; 
+                font-size: 20px; font-weight: 800; 
+                border-bottom: 2px solid #132247; 
+                padding-bottom: 6px; margin-bottom: 12px; 
                 text-align: center; color: #132247;
             }
             .print-summary-box {
                 display: flex; justify-content: space-around; 
-                background: #f1f5f9; padding: 15px; 
-                border-radius: 10px; margin-bottom: 25px;
+                background: #f8fafc; padding: 10px; 
+                border-radius: 8px; margin-bottom: 15px;
                 border: 1px solid #cbd5e1;
             }
             .print-summary-item { text-align: center; font-family: 'Assistant', sans-serif; }
-            .print-summary-title { font-size: 14px; color: #475569; font-weight: 700; }
-            .print-summary-val { font-size: 18px; font-weight: 800; color: #0f172a; margin-top: 4px; }
-            .print-table { width: 100%; border-collapse: collapse; font-family: 'Assistant', sans-serif; font-size: 13px; }
-            .print-table th, .print-table td { border: 1px solid #cbd5e1; padding: 10px; text-align: right; }
-            .print-table th { background-color: #f8fafc; color: #334155; font-weight: 700; }
-            .print-table tr:nth-child(even) { background-color: #f8fafc; }
+            .print-summary-title { font-size: 12px; color: #475569; font-weight: 700; }
+            .print-summary-val { font-size: 15px; font-weight: 800; color: #0f172a; margin-top: 2px; }
+            .print-table { 
+                width: 100% !important; 
+                border-collapse: collapse !important; 
+                font-family: 'Assistant', sans-serif; 
+                font-size: 11.5px !important; 
+            }
+            .print-table th, .print-table td { 
+                border: 1px solid #cbd5e1 !important; 
+                padding: 6px 8px !important; 
+                text-align: right !important; 
+            }
+            .print-table th { background-color: #f1f5f9 !important; color: #1e293b !important; font-weight: 700; }
+            .print-table tr:nth-child(even) { background-color: #f8fafc !important; }
         }
     </style>
 </head>
@@ -4994,4 +5012,3 @@
 </script>
 </body>
 </html>
-
