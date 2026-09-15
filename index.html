@@ -2752,6 +2752,9 @@
     const db = getFirestore(app);
     const googleProvider = new GoogleAuthProvider();
 
+    // חשיפה גלובלית לצורך בדיקה ב-Console
+    window.globalAuth = auth;
+
     enableIndexedDbPersistence(db).catch((err) => {
         console.log("Offline persistence not available", err);
     });
@@ -2760,13 +2763,21 @@
     window.isUserInstructor = false;
     const OWNER_UID = "ShasTZArs9Uqddy973BmlW4oP7T2";
 
-    // טיפול בתוצאת החזרה מהפניית ההתחברות (Redirect)
-    getRedirectResult(auth).catch((error) => {
-        console.error("Redirect error:", error);
+    // בדיקה והדפסה של תוצאת ההתחברות מיד בחזרה מהפניה
+    getRedirectResult(auth).then((result) => {
+        if (result && result.user) {
+            console.log("SUCCESS Redirect Login User:", result.user.email);
+        } else {
+            console.log("Redirect result was empty (normal if not returning from sign-in)");
+        }
+    }).catch((error) => {
+        console.error("Redirect Login Error Code:", error.code);
+        console.error("Redirect Login Error Message:", error.message);
     });
 
     window.triggerGoogleSignIn = async function() {
         try {
+            console.log("Starting Google Sign-In Redirect...");
             await signInWithRedirect(auth, googleProvider);
         } catch (error) {
             console.error("שגיאה בתהליך ההתחברות:", error);
@@ -2813,6 +2824,7 @@
         const authContainer = document.getElementById('headerAuthContainer');
 
         if (user) {
+            console.log("Auth State Changed: User is LOGGED IN ->", user.email);
             const displayName = user.displayName ? user.displayName.split(' ')[0] : 'מחובר';
             btnText.textContent = displayName;
             authContainer.classList.add('logged-in');
@@ -2831,6 +2843,7 @@
             }
 
         } else {
+            console.log("Auth State Changed: User is LOGGED OUT");
             window.isUserInstructor = false;
             btnText.textContent = 'התחברות';
             authContainer.classList.remove('logged-in');
