@@ -2647,6 +2647,11 @@
                 dropdown.classList.add('open');
                 backdrop.classList.add('open');
             }
+        } else {
+            // הוספת הפעלת פופאפ ההתחברות מחדש עבור משתמש מנותק
+            if (window.triggerGoogleSignIn) {
+                window.triggerGoogleSignIn();
+            }
         }
     };
 
@@ -2763,6 +2768,7 @@
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const db = getFirestore(app);
+    const googleProvider = new GoogleAuthProvider();
 
     enableIndexedDbPersistence(db).catch((err) => {
         console.log("Offline persistence not available", err);
@@ -2771,6 +2777,15 @@
     window.currentUser = null;
     window.isUserInstructor = false;
     const OWNER_UID = "ShasTZArs9Uqddy973BmlW4oP7T2";
+
+    // פונקציית התחברות עם Google שמופעלת בלחיצה על כפתור ההתחברות הראשי
+    window.triggerGoogleSignIn = async function() {
+        try {
+            await signInWithPopup(auth, googleProvider);
+        } catch (error) {
+            console.error("שגיאה בתהליך ההתחברות:", error);
+        }
+    };
 
     async function checkInstructorPermission(uid) {
         try {
