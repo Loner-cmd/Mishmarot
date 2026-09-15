@@ -54,9 +54,10 @@
 
         html, body {
             width: 100%;
+            height: 100%;
             overflow-x: hidden;
             background-color: var(--bg-primary);
-            /* שומרים על אפקט הגומיה המקורי של הדפדפן בלי לחסום אותו לחלוטין */
+            /* מאפשר את אפקט הגומיה הטבעי של הדפדפן לקצוות */
         }
 
         .num-font {
@@ -66,7 +67,10 @@
 
         body {
             color: var(--text-main);
-            min-height: 100vh;
+            /* במסכים גדולים ננעל גובה למניעת גלילה ריקה, במסכים קטנים נאפשר גלילה חכמה */
+            min-height: 100%;
+            height: 100%;
+            overflow-y: auto;
             display: flex;
             justify-content: center;
             padding: 0 12px 12px 12px;
@@ -96,7 +100,8 @@
             padding-top: calc(92px + env(safe-area-inset-top, 20px));
             padding-bottom: 120px;
             position: relative;
-            min-height: 100vh; /* מונע גלילה מיותרת למטה כשאין תוכן, אך משמר את אפקט הגומיה */
+            /* מונע גלילה מיותרת ומבטיח תצוגה נקייה ללא רווחים ריקים מתחת לפאנל */
+            min-height: calc(100% - env(safe-area-inset-top, 20px));
         }
 
         .svg-icon {
