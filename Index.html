@@ -57,7 +57,6 @@
             height: 100%;
             overflow-x: hidden;
             background-color: var(--bg-primary);
-            /* מאפשר את אפקט הגומיה הטבעי של הדפדפן לקצוות */
         }
 
         .num-font {
@@ -67,7 +66,6 @@
 
         body {
             color: var(--text-main);
-            /* במסכים גדולים ננעל גובה למניעת גלילה ריקה, במסכים קטנים נאפשר גלילה חכמה */
             min-height: 100%;
             height: 100%;
             overflow-y: auto;
@@ -79,7 +77,6 @@
                 radial-gradient(circle at 90% 80%, rgba(0, 210, 255, 0.05) 0%, transparent 40%);
         }
 
-        /* כיסוי רקע קבוע לסטטוס-בר של הפלאפון למעלה */
         body::before {
             content: '';
             position: fixed;
@@ -100,7 +97,6 @@
             padding-top: calc(92px + env(safe-area-inset-top, 20px));
             padding-bottom: 120px;
             position: relative;
-            /* מונע גלילה מיותרת ומבטיח תצוגה נקייה ללא רווחים ריקים מתחת לפאנל */
             min-height: calc(100% - env(safe-area-inset-top, 20px));
         }
 
@@ -436,7 +432,6 @@
             background: rgba(239, 68, 68, 0.2);
         }
 
-        /* Bottom Nav & Floating Action Drawer - Perfectly Centered, Fixed Layout */
         .bottom-nav-wrapper {
             position: fixed;
             bottom: 0; left: 0; right: 0;
@@ -523,11 +518,10 @@
             transform: scale(1.15);
         }
 
-        /* Tools Drawer Button (Moved to right side) */
         .tools-drawer-wrap {
             position: absolute;
             right: 8px;
-            display: none; /* Visible only in history view */
+            display: none;
         }
 
         .btn-tools-main {
@@ -617,7 +611,6 @@
             box-shadow: 0 0 10px rgba(0, 210, 255, 0.4);
         }
 
-        /* Larger, clearer tooltips positioned on the LEFT side of buttons for right-handed use */
         .drawer-tooltip {
             position: absolute;
             right: 50px;
@@ -643,7 +636,6 @@
             transform: translateY(-50%) translateX(0);
         }
 
-        /* Floating status bubble above nav */
         .status-bubble-toast {
             position: fixed;
             bottom: 82px;
@@ -839,7 +831,6 @@
             opacity: 0.7 !important;
         }
 
-        /* עיצוב פלוס חופשי נקי לחלוטין ללא רקע ריבועי, עם צללית עומק שחורה לימין-למטה והילה ממוקדת עדינה */
         .svg-plus-btn {
             position: absolute;
             top: 15px; 
@@ -920,7 +911,6 @@
             color: #fff;
         }
 
-        /* Clean Month Accordion Wrapper with Left-side Graph Icon */
         .month-accordion-wrapper {
             background: var(--bg-card);
             border-radius: 16px;
@@ -959,7 +949,6 @@
             gap: 10px;
         }
 
-        /* Perfectly matching tool button style for monthly summary */
         .btn-summary-modal {
             width: 36px;
             height: 36px;
@@ -1018,7 +1007,6 @@
             display: block;
         }
 
-        /* Monthly Summary Modal Sheet */
         .summary-modal-content {
             display: flex;
             flex-direction: column;
@@ -1105,7 +1093,6 @@
             position: relative;
         }
 
-        /* עיצוב אייקון פינה בגודל מושלם (24px) וממוקם במרכז הקשת */
         .shift-corner-icon {
             position: absolute;
             top: -9px;
@@ -1391,7 +1378,6 @@
             border: 1px solid rgba(239, 68, 68, 0.4);
         }
 
-        /* תיקון אנימציית פתיחה/סגירה באמצעות Grid Rows לאנימציה חלקה, ישירה וללא השהיות */
         .shift-details {
             display: grid;
             grid-template-rows: 0fr;
@@ -2285,7 +2271,6 @@
 
 <div class="bottom-nav-wrapper">
     <div class="bottom-nav-container">
-        <!-- Floating Tools Drawer (Moved to right corner) -->
         <div id="toolsDrawerWrap" class="tools-drawer-wrap">
             <button id="btnToolsMain" class="btn-tools-main" onclick="toggleToolsDrawer()" title="כלים">
                 <svg viewBox="0 0 24 24">
@@ -2591,10 +2576,8 @@
 <div id="printArea" style="display: none;"></div>
 
 <script>
-    // Global Constants
     const PRESET_NALT_MINUTES = [0, 40, 45, 60, 90, 120, 270];
 
-    // Global UI helper functions
     window.closeUserMenu = function(e) {
         if(e) {
             e.stopPropagation();
@@ -2648,7 +2631,6 @@
                 backdrop.classList.add('open');
             }
         } else {
-            // הוספת הפעלת פופאפ ההתחברות מחדש עבור משתמש מנותק
             if (window.triggerGoogleSignIn) {
                 window.triggerGoogleSignIn();
             }
@@ -2753,7 +2735,7 @@
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import { getAuth, GoogleAuthProvider, signInWithRedirect, getRedirectResult, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
     import { getFirestore, collection, doc, setDoc, getDocs, deleteDoc, getDoc, enableIndexedDbPersistence } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
     const firebaseConfig = {
@@ -2778,10 +2760,14 @@
     window.isUserInstructor = false;
     const OWNER_UID = "ShasTZArs9Uqddy973BmlW4oP7T2";
 
-    // פונקציית התחברות עם Google שמופעלת בלחיצה על כפתור ההתחברות הראשי
+    // טיפול בתוצאת החזרה מהפניית ההתחברות (Redirect)
+    getRedirectResult(auth).catch((error) => {
+        console.error("Redirect error:", error);
+    });
+
     window.triggerGoogleSignIn = async function() {
         try {
-            await signInWithPopup(auth, googleProvider);
+            await signInWithRedirect(auth, googleProvider);
         } catch (error) {
             console.error("שגיאה בתהליך ההתחברות:", error);
         }
@@ -3390,7 +3376,6 @@
         }, 2200);
     }
 
-    // Robust, safe interaction mechanism for tools and summary buttons (Tooltip on long press 500ms) - strictly for drawer/summary buttons only!
     function setupGlobalInteractions() {
         const drawerItems = document.querySelectorAll('.tools-popup-drawer .btn-drawer-item, .month-accordion-header .btn-summary-modal');
         
