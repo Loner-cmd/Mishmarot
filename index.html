@@ -95,7 +95,7 @@
             flex-direction: column;
             gap: 16px;
             padding-top: calc(92px + env(safe-area-inset-top, 20px));
-            padding-bottom: 120px;
+            padding-bottom: 140px; /* מרווח תחתון מעודכן כך שהאלמנט האחרון לא יוסתר מאחורי פאנל הניווט */
             position: relative;
             min-height: calc(100% - env(safe-area-inset-top, 20px));
         }
@@ -128,10 +128,8 @@
             box-shadow: 0 10px 25px rgba(0,0,0,0.6);
             position: fixed;
             top: 0;
-            left: 50%;
-            transform: translateX(-50%);
             width: 100%;
-            max-width: 480px;
+            max-width: 480px; /* מתיישר בדיוק עם רוחב הקונטיינר המרכזי במחשב ובנייד ללא סטייה עקב פס גלילה */
             z-index: 2500;
             overflow: hidden;
         }
@@ -4482,12 +4480,10 @@
                 const endMins = hasEnd ? timeToMinutes(shift.endTime) : -1;
                 const realEndMins = (endMins !== -1 && endMins < startMins) ? endMins + 1440 : endMins;
 
-                // עדכון תנאי בוקר: החל מ-03:00 (180 דקות) ועד 10:00 (600 דקות)
                 if (startMins >= 180 && startMins <= 600 && (realEndMins === -1 || realEndMins <= 1050)) {
                     shiftTypeClass = 'type-morning';
                 } else if (startMins > 600 && startMins <= 1080 && (realEndMins === -1 || realEndMins <= 1350)) {
                     shiftTypeClass = 'type-noon';
-                // עדכון תנאי לילה: החל מ-18:00 (1080 דקות) ועד 23:59 (1439 דקות)
                 } else if (startMins >= 1080 && startMins <= 1439) {
                     shiftTypeClass = 'type-night';
                 }
