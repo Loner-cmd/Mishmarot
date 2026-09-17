@@ -95,7 +95,7 @@
             flex-direction: column;
             gap: 16px;
             padding-top: calc(92px + env(safe-area-inset-top, 20px));
-            padding-bottom: 120px;
+            padding-bottom: 140px;
             position: relative;
             min-height: calc(100% - env(safe-area-inset-top, 20px));
         }
@@ -2779,11 +2779,27 @@
     async function checkInstructorPermission(uid) {
         try {
             if (uid === OWNER_UID) {
-                const localOverride = localStorage.getItem('owner_instructor_override');
-                if (localOverride !== null) {
-                    window.isUserInstructor = (localOverride === 'true');
-                } else {
-                    window.isUserInstructor = true;
+                try {
+                    const userDocRef = doc(db, 'app_users', uid);
+                    const userSnap = await getDoc(userDocRef);
+                    if (userSnap.exists() && userSnap.data().instructorMode !== undefined) {
+                        window.isUserInstructor = Boolean(userSnap.data().instructorMode);
+                        localStorage.setItem('owner_instructor_override', window.isUserInstructor ? 'true' : 'false');
+                    } else {
+                        const localOverride = localStorage.getItem('owner_instructor_override');
+                        if (localOverride !== null) {
+                            window.isUserInstructor = (localOverride === 'true');
+                        } else {
+                            window.isUserInstructor = false;
+                        }
+                    }
+                } catch (e) {
+                    const localOverride = localStorage.getItem('owner_instructor_override');
+                    if (localOverride !== null) {
+                        window.isUserInstructor = (localOverride === 'true');
+                    } else {
+                        window.isUserInstructor = false;
+                    }
                 }
                 return;
             }
@@ -2801,10 +2817,19 @@
         }
     }
 
-    window.toggleOwnerInstructorMode = function(isChecked) {
+    window.toggleOwnerInstructorMode = async function(isChecked) {
         if (!window.currentUser || window.currentUser.uid !== OWNER_UID) return;
         window.isUserInstructor = isChecked;
         localStorage.setItem('owner_instructor_override', isChecked ? 'true' : 'false');
+        
+        try {
+            await setDoc(doc(db, 'app_users', OWNER_UID), {
+                instructorMode: isChecked
+            }, { merge: true });
+        } catch (err) {
+            console.error("Error saving owner instructor mode to cloud:", err);
+        }
+
         if (typeof updateActiveShiftUI === 'function') {
             updateActiveShiftUI();
         }
@@ -4474,22 +4499,24 @@
 
         let shiftTypeClass = '';
         if (hasStart) {
+            const startMins = timeToMinutes(shift.startTime);
+            const endMins = hasEnd ? timeToMinutes(shift.endTime) : -1;
+            const realEndMins = (endMins !== -1 && endMins < startMins) ? endMins + 1440 : endMins;
+
+            const isNightShift = (startMins >= 1080 || startMins <= 239) && (realEndMins === -1 || realEndMins <= 420);
+
             if (hasEnd && shift.startTime === '06:00' && shift.endTime === '18:00') {
                 shiftTypeClass = 'type-morning';
             } else if (hasEnd && shift.startTime === '18:00' && shift.endTime === '06:00') {
                 shiftTypeClass = 'type-night';
-            } else {
-                const startMins = timeToMinutes(shift.startTime);
-                const endMins = hasEnd ? timeToMinutes(shift.endTime) : -1;
-                const realEndMins = (endMins !== -1 && endMins < startMins) ? endMins + 1440 : endMins;
-
-                if (startMins >= 240 && startMins <= 600 && (realEndMins === -1 || realEndMins <= 1050)) {
-                    shiftTypeClass = 'type-morning';
-                } else if (startMins > 600 && startMins <= 1080 && (realEndMins === -1 || realEndMins <= 1350)) {
-                    shiftTypeClass = 'type-noon';
-                } else if (startMins >= 1080 || startMins <= 239) {
-                    shiftTypeClass = 'type-night';
-                }
+            } else if (isNightShift) {
+                shiftTypeClass = 'type-night';
+            } else if (startMins >= 240 && startMins <= 600 && (realEndMins === -1 || realEndMins <= 1050)) {
+                shiftTypeClass = 'type-morning';
+            } else if (startMins > 600 && startMins <= 1080 && (realEndMins === -1 || realEndMins <= 1350)) {
+                shiftTypeClass = 'type-noon';
+            } else if (startMins >= 1080 || startMins <= 239) {
+                shiftTypeClass = 'type-morning';
             }
         }
 
@@ -5047,4 +5074,3 @@
 </script>
 </body>
 </html>
-
