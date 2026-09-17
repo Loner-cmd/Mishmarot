@@ -2752,7 +2752,6 @@
     const db = getFirestore(app);
     const googleProvider = new GoogleAuthProvider();
 
-    // הגדרת אחסון מבוסס LocalStorage כדי למנוע איבוד סשן בפופאפ
     setPersistence(auth, browserLocalPersistence).catch((err) => {
         console.error("Persistence error:", err);
     });
@@ -4476,18 +4475,20 @@
         if (hasStart) {
             if (hasEnd && shift.startTime === '06:00' && shift.endTime === '18:00') {
                 shiftTypeClass = 'type-morning';
-            } else if (hasEnd && shift.startTime === '18:00' && shift.endTime === '06:00') {
+            } else if (hasEnd && (shift.startTime === '18:00' && shift.endTime === '06:00' || (shift.startTime === '18:00' && shift.endTime === '23:59'))) {
                 shiftTypeClass = 'type-night';
             } else {
                 const startMins = timeToMinutes(shift.startTime);
                 const endMins = hasEnd ? timeToMinutes(shift.endTime) : -1;
                 const realEndMins = (endMins !== -1 && endMins < startMins) ? endMins + 1440 : endMins;
 
-                if (startMins >= 240 && startMins <= 600 && (realEndMins === -1 || realEndMins <= 1050)) {
+                // עדכון תנאי בוקר: החל מ-03:00 (180 דקות) ועד 10:00 (600 דקות)
+                if (startMins >= 180 && startMins <= 600 && (realEndMins === -1 || realEndMins <= 1050)) {
                     shiftTypeClass = 'type-morning';
                 } else if (startMins > 600 && startMins <= 1080 && (realEndMins === -1 || realEndMins <= 1350)) {
                     shiftTypeClass = 'type-noon';
-                } else if (startMins >= 1080 || startMins <= 239) {
+                // עדכון תנאי לילה: החל מ-18:00 (1080 דקות) ועד 23:59 (1439 דקות)
+                } else if (startMins >= 1080 && startMins <= 1439) {
                     shiftTypeClass = 'type-night';
                 }
             }
@@ -5047,4 +5048,3 @@
 </script>
 </body>
 </html>
-
