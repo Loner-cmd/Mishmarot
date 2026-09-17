@@ -95,7 +95,7 @@
             flex-direction: column;
             gap: 16px;
             padding-top: calc(92px + env(safe-area-inset-top, 20px));
-            padding-bottom: 140px;
+            padding-bottom: 200px;
             position: relative;
             min-height: calc(100% - env(safe-area-inset-top, 20px));
         }
@@ -2752,7 +2752,6 @@
     const db = getFirestore(app);
     const googleProvider = new GoogleAuthProvider();
 
-    // הגדרת אחסון מבוסס LocalStorage כדי למנוע איבוד סשן בפופאפ
     setPersistence(auth, browserLocalPersistence).catch((err) => {
         console.error("Persistence error:", err);
     });
@@ -2779,27 +2778,11 @@
     async function checkInstructorPermission(uid) {
         try {
             if (uid === OWNER_UID) {
-                try {
-                    const userDocRef = doc(db, 'app_users', uid);
-                    const userSnap = await getDoc(userDocRef);
-                    if (userSnap.exists() && userSnap.data().instructorMode !== undefined) {
-                        window.isUserInstructor = Boolean(userSnap.data().instructorMode);
-                        localStorage.setItem('owner_instructor_override', window.isUserInstructor ? 'true' : 'false');
-                    } else {
-                        const localOverride = localStorage.getItem('owner_instructor_override');
-                        if (localOverride !== null) {
-                            window.isUserInstructor = (localOverride === 'true');
-                        } else {
-                            window.isUserInstructor = false;
-                        }
-                    }
-                } catch (e) {
-                    const localOverride = localStorage.getItem('owner_instructor_override');
-                    if (localOverride !== null) {
-                        window.isUserInstructor = (localOverride === 'true');
-                    } else {
-                        window.isUserInstructor = false;
-                    }
+                const localOverride = localStorage.getItem('owner_instructor_override');
+                if (localOverride !== null) {
+                    window.isUserInstructor = (localOverride === 'true');
+                } else {
+                    window.isUserInstructor = true;
                 }
                 return;
             }
@@ -2817,19 +2800,10 @@
         }
     }
 
-    window.toggleOwnerInstructorMode = async function(isChecked) {
+    window.toggleOwnerInstructorMode = function(isChecked) {
         if (!window.currentUser || window.currentUser.uid !== OWNER_UID) return;
         window.isUserInstructor = isChecked;
         localStorage.setItem('owner_instructor_override', isChecked ? 'true' : 'false');
-        
-        try {
-            await setDoc(doc(db, 'app_users', OWNER_UID), {
-                instructorMode: isChecked
-            }, { merge: true });
-        } catch (err) {
-            console.error("Error saving owner instructor mode to cloud:", err);
-        }
-
         if (typeof updateActiveShiftUI === 'function') {
             updateActiveShiftUI();
         }
