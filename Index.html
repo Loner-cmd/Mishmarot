@@ -95,7 +95,7 @@
             flex-direction: column;
             gap: 16px;
             padding-top: calc(92px + env(safe-area-inset-top, 20px));
-            padding-bottom: 200px;
+            padding-bottom: 120px;
             position: relative;
             min-height: calc(100% - env(safe-area-inset-top, 20px));
         }
@@ -2752,6 +2752,7 @@
     const db = getFirestore(app);
     const googleProvider = new GoogleAuthProvider();
 
+    // הגדרת אחסון מבוסס LocalStorage כדי למנוע איבוד סשן בפופאפ
     setPersistence(auth, browserLocalPersistence).catch((err) => {
         console.error("Persistence error:", err);
     });
@@ -4473,24 +4474,22 @@
 
         let shiftTypeClass = '';
         if (hasStart) {
-            const startMins = timeToMinutes(shift.startTime);
-            const endMins = hasEnd ? timeToMinutes(shift.endTime) : -1;
-            const realEndMins = (endMins !== -1 && endMins < startMins) ? endMins + 1440 : endMins;
-
-            const isNightShift = (startMins >= 1080 || startMins <= 239) && (realEndMins === -1 || realEndMins <= 420);
-
             if (hasEnd && shift.startTime === '06:00' && shift.endTime === '18:00') {
                 shiftTypeClass = 'type-morning';
             } else if (hasEnd && shift.startTime === '18:00' && shift.endTime === '06:00') {
                 shiftTypeClass = 'type-night';
-            } else if (isNightShift) {
-                shiftTypeClass = 'type-night';
-            } else if (startMins >= 240 && startMins <= 600 && (realEndMins === -1 || realEndMins <= 1050)) {
-                shiftTypeClass = 'type-morning';
-            } else if (startMins > 600 && startMins <= 1080 && (realEndMins === -1 || realEndMins <= 1350)) {
-                shiftTypeClass = 'type-noon';
-            } else if (startMins >= 1080 || startMins <= 239) {
-                shiftTypeClass = 'type-morning';
+            } else {
+                const startMins = timeToMinutes(shift.startTime);
+                const endMins = hasEnd ? timeToMinutes(shift.endTime) : -1;
+                const realEndMins = (endMins !== -1 && endMins < startMins) ? endMins + 1440 : endMins;
+
+                if (startMins >= 240 && startMins <= 600 && (realEndMins === -1 || realEndMins <= 1050)) {
+                    shiftTypeClass = 'type-morning';
+                } else if (startMins > 600 && startMins <= 1080 && (realEndMins === -1 || realEndMins <= 1350)) {
+                    shiftTypeClass = 'type-noon';
+                } else if (startMins >= 1080 || startMins <= 239) {
+                    shiftTypeClass = 'type-night';
+                }
             }
         }
 
