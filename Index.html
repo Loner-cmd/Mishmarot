@@ -94,7 +94,7 @@
             flex-direction: column;
             gap: 16px;
             padding-top: calc(92px + env(safe-area-inset-top, 20px));
-            padding-bottom: 88px; /* מרווח תחתון מדויק ומאוד מדורג מעל פאנל הניווט */
+            padding-bottom: 88px;
             position: relative;
         }
 
@@ -126,8 +126,11 @@
             box-shadow: 0 10px 25px rgba(0,0,0,0.6);
             position: fixed;
             top: 0;
-            width: 100%;
-            max-width: 480px;
+            left: 12px;
+            right: 12px;
+            margin: 0 auto;
+            width: calc(100% - 24px);
+            max-width: 480px; /* מתאים את עצמו בדיוק מושלם לרוחב הקונטיינר בכל מסך במובייל ובמחשב */
             z-index: 2500;
             overflow: hidden;
         }
