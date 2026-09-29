@@ -332,7 +332,7 @@ window.loadAdminUsersList = async function() {
             const isInst = Boolean(instructorsMap[uId]);
             const userEmail = uData.email || 'לא ידוע';
 
-            const copySvg = `<svg class="svg-icon" width="13" height="13" viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>`;
+            const copySvg = '<svg class="svg-icon" width="13" height="13" viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>';
 
             html += `
                 <div style="background: rgba(0,0,0,0.25); border: 1px solid rgba(255,255,255,0.06); border-radius: 12px; padding: 10px 12px; display: flex; flex-direction: column; gap: 8px;">
@@ -1570,7 +1570,7 @@ function calculateFullPremTimes(startStr, endStr) {
     if (!endStr) {
         const pStartH = String(Math.floor((sMins % 1440) / 60)).padStart(2, '0');
         const pStartM = String((sMins % 1440) % 60).padStart(2, '0');
-        return { start: `${pStartH}:${pStartM}`, end: '' };
+        return { start: pStartH + ':' + pStartM, end: '' };
     }
 
     let eMins = timeToMinutes(endStr);
@@ -1587,8 +1587,8 @@ function calculateFullPremTimes(startStr, endStr) {
     const pEndM = String((eMins % 1440) % 60).padStart(2, '0');
 
     return {
-        start: `${pStartH}:${pStartM}`,
-        end: `${pEndH}:${pEndM}`
+        start: pStartH + ':' + pStartM,
+        end: pEndH + ':' + pEndM
     };
 }
 
@@ -1723,16 +1723,16 @@ function buildShiftCardHTML(shift, overlappingIds) {
     const daysArr = ['ראשון', 'שני', 'שלישי', 'רביעי', 'חמישי', 'שישי', 'שבת'];
     const dObj = parts.length === 3 ? new Date(parts[0], parts[1] - 1, parts[2]) : new Date();
     const dayName = 'יום ' + daysArr[dObj.getDay()];
-    const dateFmt = parts.length === 3 ? `${parts[2]}/${parts[1]}/${parts[0]}` : '--/--/----';
+    const dateFmt = parts.length === 3 ? parts[2] + '/' + parts[1] + '/' + parts[0] : '--/--/----';
 
     let naltStartRange = '';
     if (hasStart && naltStart > 0) {
-        naltStartRange = `${shift.startTime} – ${addMinutesToTime(shift.startTime, naltStart)}`;
+        naltStartRange = shift.startTime + ' – ' + addMinutesToTime(shift.startTime, naltStart);
     }
 
     let naltEndRange = '';
     if (hasEnd && naltEnd > 0) {
-        naltEndRange = `${subtractMinutesFromTime(shift.endTime, naltEnd)} – ${shift.endTime}`;
+        naltEndRange = subtractMinutesFromTime(shift.endTime, naltEnd) + ' – ' + shift.endTime;
     }
 
     let shiftTypeClass = '';
@@ -1755,6 +1755,15 @@ function buildShiftCardHTML(shift, overlappingIds) {
             }
         }
     }
+
+    let morningSvg = '<g fill="none" stroke-width="2" stroke-linecap="round"><path d="M3 14h18M7 14a5 5 0 0 1 10 0" stroke="url(#combined-grad-' + shiftIdStr + ')"/><path d="M12 3v4M6.34 5.34l2.12 2.12M17.66 5.34l-2.12 2.12M3.5 10h3M20.5 10h-3" stroke="url(#sun-grad-' + shiftIdStr + ')"/><path d="M5 18h14M8 21h8" stroke="url(#morning-grad-' + shiftIdStr + ')"/></g>';
+    let noonSvg = '<g fill="url(#noon-grad-' + shiftIdStr + ')" stroke="url(#noon-grad-' + shiftIdStr + ')"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.93 4.93l1.41 1.41m11.32 11.32l1.41 1.41M2 12h2m16 0h2M4.93 19.07l1.41-1.41m11.32-11.32l1.41-1.41" fill="none" stroke-width="2" stroke-linecap="round"/></g>';
+    let nightSvg = '<g><circle cx="11.5" cy="12" r="8" fill="url(#night-grad-' + shiftIdStr + ')" mask="url(#moon-mask-' + shiftIdStr + ')"/><path d="M19 4l1 2 2 1-2 1-1 2-1-2-2-1 2-1 1-2zM14 10l.5 1 1 .5-1 .5-.5 1-.5-1-1-.5 1-.5.5-1zM18.5 13l.4.8.8.4-.8.4-.4.8-.4-.8-.8-.4.8-.4.4-.8z" fill="url(#night-grad-' + shiftIdStr + ')" stroke="none"/></g>';
+
+    let cornerIconInner = '';
+    if (shiftTypeClass === 'type-morning') cornerIconInner = morningSvg;
+    else if (shiftTypeClass === 'type-noon') cornerIconInner = noonSvg;
+    else if (shiftTypeClass === 'type-night') cornerIconInner = nightSvg;
 
     return `
         <div class="shift-card ${shiftTypeClass} ${isActive ? 'active-shift' : ''} ${isOverlap ? 'has-overlap' : ''} ${isIncomplete && !isActive ? 'incomplete' : ''} ${isSelected ? 'selected-for-delete' : ''}" 
@@ -1796,22 +1805,7 @@ function buildShiftCardHTML(shift, overlappingIds) {
                             <circle cx="15.5" cy="11.5" r="7.5" fill="black"/>
                         </mask>
                     </defs>
-                    ${shiftTypeClass === 'type-morning' ? `
-                    <g fill="none" stroke-width="2" stroke-linecap="round">
-                        <path d="M3 14h18M7 14a5 5 0 0 1 10 0" stroke="url(#combined-grad-${shiftIdStr})"/>
-                        <path d="M12 3v4M6.34 5.34l2.12 2.12M17.66 5.34l-2.12 2.12M3.5 10h3M20.5 10h-3" stroke="url(#sun-grad-${shiftIdStr})"/>
-                        <path d="M5 18h14M8 21h8" stroke="url(#morning-grad-${shiftIdStr})"/>
-                    </g>` : ''}
-                    ${shiftTypeClass === 'type-noon' ? `
-                    <g fill="url(#noon-grad-${shiftIdStr})" stroke="url(#noon-grad-${shiftIdStr})">
-                        <circle cx="12" cy="12" r="4"/>
-                        <path d="M12 2v2m0 16v2M4.93 4.93l1.41 1.41m11.32 11.32l1.41 1.41M2 12h2m16 0h2M4.93 19.07l1.41-1.41m11.32-11.32l1.41-1.41" fill="none" stroke-width="2" stroke-linecap="round"/>
-                    </g>` : ''}
-                    ${shiftTypeClass === 'type-night' ? `
-                    <g>
-                        <circle cx="11.5" cy="12" r="8" fill="url(#night-grad-${shiftIdStr})" mask="url(#moon-mask-${shiftIdStr})"/>
-                        <path d="M19 4l1 2 2 1-2 1-1 2-1-2-2-1 2-1 1-2zM14 10l.5 1 1 .5-1 .5-.5 1-.5-1-1-.5 1-.5.5-1zM18.5 13l.4.8.8.4-.8.4-.4.8-.4-.8-.8-.4.8-.4.4-.8z" fill="url(#night-grad-${shiftIdStr})" stroke="none"/>
-                    </g>` : ''}
+                    ${cornerIconInner}
                 </svg>
             </div>
             
