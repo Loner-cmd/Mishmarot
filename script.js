@@ -640,7 +640,7 @@ function showStatusBubbleToast(msg) {
     }, 2200);
 }
 
-// תיקון פונקציות גלובליות חסרות (closeUserMenu ו-handleAuthClick)
+// פונקציות גלובליות נדרשות
 window.closeUserMenu = function(e) {
     if(e) {
         e.stopPropagation();
@@ -679,9 +679,6 @@ window.handleAuthClick = async function(event) {
     }
 };
 
-// ---------------------------------------------------------
-// תיקון פונקציות הסיכום החודשי הגלובליות שחסרות כרגע
-// ---------------------------------------------------------
 window.openMonthlySummaryModal = function(mk) {
     const mShifts = window.shifts.filter(s => s.date && s.date.startsWith(mk));
     let totWorkMins = 0;
@@ -710,7 +707,6 @@ window.openMonthlySummaryModal = function(mk) {
 window.closeMonthlySummaryModal = function() {
     document.getElementById('monthlySummaryModal').classList.remove('open');
 };
-// ---------------------------------------------------------
 
 function setupGlobalInteractions() {
     const drawerItems = document.querySelectorAll('.tools-popup-drawer .btn-drawer-item, .month-accordion-header .btn-summary-modal');
@@ -2157,7 +2153,7 @@ function validateModalRealtime(isSubmit = false) {
     else premEndInput.classList.remove('input-error');
 
     if (state.premStartInvalid || state.premEndInvalid) {
-        premErr.textContent = state.premError || 'הפרמיה מחוץ זמני המשמרת';
+        premErr.textContent = state.premError || 'הפרמיה מחוץ לזמני המשמרת';
         premErr.classList.add('visible');
     } else {
         premErr.classList.remove('visible');
