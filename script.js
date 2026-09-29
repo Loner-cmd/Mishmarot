@@ -640,7 +640,7 @@ function showStatusBubbleToast(msg) {
     }, 2200);
 }
 
-// פונקציות גלובליות נדרשות
+// חשיפת כל הפונקציות הגלובליות שמופעלות מה-HTML באופן מלא
 window.closeUserMenu = function(e) {
     if(e) {
         e.stopPropagation();
@@ -707,6 +707,101 @@ window.openMonthlySummaryModal = function(mk) {
 window.closeMonthlySummaryModal = function() {
     document.getElementById('monthlySummaryModal').classList.remove('open');
 };
+
+window.validateModalRealtime = function(isSubmit = false) {
+    const startInput = document.getElementById('fieldStartTime');
+    const endInput = document.getElementById('fieldEndTime');
+    const premStartInput = document.getElementById('fieldPremStart');
+    const premEndInput = document.getElementById('fieldPremEnd');
+    
+    const shiftErr = document.getElementById('shiftTimeError');
+    const premErr = document.getElementById('premTimeError');
+
+    const state = getValidationState();
+
+    if (state.bothEmptyInvalid && !isSubmit) {
+        startInput.classList.remove('input-error');
+        endInput.classList.remove('input-error');
+        shiftErr.classList.remove('visible');
+    } else {
+        if (state.startInvalid) startInput.classList.add('input-error');
+        else startInput.classList.remove('input-error');
+
+        if (state.endInvalid) endInput.classList.add('input-error');
+        else endInput.classList.remove('input-error');
+
+        if (state.startInvalid || state.endInvalid) {
+            shiftErr.textContent = state.shiftError;
+            shiftErr.classList.add('visible');
+        } else {
+            shiftErr.classList.remove('visible');
+        }
+    }
+
+    if (state.premStartInvalid) premStartInput.classList.add('input-error');
+    else premStartInput.classList.remove('input-error');
+
+    if (state.premEndInvalid) premEndInput.classList.add('input-error');
+    else premEndInput.classList.remove('input-error');
+
+    if (state.premStartInvalid || state.premEndInvalid) {
+        premErr.textContent = state.premError || 'הפרמיה מחוץ לזמני המשמרת';
+        premErr.classList.add('visible');
+    } else {
+        premErr.classList.remove('visible');
+    }
+};
+
+window.onFullPremCheckboxChange = function(isChecked) {
+    const startInput = document.getElementById('fieldStartTime').value;
+    const endInput = document.getElementById('fieldEndTime').value;
+    if (isChecked && startInput && (!endInput || startInput !== endInput)) {
+        const times = calculateFullPremTimes(startInput, endInput);
+        document.getElementById('fieldPremStart').value = times.start;
+        document.getElementById('fieldPremEnd').value = times.end;
+    } else if (!isChecked || (startInput && endInput && startInput === endInput)) {
+        document.getElementById('fieldPremStart').value = '';
+        document.getElementById('fieldPremEnd').value = '';
+    }
+    window.validateModalRealtime(true);
+};
+
+window.handleModalTimeChangeForFullPrem = function() {
+    const isChecked = document.getElementById('fieldFullPremModal').checked;
+    if (isChecked) {
+        const startInput = document.getElementById('fieldStartTime').value;
+        const endInput = document.getElementById('fieldEndTime').value;
+        if (startInput && endInput && startInput !== endInput) {
+            const times = calculateFullPremTimes(startInput, endInput);
+            document.getElementById('fieldPremStart').value = times.start;
+            document.getElementById('fieldPremEnd').value = times.end;
+        } else {
+            document.getElementById('fieldPremStart').value = startInput || '';
+            document.getElementById('fieldPremEnd').value = '';
+        }
+    }
+};
+
+window.handleManualPremChange = function() {
+    const checkbox = document.getElementById('fieldFullPremModal');
+    if (checkbox && checkbox.checked) {
+        checkbox.checked = false;
+    }
+};
+
+window.handleNaltSelectChange = function(type) {
+    const select = document.getElementById('selectNalt' + type);
+    const customInput = document.getElementById('customNalt' + type);
+    if (select.value === 'custom') {
+        customInput.style.display = 'block';
+        customInput.focus();
+    } else {
+        customInput.style.display = 'none';
+        customInput.value = '';
+    }
+};
+
+// ---------------------------------------------------------
 
 function setupGlobalInteractions() {
     const drawerItems = document.querySelectorAll('.tools-popup-drawer .btn-drawer-item, .month-accordion-header .btn-summary-modal');
@@ -2116,50 +2211,6 @@ function getValidationState() {
     };
 }
 
-function validateModalRealtime(isSubmit = false) {
-    const startInput = document.getElementById('fieldStartTime');
-    const endInput = document.getElementById('fieldEndTime');
-    const premStartInput = document.getElementById('fieldPremStart');
-    const premEndInput = document.getElementById('fieldPremEnd');
-    
-    const shiftErr = document.getElementById('shiftTimeError');
-    const premErr = document.getElementById('premTimeError');
-
-    const state = getValidationState();
-
-    if (state.bothEmptyInvalid && !isSubmit) {
-        startInput.classList.remove('input-error');
-        endInput.classList.remove('input-error');
-        shiftErr.classList.remove('visible');
-    } else {
-        if (state.startInvalid) startInput.classList.add('input-error');
-        else startInput.classList.remove('input-error');
-
-        if (state.endInvalid) endInput.classList.add('input-error');
-        else endInput.classList.remove('input-error');
-
-        if (state.startInvalid || state.endInvalid) {
-            shiftErr.textContent = state.shiftError;
-            shiftErr.classList.add('visible');
-        } else {
-            shiftErr.classList.remove('visible');
-        }
-    }
-
-    if (state.premStartInvalid) premStartInput.classList.add('input-error');
-    else premStartInput.classList.remove('input-error');
-
-    if (state.premEndInvalid) premEndInput.classList.add('input-error');
-    else premEndInput.classList.remove('input-error');
-
-    if (state.premStartInvalid || state.premEndInvalid) {
-        premErr.textContent = state.premError || 'הפרמיה מחוץ לזמני המשמרת';
-        premErr.classList.add('visible');
-    } else {
-        premErr.classList.remove('visible');
-    }
-}
-
 window.saveShiftDirect = function() {
     const editId = document.getElementById('editShiftId').value;
     const siddurVal = document.getElementById('fieldSiddur').value.trim();
@@ -2186,7 +2237,7 @@ window.saveShiftDirect = function() {
     const validation = getValidationState();
     
     if (!validation.valid) {
-        validateModalRealtime(true);
+        window.validateModalRealtime(true);
         let errorMsg = 'לא ניתן לשמור את המשמרת – יש לתקן את השדות המסומנים באדום.';
         let errorTitle = 'שגיאה בנתוני המשמרת';
         
@@ -2329,7 +2380,7 @@ window.openShiftModal = function(shiftId) {
     }
 
     modal.classList.add('open');
-    validateModalRealtime(false);
+    window.validateModalRealtime(false);
 };
 
 window.closeModal = function() {
