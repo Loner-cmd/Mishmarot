@@ -640,7 +640,9 @@ function showStatusBubbleToast(msg) {
     }, 2200);
 }
 
-// חשיפת כל הפונקציות הגלובליות שמופעלות מה-HTML באופן מלא
+// ---------------------------------------------------------
+// ריכוז וייצוא כל הפונקציות תחת window למניעת שגיאות
+// ---------------------------------------------------------
 window.closeUserMenu = function(e) {
     if(e) {
         e.stopPropagation();
@@ -800,7 +802,6 @@ window.handleNaltSelectChange = function(type) {
         customInput.value = '';
     }
 };
-
 // ---------------------------------------------------------
 
 function setupGlobalInteractions() {
@@ -1777,7 +1778,7 @@ window.onFullPremCheckboxChange = function(isChecked) {
         document.getElementById('fieldPremStart').value = '';
         document.getElementById('fieldPremEnd').value = '';
     }
-    validateModalRealtime(true);
+    window.validateModalRealtime(true);
 };
 
 window.handleModalTimeChangeForFullPrem = function() {
