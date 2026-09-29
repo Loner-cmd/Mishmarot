@@ -641,7 +641,7 @@ function showStatusBubbleToast(msg) {
 }
 
 // ---------------------------------------------------------
-// חשיפת כל הפונקציות הגלובליות נדרשות תחת window
+// חשיפת כל הפונקציות הגלובליות נדרשות תחת window (כולל getNaltFieldValue ו-setNaltFieldUI)
 // ---------------------------------------------------------
 window.closeUserMenu = function(e) {
     if(e) {
@@ -820,6 +820,16 @@ window.setNaltFieldUI = function(type, mins) {
         customInput.value = formatMinutesToDisplay(mins);
     }
 };
+
+function getNaltFieldValue(type) {
+    const select = document.getElementById('selectNalt' + type);
+    const customInput = document.getElementById('customNalt' + type);
+    if (select.value === 'custom') {
+        return parseInputToMinutes(customInput.value);
+    }
+    return Number(select.value) || 0;
+}
+window.getNaltFieldValue = getNaltFieldValue;
 // ---------------------------------------------------------
 
 function setupGlobalInteractions() {
@@ -2022,14 +2032,22 @@ function buildShiftCardHTML(shift, overlappingIds) {
                         </div>\
                         ' + (hasNalt ? '\
                         <div class="sub-breakdown">\
-                            ' + (naltStart > 0 ? '<div class="breakdown-item"><span class="breakdown-label">נל״ת הלוך (' + formatMinutesToHM(naltStart) + '):</span><span class="breakdown-value" dir="ltr">' + naltStartRange + '</span></div>' : '') + '\
-                            ' + (naltEnd > 0 ? '<div class="breakdown-item"><span class="breakdown-label">נל״ת חזור (' + formatMinutesToHM(naltEnd) + '):</span><span class="breakdown-value" dir="ltr">' + naltEndRange + '</span></div>' : '') + '\
+                            <div style="font-size: 0.78rem; font-weight: 700; color: #38bdf8; margin-bottom: 6px; display: flex; align-items: center; gap: 6px;">\
+                                ' + naltSvgIcon + ' נל"ת (נסיעה ללא תפקיד)\
+                            </div>\
+                            ' + (naltStart > 0 ? '<div class="breakdown-item"><span class="breakdown-label">נל"ת הלוך (' + formatMinutesToHM(naltStart) + '):</span><span class="breakdown-value" dir="ltr">' + naltStartRange + '</span></div>' : '') + '\
+                            ' + (naltEnd > 0 ? '<div class="breakdown-item"><span class="breakdown-label">נל"ת חזור (' + formatMinutesToHM(naltEnd) + '):</span><span class="breakdown-value" dir="ltr">' + naltEndRange + '</span></div>' : '') + '\
                         </div>' : '') + '\
                         ' + (hasPrem ? '\
                         <div class="sub-breakdown">\
+                            <div style="font-size: 0.78rem; font-weight: 700; color: #c084fc; margin-bottom: 6px; display: flex; align-items: center; gap: 6px;">\
+                                ' + premSvgIcon + ' פרמיה (' + formatMinutesToHM(premDurationMins) + ')\
+                            </div>\
                             <div class="breakdown-item">\
-                                <span class="breakdown-label">פרמיה ' + (premDurationMins > 0 ? '(' + formatMinutesToHM(premDurationMins) + ')' : '') + ':</span>\
-                                <span class="breakdown-value">' + (shift.premStartTime || '---') + ' – ' + (shift.premEndTime || '---') + '</span>\
+                                <span class="breakdown-label">משעה:</span>\
+                                <span class="breakdown-value">' + shift.premStartTime + '</span>\
+                                <span class="breakdown-label" style="margin-right: 8px;">עד שעה:</span>\
+                                <span class="breakdown-value">' + shift.premEndTime + '</span>\
                             </div>\
                         </div>' : '') + '\
                         ' + (hasNotes ? '<div class="notes-display-box"><span>' + shift.notes + '</span></div>' : '') + '\
