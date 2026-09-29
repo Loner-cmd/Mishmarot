@@ -640,6 +640,48 @@ function showStatusBubbleToast(msg) {
     }, 2200);
 }
 
+// ---------------------------------------------------------
+// תיקון פונקציות גלובליות חסרות (closeUserMenu ו-handleAuthClick)
+// ---------------------------------------------------------
+window.closeUserMenu = function(e) {
+    if(e) {
+        e.stopPropagation();
+        e.preventDefault();
+    }
+    const dropdown = document.getElementById('userDropdownMenu');
+    const backdrop = document.getElementById('menuBackdrop');
+    if (dropdown) dropdown.classList.remove('open');
+    if (backdrop) backdrop.classList.remove('open');
+};
+
+window.handleAuthClick = async function(event) {
+    event.stopPropagation();
+    if (currentView === 'profile' || currentView === 'admin') return;
+
+    if (window.currentUser) {
+        const dropdown = document.getElementById('userDropdownMenu');
+        const backdrop = document.getElementById('menuBackdrop');
+        const isOpen = dropdown.classList.contains('open');
+        
+        if (isOpen) {
+            dropdown.classList.remove('open');
+            backdrop.classList.remove('open');
+        } else {
+            const authContainer = document.getElementById('headerAuthContainer');
+            const rect = authContainer.getBoundingClientRect();
+            dropdown.style.top = (rect.bottom + 8) + 'px';
+            dropdown.style.left = rect.left + 'px';
+            dropdown.classList.add('open');
+            backdrop.classList.add('open');
+        }
+    } else {
+        if (window.triggerGoogleSignIn) {
+            window.triggerGoogleSignIn();
+        }
+    }
+};
+// ---------------------------------------------------------
+
 function setupGlobalInteractions() {
     const drawerItems = document.querySelectorAll('.tools-popup-drawer .btn-drawer-item, .month-accordion-header .btn-summary-modal');
     
@@ -1756,6 +1798,15 @@ function buildShiftCardHTML(shift, overlappingIds) {
         }
     }
 
+    let morningSvg = '<g fill="none" stroke-width="2" stroke-linecap="round"><path d="M3 14h18M7 14a5 5 0 0 1 10 0" stroke="url(#combined-grad-' + shiftIdStr + ')"/><path d="M12 3v4M6.34 5.34l2.12 2.12M17.66 5.34l-2.12 2.12M3.5 10h3M20.5 10h-3" stroke="url(#sun-grad-' + shiftIdStr + ')"/><path d="M5 18h14M8 21h8" stroke="url(#morning-grad-' + shiftIdStr + ')"/></g>';
+    let noonSvg = '<g fill="url(#noon-grad-' + shiftIdStr + ')" stroke="url(#noon-grad-' + shiftIdStr + ')"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.93 4.93l1.41 1.41m11.32 11.32l1.41 1.41M2 12h2m16 0h2M4.93 19.07l1.41-1.41m11.32-11.32l1.41-1.41" fill="none" stroke-width="2" stroke-linecap="round"/></g>';
+    let nightSvg = '<g><circle cx="11.5" cy="12" r="8" fill="url(#night-grad-' + shiftIdStr + ')" mask="url(#moon-mask-' + shiftIdStr + ')"/><path d="M19 4l1 2 2 1-2 1-1 2-1-2-2-1 2-1 1-2zM14 10l.5 1 1 .5-1 .5-.5 1-.5-1-1-.5 1-.5.5-1zM18.5 13l.4.8.8.4-.8.4-.4.8-.4-.8-.8-.4.8-.4.4-.8z" fill="url(#night-grad-' + shiftIdStr + ')" stroke="none"/></g>';
+
+    let cornerIconInner = '';
+    if (shiftTypeClass === 'type-morning') cornerIconInner = morningSvg;
+    else if (shiftTypeClass === 'type-noon') cornerIconInner = noonSvg;
+    else if (shiftTypeClass === 'type-night') cornerIconInner = nightSvg;
+
     return '\
         <div class="shift-card ' + shiftTypeClass + ' ' + (isActive ? 'active-shift' : '') + ' ' + (isOverlap ? 'has-overlap' : '') + ' ' + (isIncomplete && !isActive ? 'incomplete' : '') + ' ' + (isSelected ? 'selected-for-delete' : '') + '" \
              data-id="' + shiftIdStr + '" \
@@ -1796,9 +1847,7 @@ function buildShiftCardHTML(shift, overlappingIds) {
                             <circle cx="15.5" cy="11.5" r="7.5" fill="black"/>\
                         </mask>\
                     </defs>\
-                    ' + (shiftTypeClass === 'type-morning' ? '<g fill="none" stroke-width="2" stroke-linecap="round"><path d="M3 14h18M7 14a5 5 0 0 1 10 0" stroke="url(#combined-grad-' + shiftIdStr + ')"/><path d="M12 3v4M6.34 5.34l2.12 2.12M17.66 5.34l-2.12 2.12M3.5 10h3M20.5 10h-3" stroke="url(#sun-grad-' + shiftIdStr + ')"/><path d="M5 18h14M8 21h8" stroke="url(#morning-grad-' + shiftIdStr + ')"/></g>' : '') + '\
-                    ' + (shiftTypeClass === 'type-noon' ? '<g fill="url(#noon-grad-' + shiftIdStr + ')" stroke="url(#noon-grad-' + shiftIdStr + ')"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.93 4.93l1.41 1.41m11.32 11.32l1.41 1.41M2 12h2m16 0h2M4.93 19.07l1.41-1.41m11.32-11.32l1.41-1.41" fill="none" stroke-width="2" stroke-linecap="round"/></g>' : '') + '\
-                    ' + (shiftTypeClass === 'type-night' ? '<g><circle cx="11.5" cy="12" r="8" fill="url(#night-grad-' + shiftIdStr + ')" mask="url(#moon-mask-' + shiftIdStr + ')"/><path d="M19 4l1 2 2 1-2 1-1 2-1-2-2-1 2-1 1-2zM14 10l.5 1 1 .5-1 .5-.5 1-.5-1-1-.5 1-.5.5-1zM18.5 13l.4.8.8.4-.8.4-.4.8-.4-.8-.8-.4.8-.4.4-.8z" fill="url(#night-grad-' + shiftIdStr + ')" stroke="none"/></g>' : '') + '\
+                    ' + cornerIconInner + '\
                 </svg>\
             </div>\
             \
@@ -1862,6 +1911,7 @@ function buildShiftCardHTML(shift, overlappingIds) {
                                 <div class="checkbox-label-container" onclick="handleFullPremClick(event, \'' + shiftIdStr + '\')" style="margin-right: auto;">\
                                     <input type="checkbox" ' + (shift.fullPrem ? 'checked' : '') + ' style="pointer-events: none;" tabindex="-1">\
                                     <span>פרמיה מלאה</span>\
+                                />\
                                 </div>\
                             </div>\
                         </div>\
@@ -1943,8 +1993,8 @@ function renderShifts() {
     expandedIds.forEach(id => {
         const card = container.querySelector('.shift-card[data-id="' + id + '"]');
         if (card) {
-            const details = card.querySelector('.shift-details');
-            if (details) details.classList.add('expanded');
+            constDetails = card.querySelector('.shift-details');
+            if (constDetails) constDetails.classList.add('expanded');
         }
     });
 
@@ -2241,7 +2291,7 @@ window.openShiftModal = function(shiftId) {
         document.getElementById('fieldDate').value = y + '-' + m + '-' + d;
         document.getElementById('fieldStartTime').value = '';
         document.getElementById('fieldEndTime').value = '';
-        document.getElementById('fieldFullPremModal').checked = false;
+        document.getElementById('fieldFullPremModal').checked, false;
         document.getElementById('fieldNotes').value = '';
         setNaltFieldUI('Start', 0);
         setNaltFieldUI('End', 0);
