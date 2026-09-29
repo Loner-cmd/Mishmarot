@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>יומן משמרות</title>
+    
+    <!-- PWA Settings -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#0b1329">
+
+    <!-- iOS PWA Settings -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="יומן משמרות">
+    <link id="dynamic-touch-icon" rel="apple-touch-icon" href="">
+    <link id="dynamic-favicon" rel="icon" type="image/png" href="">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- External CSS Style Sheet -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div id="menuBackdrop" class="menu-backdrop" onclick="closeUserMenu(event)"></div>
+
+<div id="userDropdownMenu" class="user-dropdown-menu">
+    <button class="dropdown-item" onclick="goToProfileView()">פרופיל אישי</button>
+    <button class="dropdown-item" onclick="openSettingsModal()">הגדרות</button>
+    <button class="dropdown-item danger-item" onclick="confirmSignOut()">התנתקות</button>
+</div>
+
+<div class="app-container">
+    <header id="mainHeader">
+        <div class="header-right">
+            <div class="logo-area">
+                <svg class="rail-icon-svg" viewBox="0 0 512 512">
+                    <defs>
+                        <linearGradient id="hdrBg" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stop-color="#132247"/>
+                            <stop offset="100%" stop-color="#060b16"/>
+                        </linearGradient>
+                        <linearGradient id="hdrRail" x1="0%" y1="0%" x2="0%" y2="100%">
+                            <stop offset="0%" stop-color="#00e5ff"/>
+                            <stop offset="100%" stop-color="#0077ff"/>
+                        </linearGradient>
+                        <linearGradient id="hdrTieTop" x1="0%" y1="0%" x2="0%" y2="100%">
+                            <stop offset="0%" stop-color="#3a558a"/>
+                            <stop offset="100%" stop-color="#2c426f"/>
+                        </linearGradient>
+                        <linearGradient id="hdrTieFront" x1="0%" y1="0%" x2="0%" y2="100%">
+                            <stop offset="0%" stop-color="#1e2e4e"/>
+                            <stop offset="100%" stop-color="#141f36"/>
+                        </linearGradient>
+                    </defs>
+                    <rect width="512" height="512" rx="115" fill="url(#hdrBg)"/>
+                    <rect x="16" y="16" width="480" height="480" rx="100" fill="none" stroke="rgba(0, 229, 255, 0.15)" stroke-width="4"/>
+                    <polygon points="186,306 326,306 332,314 180,314" fill="url(#hdrTieTop)" stroke="rgba(0,229,255,0.4)" stroke-width="1.5"/>
+                    <polygon points="180,314 332,314 332,320 180,320" fill="url(#hdrTieFront)"/>
+                    <polygon points="164,338 348,338 356,348 156,348" fill="url(#hdrTieTop)" stroke="rgba(0,229,255,0.45)" stroke-width="1.8"/>
+                    <polygon points="156,348 356,348 356,356 156,356" fill="url(#hdrTieFront)"/>
+                    <polygon points="136,378 376,378 388,392 124,392" fill="url(#hdrTieTop)" stroke="rgba(0,229,255,0.55)" stroke-width="2.2"/>
+                    <polygon points="124,392 388,392 388,402 124,402" fill="url(#hdrTieFront)"/>
+                    <polygon points="98,428 414,428 430,446 82,446" fill="url(#hdrTieTop)" stroke="rgba(0,229,255,0.7)" stroke-width="2.6"/>
+                    <polygon points="82,446 430,446 430,460 82,460" fill="url(#hdrTieFront)"/>
+                    <polygon points="194,290 206,290 120,465 102,465" fill="url(#hdrRail)"/>
+                    <line x1="194" y1="290" x2="102" y2="465" stroke="#ffffff" stroke-width="2" opacity="0.65"/>
+                    <polygon points="306,290 318,290 410,465 392,465" fill="url(#hdrRail)"/>
+                    <line x1="318" y1="290" x2="410" y2="465" stroke="#ffffff" stroke-width="2" opacity="0.65"/>
+                    <path d="M165 110 C165 65 200 50 256 50 C312 50 347 65 347 110 L360 250 C360 278 335 292 256 292 C177 292 152 278 152 250 Z" fill="#132247" stroke="#00d2ff" stroke-width="12" stroke-linejoin="round"/>
+                    <path d="M188 115 C188 95 210 82 256 82 C302 82 324 95 324 115 L332 172 L180 172 Z" fill="#080e1d" stroke="#00d2ff" stroke-width="5" stroke-linejoin="round"/>
+                    <circle cx="202" cy="242" r="14" fill="#00d2ff"/>
+                    <circle cx="310" cy="242" r="14" fill="#00d2ff"/>
+                    <rect x="230" y="233" width="52" height="18" rx="6" fill="#10b981"/>
+                    <circle cx="365" cy="365" r="76" fill="#080e1d" stroke="#00d2ff" stroke-width="9"/>
+                    <circle cx="365" cy="365" r="66" fill="rgba(0, 210, 255, 0.08)"/>
+                    <polyline points="365,315 365,365 408,365" fill="none" stroke="#ffffff" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+                    <circle cx="365" cy="365" r="6.5" fill="#00d2ff"/>
+                </svg>
+                <div class="logo-text" style="text-align: right;">
+                    <h1>יומן משמרות</h1>
+                    <span>רכבת ישראל</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="header-center-group">
+            <div class="header-status-box">
+                <div id="statusIndicator" class="status-badge idle">
+                    <span class="pulse-dot"></span>
+                    <span id="statusText">במנוחה</span>
+                </div>
+                <div class="header-live-timer" id="headerShiftDuration">00:00:00</div>
+            </div>
+        </div>
+
+        <div id="headerAuthContainer" class="header-auth-container" onclick="handleAuthClick(event)">
+            <div id="headerAuthCircle" class="header-auth-circle">
+                <svg viewBox="0 0 24 24">
+                    <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                </svg>
+            </div>
+            <span id="authBtnText" class="header-auth-label">התחברות</span>
+        </div>
+
+        <div class="header-progress-container" id="headerProgressWrap">
+            <div class="header-progress-fill fill-green" id="headerProgressFill"></div>
+        </div>
+    </header>
+
+    <div id="viewClock" class="app-view">
+        <div class="clock-screen-card">
+            <div class="clock-display-wrap">
+                <div class="clock-time-huge" id="clockMain">--:--</div>
+                <div class="clock-date-sub">
+                    <svg class="calendar-icon-svg" viewBox="0 0 24 24">
+                        <path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20a2 2 0 0 0 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10zm0-12H5V6h14v2z"/>
+                    </svg>
+                    <span class="date-text-content" id="currentDate">--</span>
+                </div>
+            </div>
+
+            <div class="main-action-wrapper">
+                <div class="well-container">
+                    <button id="btnMainAction" class="btn-main-circle state-idle" onclick="handleMainAction()" ontouchstart="this.classList.add('pressed')" ontouchend="this.classList.remove('pressed')" ontouchcancel="this.classList.remove('pressed')" onmousedown="this.classList.add('pressed')" onmouseup="this.classList.remove('pressed')" onmouseleave="this.classList.remove('pressed')">
+                        <svg class="btn-main-icon" viewBox="0 0 24 24">
+                            <path d="M18.36 6.64a9 9 0 1 1-12.73 0"></path>
+                            <line x1="12" y1="2" x2="12" y2="12"></line>
+                        </svg>
+                        <div class="btn-main-text-wrap">
+                            <span class="btn-main-line1" id="mainActionTextLine1">כניסה</span>
+                            <span class="btn-main-line2" id="mainActionTextLine2">למשמרת</span>
+                        </div>
+                    </button>
+                </div>
+
+                <svg id="btnPlusManual" class="svg-plus-btn" viewBox="0 0 36 36" onclick="openShiftModal(null)" ontouchstart="this.classList.add('pressed')" ontouchend="this.classList.remove('pressed')" ontouchcancel="this.classList.remove('pressed')" onmousedown="this.classList.add('pressed')" onmouseup="this.classList.remove('pressed')" onmouseleave="this.classList.remove('pressed')">
+                    <path class="glow-layer" d="M15,6 a3,3 0 0,1 6,0 v9 h9 a3,3 0 0,1 0,6 h-9 v9 a3,3 0 0,1 -6,0 v-9 h-9 a3,3 0 0,1 0,-6 h9 z"/>
+                    <path class="main-plus-path" d="M15,6 a3,3 0 0,1 6,0 v9 h9 a3,3 0 0,1 0,6 h-9 v9 a3,3 0 0,1 -6,0 v-9 h-9 a3,3 0 0,1 0,-6 h9 z"/>
+                </svg>
+            </div>
+        </div>
+    </div>
+
+    <div id="viewHistory" class="app-view" style="display: none;">
+        <div id="selectionToolbar" class="selection-toolbar">
+            <span id="selectedCountText" style="font-size: 0.85rem; font-weight: 700; color: var(--accent-cyan);">0 נבחרו</span>
+            <div class="toolbar-buttons">
+                <button class="btn-toolbar btn-toolbar-select" onclick="selectAllShifts()">בחר הכל</button>
+                <button class="btn-toolbar btn-toolbar-delete" onclick="deleteSelectedShifts()">מחק נבחרים</button>
+            </div>
+        </div>
+
+        <div id="sortingToolbar" class="selection-toolbar">
+            <span style="font-size: 0.85rem; font-weight: 700; color: var(--accent-cyan);">גרור לסידור מחדש</span>
+            <div class="toolbar-buttons">
+                <button class="btn-toolbar btn-toolbar-select" onclick="sortShiftsByDate()">איפוס לתאריכים</button>
+                <button class="btn-toolbar btn-toolbar-save" onclick="saveManualSorting()">שמור סדר</button>
+            </div>
+        </div>
+
+        <div id="shiftsContainer" class="shifts-list"></div>
+    </div>
+
+    <div id="viewProfile" class="app-view" style="display: none;">
+        <div class="clock-screen-card" style="align-items: stretch; gap: 14px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 10px;">
+                <h2 style="font-size: 1.2rem; color: #fff;">פרופיל אישי</h2>
+                <button class="btn-icon-action" style="background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border-color); color: var(--text-main); width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer;" onclick="navigateTo('clock')" title="חזרה">
+                    <svg class="svg-icon" width="18" height="18" viewBox="0 0 24 24">
+                        <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+                    </svg>
+                </button>
+            </div>
+            
+            <div class="card-sub-section">
+                <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 4px;">שם משתמש:</p>
+                <p id="profileName" style="font-size: 1.1rem; font-weight: 700; color: #fff;"></p>
+            </div>
+            <div class="card-sub-section">
+                <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 4px;">כתובת מייל:</p>
+                <p id="profileEmail" style="font-size: 1rem; font-weight: 600; color: var(--accent-cyan);"></p>
+            </div>
+
+            <div id="ownerAdminBtnContainer" style="display: none;">
+                <button class="btn-secondary" style="width: 100%; background: rgba(0, 210, 255, 0.15); border-color: var(--accent-cyan); color: var(--accent-cyan); font-weight: 700; padding: 12px; display: flex; align-items: center; justify-content: center; gap: 8px;" onclick="navigateTo('admin')">
+                    <svg class="svg-icon" width="18" height="18" viewBox="0 0 24 24">
+                        <path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/>
+                    </svg>
+                    ניהול מערכת הרשאות
+                </button>
+            </div>
+
+            <div class="card-sub-section" style="margin-top: 4px;">
+                <div class="card-sub-title" style="justify-content: space-between;">
+                    <span>סיכום נתונים</span>
+                    <select id="profileMonthSelect" class="form-control" style="width: 130px; height: 32px; font-size: 0.8rem;" onchange="updateProfileSummaryData()">
+                        <option value="annual">סיכום שנתי</option>
+                    </select>
+                </div>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-top: 10px;">
+                    <div class="summary-stat-block stat-work">
+                        <span class="stat-label">עבודה</span>
+                        <span class="stat-val" id="profWorkVal">0 שעות</span>
+                    </div>
+                    <div class="summary-stat-block stat-prem">
+                        <span class="stat-label">פרמיה</span>
+                        <span class="stat-val" id="profPremVal">0 שעות</span>
+                    </div>
+                    <div class="summary-stat-block stat-nalt">
+                        <span class="stat-label">נל״ת</span>
+                        <span class="stat-val" id="profNaltVal">0 שעות</span>
+                    </div>
+                </div>
+            </div>
+
+            <div id="ownerInstructorToggleContainer" style="display: none;">
+                <div class="toggle-switch-container">
+                    <span class="toggle-label-text">
+                        <svg class="svg-icon" width="18" height="18" viewBox="0 0 24 24">
+                            <path d="M12 3L1 9l11 6 9-4.91V17h2V9L12 3zM5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82z"/>
+                        </svg>
+                        פרמיית הדרכה
+                    </span>
+                    <label class="switch">
+                        <input type="checkbox" id="ownerInstructorToggle" onchange="toggleOwnerInstructorMode(this.checked)">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="viewAdmin" class="app-view" style="display: none;">
+        <div class="clock-screen-card" style="align-items: stretch; gap: 14px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 10px;">
+                <h2 style="font-size: 1.2rem; color: var(--accent-cyan); display: flex; align-items: center; gap: 8px;">
+                    <svg class="svg-icon" width="20" height="20" viewBox="0 0 24 24">
+                        <path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/>
+                    </svg>
+                    פאנל ניהול הרשאות
+                </h2>
+                <button class="btn-icon-action" style="background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border-color); color: var(--text-main); width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer;" onclick="navigateTo('profile')" title="חזרה">
+                    <svg class="svg-icon" width="18" height="18" viewBox="0 0 24 24">
+                        <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+                    </svg>
+                </button>
+            </div>
+
+            <div class="card-sub-section">
+                <p style="font-size: 0.9rem; font-weight: 700; color: #fff; margin-bottom: 10px;">משתמשים שהתחברו למערכת:</p>
+                <div id="adminUsersList" style="display: flex; flex-direction: column; gap: 8px; max-height: 420px; overflow-y: auto;">
+                    <div style="text-align: center; color: var(--text-muted); padding: 20px;">טוען משתמשים...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="bottom-nav-wrapper">
+    <div class="bottom-nav-container">
+        <div id="toolsDrawerWrap" class="tools-drawer-wrap">
+            <button id="btnToolsMain" class="btn-tools-main" onclick="toggleToolsDrawer()" title="כלים">
+                <svg viewBox="0 0 24 24">
+                    <path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/>
+                </svg>
+            </button>
+            <div class="tools-popup-drawer">
+                <button id="btnToggleMultiPanel" class="btn-drawer-item" data-action="multipanel" data-tooltip="ריבוי פאנלים">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M11.99 18.54l-7.37-5.73L3 14.07l9 7 9-7-1.63-1.27-7.38 5.74zM12 16l7.36-5.73L21 9l-9-7-9 7 1.63 1.27L12 16z"/>
+                    </svg>
+                    <span class="drawer-tooltip">ריבוי פאנלים</span>
+                </button>
+                <button id="btnToggleSorting" class="btn-drawer-item" data-action="sorting" data-tooltip="מיון">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M9 3L5 6.99h3V14h2V6.99h3L9 3zm7 14.01V10h-2v7.01h-3L15 21l4-3.99h-3z"/>
+                    </svg>
+                    <span class="drawer-tooltip">מיון</span>
+                </button>
+                <button id="btnToggleSelection" class="btn-drawer-item" data-action="selection" data-tooltip="בחירה">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-9 14l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                    </svg>
+                    <span class="drawer-tooltip">בחירה</span>
+                </button>
+            </div>
+        </div>
+
+        <div class="bottom-nav" id="bottomNav">
+            <div class="nav-indicator" id="navIndicator"></div>
+            <div class="nav-tab active" data-target="clock" onclick="handleNavClick('clock')">
+                <svg viewBox="0 0 24 24">
+                    <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+                </svg>
+                <span>ראשי</span>
+            </div>
+            <div class="nav-tab" data-target="history" onclick="handleNavClick('history')">
+                <svg viewBox="0 0 24 24">
+                    <path d="M19 3h-4.18C14.4 1.84 13.3 1 12 1c-1.3 0-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm2 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/>
+                </svg>
+                <span>משמרות</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="statusBubbleToast" class="status-bubble-toast"></div>
+
+<!-- Modal for Monthly Summary -->
+<div class="modal-overlay" id="monthlySummaryModal">
+    <div class="modal-sheet">
+        <div class="modal-header">
+            <h2 class="modal-title" id="summaryModalTitle">סיכום חודשי</h2>
+            <button class="btn-close" onclick="closeMonthlySummaryModal()">
+                <svg class="svg-icon" width="22" height="22" viewBox="0 0 24 24">
+                    <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+                </svg>
+            </button>
+        </div>
+        <div class="summary-modal-content">
+            <div class="summary-stats-grid-modal">
+                <div class="summary-stat-block-modal stat-work">
+                    <span class="stat-label-modal">עבודה</span>
+                    <span class="stat-val-modal" id="modalWorkVal">0 שעות</span>
+                </div>
+                <div class="summary-stat-block-modal stat-prem">
+                    <span class="stat-label-modal">פרמיה</span>
+                    <span class="stat-val-modal" id="modalPremVal">0 שעות</span>
+                </div>
+                <div class="summary-stat-block-modal stat-nalt">
+                    <span class="stat-label-modal">נל״ת</span>
+                    <span class="stat-val-modal" id="modalNaltVal">0 שעות</span>
+                </div>
+            </div>
+            <button class="btn-export-full" id="modalExportBtn" onclick="">
+                <svg class="svg-icon" width="18" height="18" viewBox="0 0 24 24">
+                    <path d="M16 5l-4-4-4 4h3v8h2V5h3zm4 4v11c0 1.1-.9 2-2 2H6c-1.1 0-2-.9-2-2V9c0-1.1.9-2 2-2h3v2H6v11h12V9h-3V7h3c1.1 0 2 .9 2 2z"/>
+                </svg>
+                פקד / שתף דוח חודשי
+            </button>
+        </div>
+    </div>
+</div>
+
+<div class="modal-overlay" id="shiftModal">
+    <div class="modal-sheet">
+        <div class="modal-header">
+            <h2 class="modal-title" id="modalTitle">פרטי משמרת</h2>
+            <button class="btn-close" onclick="closeModal()">
+                <svg class="svg-icon" width="22" height="22" viewBox="0 0 24 24">
+                    <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+                </svg>
+            </button>
+        </div>
+
+        <div>
+            <input type="hidden" id="editShiftId">
+
+            <div class="card-sub-section">
+                <div class="card-sub-title">
+                    <svg class="svg-icon" width="16" height="16" viewBox="0 0 24 24">
+                        <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
+                    </svg>
+                    פרטי המשמרת
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">סידור</label>
+                    <div class="full-prem-row">
+                        <input type="text" id="fieldSiddur" class="form-control" placeholder="סידור / מספר רכבת" style="flex: 1;">
+                        <label class="checkbox-label-container">
+                            <input type="checkbox" id="fieldFullPremModal" onchange="onFullPremCheckboxChange(this.checked)">
+                            פרמיה מלאה
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">תאריך</label>
+                    <input type="date" id="fieldDate" class="form-control">
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">שעת כניסה</label>
+                        <div class="input-wrapper">
+                            <input type="time" id="fieldStartTime" class="form-control" onchange="validateModalRealtime(true); handleModalTimeChangeForFullPrem();" oninput="validateModalRealtime(false); handleModalTimeChangeForFullPrem();">
+                            <svg class="field-error-icon" viewBox="0 0 24 24">
+                                <path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">שעת יציאה</label>
+                        <div class="input-wrapper">
+                            <input type="time" id="fieldEndTime" class="form-control" onchange="validateModalRealtime(true); handleModalTimeChangeForFullPrem();" oninput="validateModalRealtime(false); handleModalTimeChangeForFullPrem();">
+                            <svg class="field-error-icon" viewBox="0 0 24 24">
+                                <path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+                <div id="shiftTimeError" class="row-error-msg"></div>
+            </div>
+
+            <div class="card-sub-section">
+                <div class="card-sub-title">
+                    <svg class="svg-icon" width="16" height="16" viewBox="0 0 24 24">
+                        <path d="M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11c-.66 0-1.21.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99zM6.85 7h10.29l1.04 3H5.81l1.04-3zM19 17H5v-4.66l.12-.34h13.77l.11.34V17z"/>
+                        <circle cx="7.5" cy="14.5" r="1.5"/>
+                        <circle cx="16.5" cy="14.5" r="1.5"/>
+                    </svg>
+                    נל״ת (נסיעה ללא תפקיד - אופציונלי)
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">נל״ת הלוך</label>
+                        <select id="selectNaltStart" class="form-control" onchange="handleNaltSelectChange('Start')">
+                            <option value="0">ללא</option>
+                            <option value="40">0:40 (40 דק׳)</option>
+                            <option value="45">0:45 (45 דק׳)</option>
+                            <option value="60">1:00 (60 דק׳)</option>
+                            <option value="90">1:30 (90 דק׳)</option>
+                            <option value="120">2:00 (120 דק׳)</option>
+                            <option value="270">4:30 (270 דק׳)</option>
+                            <option value="custom">אחר...</option>
+                        </select>
+                        <input type="text" id="customNaltStart" class="form-control custom-nalt-input" placeholder="הזן שעות:דקות ידנית">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">נל״ת חזור</label>
+                        <select id="selectNaltEnd" class="form-control" onchange="handleNaltSelectChange('End')">
+                            <option value="0">ללא</option>
+                            <option value="40">0:40 (40 דק׳)</option>
+                            <option value="45">0:45 (45 דק׳)</option>
+                            <option value="60">1:00 (60 דק׳)</option>
+                            <option value="90">1:30 (90 דק׳)</option>
+                            <option value="120">2:00 (120 דק׳)</option>
+                            <option value="270">4:30 (270 דק׳)</option>
+                            <option value="custom">אחר...</option>
+                        </select>
+                        <input type="text" id="customNaltEnd" class="form-control custom-nalt-input" placeholder="הזן שעות:דקות ידנית">
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-sub-section">
+                <div class="card-sub-title">
+                    <svg class="svg-icon" width="16" height="16" viewBox="0 0 24 24">
+                        <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/>
+                    </svg>
+                    פרמיה (אופציונלי)
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">משעה</label>
+                        <div class="input-wrapper">
+                            <input type="time" id="fieldPremStart" class="form-control" onchange="handleManualPremChange(); validateModalRealtime(true);" oninput="handleManualPremChange(); validateModalRealtime(false);">
+                            <svg class="field-error-icon" viewBox="0 0 24 24">
+                                <path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">עד שעה</label>
+                        <div class="input-wrapper">
+                            <input type="time" id="fieldPremEnd" class="form-control" onchange="handleManualPremChange(); validateModalRealtime(true);" oninput="handleManualPremChange(); validateModalRealtime(false);">
+                            <svg class="field-error-icon" viewBox="0 0 24 24">
+                                <path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+                <div id="premTimeError" class="row-error-msg"></div>
+            </div>
+
+            <div class="card-sub-section" id="instructorSectionModal" style="display: none;">
+                <div class="card-sub-title" style="color: var(--accent-instructor);">
+                    <svg class="svg-icon" width="16" height="16" viewBox="0 0 24 24">
+                        <path d="M12 3L1 9l11 6 9-4.91V17h2V9L12 3zM5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82z"/>
+                    </svg>
+                    פרמיית הדרכה (אופציונלי)
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">משעה</label>
+                        <div class="input-wrapper">
+                            <input type="time" id="fieldInstructorStart" class="form-control" onchange="validateModalRealtime(true)" oninput="validateModalRealtime(false)">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">עד שעה</label>
+                        <div class="input-wrapper">
+                            <input type="time" id="fieldInstructorEnd" class="form-control" onchange="validateModalRealtime(true)" oninput="validateModalRealtime(false)">
+                        </div>
+                    </div>
+                </div>
+                <div id="instructorTimeError" class="row-error-msg"></div>
+            </div>
+
+            <div class="card-sub-section">
+                <div class="form-group">
+                    <label class="form-label" style="display: flex; align-items: center; gap: 6px;">
+                        <svg class="svg-icon" width="16" height="16" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"/></svg>
+                        הערות למשמרת (אופציונלי)
+                    </label>
+                    <textarea id="fieldNotes" class="form-control" rows="2" placeholder="לדוגמה: עיכוב בגלל תקלה, החלפת משמרת..." style="height: auto; text-align: right; resize: none;"></textarea>
+                </div>
+            </div>
+
+            <button type="button" class="btn-save-modal" onclick="saveShiftDirect()">שמור משמרת</button>
+        </div>
+    </div>
+</div>
+
+<div class="modal-overlay" id="settingsModal">
+    <div class="modal-sheet">
+        <div class="modal-header">
+            <h2 class="modal-title">הגדרות מערכת</h2>
+            <button class="btn-close" onclick="closeSettingsModal()">
+                <svg class="svg-icon" width="22" height="22" viewBox="0 0 24 24">
+                    <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+                </svg>
+            </button>
+        </div>
+        <div style="padding: 16px 0; display: flex; flex-direction: column; gap: 12px; color: var(--text-muted);">
+            <div class="card-sub-section" style="padding: 14px; text-align: center;">
+                <p style="font-weight: 700; color: var(--accent-cyan); margin-bottom: 6px;">סקיצת הגדרות עתידיות</p>
+                <p style="font-size: 0.85rem;">כאן יופיעו בעתיד הגדרות תצוגה, התראות והעדפות אישיות.</p>
+            </div>
+            <button class="btn-secondary" onclick="closeSettingsModal()">סגור</button>
+        </div>
+    </div>
+</div>
+
+<div class="error-dialog-overlay" id="errorDialog">
+    <div class="error-dialog-card">
+        <div class="error-dialog-icon">
+            <svg class="svg-icon" width="28" height="28" viewBox="0 0 24 24">
+                <path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/>
+            </svg>
+        </div>
+        <div class="error-dialog-title" id="errorDialogTitle">שגיאה בנתוני המשמרת</div>
+        <div class="error-dialog-msg" id="errorDialogMessage">שעות הכניסה והיציאה אינן יכולות להיות זהות.</div>
+        <button type="button" class="btn-error-close" onclick="closeErrorDialog()">הבנתי</button>
+    </div>
+</div>
+
+<div class="error-dialog-overlay" id="smartAlertDialog">
+    <div class="error-dialog-card">
+        <div class="error-dialog-icon" id="smartAlertIcon">
+            <svg class="svg-icon" width="28" height="28" viewBox="0 0 24 24">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+            </svg>
+        </div>
+        <div class="error-dialog-title" id="smartAlertTitle">שים לב</div>
+        <div class="error-dialog-msg" id="smartAlertMessage">זמנים זהים זוהו.</div>
+        <div class="error-dialog-actions" id="smartAlertActions"></div>
+    </div>
+</div>
+
+<div id="printArea" style="display: none;"></div>
+
+<!-- External JavaScript File -->
+<script type="module" src="script.js"></script>
+</body>
+</html>
