@@ -640,9 +640,7 @@ function showStatusBubbleToast(msg) {
     }, 2200);
 }
 
-// ---------------------------------------------------------
-// ריכוז וייצוא כל הפונקציות תחת window למניעת שגיאות
-// ---------------------------------------------------------
+// פונקציות גלובליות נדרשות
 window.closeUserMenu = function(e) {
     if(e) {
         e.stopPropagation();
@@ -802,7 +800,6 @@ window.handleNaltSelectChange = function(type) {
         customInput.value = '';
     }
 };
-// ---------------------------------------------------------
 
 function setupGlobalInteractions() {
     const drawerItems = document.querySelectorAll('.tools-popup-drawer .btn-drawer-item, .month-accordion-header .btn-summary-modal');
@@ -1329,45 +1326,6 @@ function formatMonthName(mk) {
     const [y, m] = mk.split('-');
     const months = ['ינואר', 'פברואר', 'מרץ', 'אפריל', 'מאי', 'יוני', 'יולי', 'אוגוסט', 'ספטמבר', 'אוקטובר', 'נובמבר', 'דצמבר'];
     return months[parseInt(m, 10) - 1] + ' ' + y;
-}
-
-window.handleNaltSelectChange = function(type) {
-    const select = document.getElementById('selectNalt' + type);
-    const customInput = document.getElementById('customNalt' + type);
-    if (select.value === 'custom') {
-        customInput.style.display = 'block';
-        customInput.focus();
-    } else {
-        customInput.style.display = 'none';
-        customInput.value = '';
-    }
-};
-
-const PRESET_NALT_MINUTES = [0, 40, 45, 60, 90, 120, 270];
-
-function setNaltFieldUI(type, mins) {
-    const select = document.getElementById('selectNalt' + type);
-    const customInput = document.getElementById('customNalt' + type);
-    
-    mins = Number(mins) || 0;
-    if (PRESET_NALT_MINUTES.includes(mins)) {
-        select.value = String(mins);
-        customInput.style.display = 'none';
-        customInput.value = '';
-    } else {
-        select.value = 'custom';
-        customInput.style.display = 'block';
-        customInput.value = formatMinutesToDisplay(mins);
-    }
-}
-
-function getNaltFieldValue(type) {
-    const select = document.getElementById('selectNalt' + type);
-    const customInput = document.getElementById('customNalt' + type);
-    if (select.value === 'custom') {
-        return parseInputToMinutes(customInput.value);
-    }
-    return Number(select.value) || 0;
 }
 
 window.showErrorDialog = function(msg, title = 'שגיאה בנתוני המשמרת') {
@@ -1929,6 +1887,11 @@ function buildShiftCardHTML(shift, overlappingIds) {
     else if (shiftTypeClass === 'type-noon') cornerIconInner = noonSvg;
     else if (shiftTypeClass === 'type-night') cornerIconInner = nightSvg;
 
+    const naltSvgIcon = '<svg class="svg-icon" width="13" height="13" viewBox="0 0 24 24"><path fill="currentColor" d="M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11c-.66 0-1.22.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99zM6.85 7h10.29l1.04 3H5.81l1.04-3zM19 17H5v-4.66l.12-.34h13.76l.12.34V17z"/><circle fill="currentColor" cx="7.5" cy="14.5" r="1.5"/><circle fill="currentColor" cx="16.5" cy="14.5" r="1.5"/></svg>';
+    const premSvgIcon = '<svg class="svg-icon" width="13" height="13" viewBox="0 0 24 24"><path fill="currentColor" d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>';
+    const instructorSvgIcon = '<svg class="svg-icon" width="13" height="13" viewBox="0 0 24 24"><path fill="currentColor" d="M12 3L1 9l4 2.18v6L12 21l7-3.82v-6l2-1.09V17h2V9L12 3zm6.82 6L12 12.72 5.18 9 12 5.28 18.82 9zM17 15.99l-5 2.73-5-2.73v-3.72L12 15l5-2.73v3.72z"/></svg>';
+    const notesSvgIcon = '<svg class="svg-icon" width="13" height="13" viewBox="0 0 24 24"><path fill="currentColor" d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 9h12v2H6V9zm8 5H6v-2h8v2zm4-6H6V6h12v2z"/></svg>';
+
     return '\
         <div class="shift-card ' + shiftTypeClass + ' ' + (isActive ? 'active-shift' : '') + ' ' + (isOverlap ? 'has-overlap' : '') + ' ' + (isIncomplete && !isActive ? 'incomplete' : '') + ' ' + (isSelected ? 'selected-for-delete' : '') + '" \
              data-id="' + shiftIdStr + '" \
@@ -2004,10 +1967,10 @@ function buildShiftCardHTML(shift, overlappingIds) {
                     </div>\
                     <div class="shift-badges-row">\
                         <div class="badges-group-right">\
-                            ' + (hasNalt ? '<span class="tag tag-nalt">נל״ת</span>' : '') + '\
-                            ' + (hasPrem ? '<span class="tag tag-prem">פרמיה</span>' : '') + '\
-                            ' + (hasInstructor ? '<span class="tag tag-instructor">הדרכה</span>' : '') + '\
-                            ' + (hasNotes ? '<span class="tag tag-notes">הערות</span>' : '') + '\
+                            ' + (hasNalt ? '<span class="tag tag-nalt">' + naltSvgIcon + ' נל״ת</span>' : '') + '\
+                            ' + (hasPrem ? '<span class="tag tag-prem">' + premSvgIcon + ' פרמיה</span>' : '') + '\
+                            ' + (hasInstructor ? '<span class="tag tag-instructor">' + instructorSvgIcon + ' הדרכה</span>' : '') + '\
+                            ' + (hasNotes ? '<span class="tag tag-notes">' + notesSvgIcon + ' הערות</span>' : '') + '\
                         </div>\
                         <div class="badges-group-left">\
                             ' + (hasStart && hasEnd ? '<span class="tag tag-complete">סגור</span>' : '<span class="tag tag-alert">חסר</span>') + '\
@@ -2036,6 +1999,14 @@ function buildShiftCardHTML(shift, overlappingIds) {
                                 </div>\
                             </div>\
                         </div>\
+                        ' + (hasNalt ? '\
+                        <div class="sub-breakdown">\
+                            <div style="font-size: 0.78rem; font-weight: 700; color: #38bdf8; margin-bottom: 6px; display: flex; align-items: center; gap: 6px;">\
+                                ' + naltSvgIcon + ' נל"ת (נסיעה ללא תפקיד)\
+                            </div>\
+                            ' + (naltStart > 0 ? '<div class="breakdown-item"><span class="breakdown-label">נל"ת הלוך (' + formatMinutesToHM(naltStart) + '):</span><span class="breakdown-value" dir="ltr">' + naltStartRange + '</span></div>' : '') + '\
+                            ' + (naltEnd > 0 ? '<div class="breakdown-item"><span class="breakdown-label">נל"ת חזור (' + formatMinutesToHM(naltEnd) + '):</span><span class="breakdown-value" dir="ltr">' + naltEndRange + '</span></div>' : '') + '\
+                        </div>' : '') + '\
                         ' + (hasNotes ? '<div class="notes-display-box"><span>' + shift.notes + '</span></div>' : '') + '\
                         <div class="card-actions-bar">\
                             <button class="btn-secondary" onclick="event.stopPropagation(); openShiftModal(\'' + shiftIdStr + '\')">עריכה</button>\
