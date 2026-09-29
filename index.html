@@ -566,6 +566,19 @@
 
 <div id="printArea" style="display: none;"></div>
 
+<!-- הוספת פונקציית הגלובל למניעת שגיאות מודול ישירות ב-HTML -->
+<script>
+    window.getNaltFieldValue = function(type) {
+        const select = document.getElementById('selectNalt' + type);
+        const customInput = document.getElementById('customNalt' + type);
+        if (!select) return 0;
+        if (select.value === 'custom') {
+            return typeof parseInputToMinutes === 'function' ? parseInputToMinutes(customInput ? customInput.value : '') : 0;
+        }
+        return Number(select.value) || 0;
+    };
+</script>
+
 <!-- External JavaScript File -->
 <script type="module" src="script.js"></script>
 </body>
