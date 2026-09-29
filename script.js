@@ -334,28 +334,28 @@ window.loadAdminUsersList = async function() {
 
             const copySvg = '<svg class="svg-icon" width="13" height="13" viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>';
 
-            html += `
-                <div style="background: rgba(0,0,0,0.25); border: 1px solid rgba(255,255,255,0.06); border-radius: 12px; padding: 10px 12px; display: flex; flex-direction: column; gap: 8px;">
-                    <div style="display: flex; justify-content: space-between; align-items: center;">
-                        <div style="display: flex; align-items: center; gap: 6px; min-width: 0;">
-                            <span style="font-size: 0.9rem; font-weight: 700; color: #fff; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${userEmail}</span>
-                            <button class="btn-secondary copy-icon-btn" onclick="navigator.clipboard.writeText('${userEmail}')" ontouchstart="this.classList.add('pressed-copy')" ontouchend="this.classList.remove('pressed-copy')" onmousedown="this.classList.add('pressed-copy')" onmouseup="this.classList.remove('pressed-copy')" title="העתק מייל">${copySvg}</button>
-                        </div>
-                        <span style="font-size: 0.72rem; font-weight: 700; padding: 2px 8px; border-radius: 6px; background: ${isInst ? 'rgba(16,185,129,0.15); color: var(--accent-green);' : 'rgba(148,163,184,0.1); color: var(--text-muted);'}">
-                            ${isInst ? 'מדריך פעיל' : 'משתמש רגיל'}
-                        </span>
-                    </div>
-                    <div style="display: flex; justify-content: space-between; align-items: center; gap: 6px;">
-                        <div style="display: flex; align-items: center; gap: 6px; min-width: 0;">
-                            <span style="font-size: 0.72rem; color: var(--text-muted); font-family: monospace; direction: ltr; overflow: hidden; text-overflow: ellipsis;">${uId}</span>
-                            <button class="btn-secondary copy-icon-btn" onclick="navigator.clipboard.writeText('${uId}')" ontouchstart="this.classList.add('pressed-copy')" ontouchend="this.classList.remove('pressed-copy')" onmousedown="this.classList.add('pressed-copy')" onmouseup="this.classList.remove('pressed-copy')" title="העתק UID">${copySvg}</button>
-                        </div>
-                        <button class="btn-secondary" style="padding: 5px 12px; font-size: 0.78rem; font-weight: 700; white-space: nowrap; width: auto; background: ${isInst ? 'rgba(239,68,68,0.2); color:#fca5a5; border-color: rgba(239,68,68,0.4);' : 'rgba(16,185,129,0.2); color:#34d399; border-color: rgba(16,185,129,0.4);'}; transition: transform 0.1s ease, opacity 0.1s ease;" onclick="toggleInstructorStatus('${uId}', ${!isInst})" onmousedown="this.style.transform='scale(0.92)'" onmouseup="this.style.transform='scale(1)'" ontouchstart="this.style.transform='scale(0.92)'" ontouchend="this.style.transform='scale(1)'">
-                            ${isInst ? 'ביטול הרשאה' : 'מתן הרשאה'}
-                        </button>
-                    </div>
-                </div>
-            `;
+            html += '\
+                <div style="background: rgba(0,0,0,0.25); border: 1px solid rgba(255,255,255,0.06); border-radius: 12px; padding: 10px 12px; display: flex; flex-direction: column; gap: 8px;">\
+                    <div style="display: flex; justify-content: space-between; align-items: center;">\
+                        <div style="display: flex; align-items: center; gap: 6px; min-width: 0;">\
+                            <span style="font-size: 0.9rem; font-weight: 700; color: #fff; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">' + userEmail + '</span>\
+                            <button class="btn-secondary copy-icon-btn" onclick="navigator.clipboard.writeText(\'' + userEmail + '\')" title="העתק מייל">' + copySvg + '</button>\
+                        </div>\
+                        <span style="font-size: 0.72rem; font-weight: 700; padding: 2px 8px; border-radius: 6px; background: ' + (isInst ? 'rgba(16,185,129,0.15); color: var(--accent-green);' : 'rgba(148,163,184,0.1); color: var(--text-muted);') + '">\
+                            ' + (isInst ? 'מדריך פעיל' : 'משתמש רגיל') + '\
+                        </span>\
+                    </div>\
+                    <div style="display: flex; justify-content: space-between; align-items: center; gap: 6px;">\
+                        <div style="display: flex; align-items: center; gap: 6px; min-width: 0;">\
+                            <span style="font-size: 0.72rem; color: var(--text-muted); font-family: monospace; direction: ltr; overflow: hidden; text-overflow: ellipsis;">' + uId + '</span>\
+                            <button class="btn-secondary copy-icon-btn" onclick="navigator.clipboard.writeText(\'' + uId + '\')" title="העתק UID">' + copySvg + '</button>\
+                        </div>\
+                        <button class="btn-secondary" style="padding: 5px 12px; font-size: 0.78rem; font-weight: 700; white-space: nowrap; width: auto; background: ' + (isInst ? 'rgba(239,68,68,0.2); color:#fca5a5; border-color: rgba(239,68,68,0.4);' : 'rgba(16,185,129,0.2); color:#34d399; border-color: rgba(16,185,129,0.4);') + ';" onclick="toggleInstructorStatus(\'' + uId + '\', ' + (!isInst) + ')">\
+                            ' + (isInst ? 'ביטול הרשאה' : 'מתן הרשאה') + '\
+                        </button>\
+                    </div>\
+                </div>\
+            ';
         });
 
         if (count === 0) {
@@ -521,7 +521,7 @@ if (bottomNav) {
         let newOffset = navCurrentOffsetPercent + movePercent;
         newOffset = Math.max(0, Math.min(100, newOffset));
         
-        navIndicator.style.transform = `translateX(-${newOffset}%)`;
+        navIndicator.style.transform = 'translateX(-' + newOffset + '%)';
     }, { passive: false });
 
     bottomNav.addEventListener('touchend', (e) => {
@@ -602,7 +602,7 @@ window.navigateTo = function(viewName, closeMenu = true) {
     } else {
         bottomNavEl.style.display = 'flex';
         document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
-        const targetTab = document.querySelector(`.nav-tab[data-target="${viewName}"]`);
+        const targetTab = document.querySelector('.nav-tab[data-target="' + viewName + '"]');
         if (targetTab) targetTab.classList.add('active');
     }
 
@@ -755,7 +755,7 @@ function populateProfileMonthSelector() {
     
     let optionsHTML = '<option value="annual">סיכום שנתי</option>';
     sortedMonths.forEach(mk => {
-        optionsHTML += `<option value="${mk}">${formatMonthName(mk)}</option>`;
+        optionsHTML += '<option value="' + mk + '">' + formatMonthName(mk) + '</option>';
     });
     select.innerHTML = optionsHTML;
 }
@@ -793,10 +793,10 @@ function updateLiveClock() {
     const hh = String(now.getHours()).padStart(2, '0');
     const mm = String(now.getMinutes()).padStart(2, '0');
 
-    document.getElementById('clockMain').textContent = `${hh}:${mm}`;
+    document.getElementById('clockMain').textContent = hh + ':' + mm;
 
     const days = ['ראשון', 'שני', 'שלישי', 'רביעי', 'חמישי', 'שישי', 'שבת'];
-    const dStr = `יום ${days[now.getDay()]}, ${now.getDate()}.${now.getMonth() + 1}.${now.getFullYear()}`;
+    const dStr = 'יום ' + days[now.getDay()] + ', ' + now.getDate() + '.' + (now.getMonth() + 1) + '.' + now.getFullYear();
     document.getElementById('currentDate').textContent = dStr;
 
     updateActiveShiftUI();
@@ -837,7 +837,7 @@ function updateActiveShiftUI() {
         const s = String(totalSec % 60).padStart(2, '0');
 
         headerTimer.style.display = 'block';
-        headerTimer.textContent = `${h}:${m}:${s}`;
+        headerTimer.textContent = h + ':' + m + ':' + s;
         
         let durMins = Math.floor(totalSec / 60);
         let pct = Math.min((durMins / 720), 1); 
@@ -963,7 +963,7 @@ function handleLiveStart() {
     const y = now.getFullYear();
     const m = String(now.getMonth() + 1).padStart(2, '0');
     const d = String(now.getDate()).padStart(2, '0');
-    const dateStr = `${y}-${m}-${d}`;
+    const dateStr = y + '-' + m + '-' + d;
     const timeStr = String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0');
 
     const newShift = {
@@ -993,7 +993,7 @@ function handleLiveEnd() {
     const y = now.getFullYear();
     const m = String(now.getMonth() + 1).padStart(2, '0');
     const d = String(now.getDate()).padStart(2, '0');
-    const currentDateStr = `${y}-${m}-${d}`;
+    const currentDateStr = y + '-' + m + '-' + d;
     const timeStr = String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0');
     
     const active = getActiveShift();
@@ -1043,9 +1043,9 @@ function handleLiveEnd() {
     if (isSameDay && durationMins > 0 && durationMins < 180) {
         const hoursFormatted = Math.floor(durationMins / 60);
         const minsFormatted = durationMins % 60;
-        const durStr = hoursFormatted > 0 ? `${hoursFormatted} שעות ו-${minsFormatted} דק׳` : `${minsFormatted} דק׳`;
+        const durStr = hoursFormatted > 0 ? hoursFormatted + ' שעות ו-' + minsFormatted + ' דק׳' : minsFormatted + ' דק׳';
 
-        showSmartAlertDialog('משמרת קצרה מהרגיל', `משמרת זו קצרה מהרגיל ותימשך כ-${durStr}. האם אתה בטוח שברצונך לסיים ולשמור אותה?`, 'אישור (שמירה)', 'ביטול', () => {
+        showSmartAlertDialog('משמרת קצרה מהרגיל', 'משמרת זו קצרה מהרגיל ותימשך כ-' + durStr + '. האם אתה בטוח שברצונך לסיים ולשמור אותה?', 'אישור (שמירה)', 'ביטול', () => {
             active.endTime = timeStr;
             if (active.fullPrem && active.startTime !== timeStr) {
                 applyFullPremToShift(active);
@@ -1095,16 +1095,16 @@ function formatMinutesToHM(mins) {
     if (!mins || mins <= 0) return '0 שעות';
     const h = Math.floor(mins / 60);
     const m = mins % 60;
-    if (h === 0) return `${m} דק׳`;
-    if (m === 0) return `${h} שעות`;
-    return `${h}:${String(m).padStart(2, '0')}`;
+    if (h === 0) return m + ' דק׳';
+    if (m === 0) return h + ' שעות';
+    return h + ':' + String(m).padStart(2, '0');
 }
 
 function formatMinutesToDisplay(mins) {
     if (!mins || mins <= 0) return '';
     const h = Math.floor(mins / 60);
     const m = mins % 60;
-    return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
+    return String(h).padStart(2, '0') + ':' + String(m).padStart(2, '0');
 }
 
 function addMinutesToTime(timeStr, minsToAdd) {
@@ -1132,9 +1132,9 @@ function calculateDuration(start, end) {
     const hours = Math.floor(diff / 60);
     const mins = diff % 60;
     if (hours === 0 && mins === 0) return '0 דק׳';
-    if (mins === 0) return `${hours} שעות`;
-    if (hours === 0) return `${mins} דק׳`;
-    return `${hours} שעות ו-${mins} דק׳`;
+    if (mins === 0) return hours + ' שעות';
+    if (hours === 0) return mins + ' דק׳';
+    return hours + ' שעות ו-' + mins + ' דק׳';
 }
 
 function calculateDurationMinutes(start, end) {
@@ -1164,12 +1164,12 @@ function parseSiddurDisplay(siddur) {
 function formatMonthName(mk) {
     const [y, m] = mk.split('-');
     const months = ['ינואר', 'פברואר', 'מרץ', 'אפריל', 'מאי', 'יוני', 'יולי', 'אוגוסט', 'ספטמבר', 'אוקטובר', 'נובמבר', 'דצמבר'];
-    return `${months[parseInt(m, 10) - 1]} ${y}`;
+    return months[parseInt(m, 10) - 1] + ' ' + y;
 }
 
 window.handleNaltSelectChange = function(type) {
-    const select = document.getElementById(`selectNalt${type}`);
-    const customInput = document.getElementById(`customNalt${type}`);
+    const select = document.getElementById('selectNalt' + type);
+    const customInput = document.getElementById('customNalt' + type);
     if (select.value === 'custom') {
         customInput.style.display = 'block';
         customInput.focus();
@@ -1182,8 +1182,8 @@ window.handleNaltSelectChange = function(type) {
 const PRESET_NALT_MINUTES = [0, 40, 45, 60, 90, 120, 270];
 
 function setNaltFieldUI(type, mins) {
-    const select = document.getElementById(`selectNalt${type}`);
-    const customInput = document.getElementById(`customNalt${type}`);
+    const select = document.getElementById('selectNalt' + type);
+    const customInput = document.getElementById('customNalt' + type);
     
     mins = Number(mins) || 0;
     if (PRESET_NALT_MINUTES.includes(mins)) {
@@ -1198,8 +1198,8 @@ function setNaltFieldUI(type, mins) {
 }
 
 function getNaltFieldValue(type) {
-    const select = document.getElementById(`selectNalt${type}`);
-    const customInput = document.getElementById(`customNalt${type}`);
+    const select = document.getElementById('selectNalt' + type);
+    const customInput = document.getElementById('customNalt' + type);
     if (select.value === 'custom') {
         return parseInputToMinutes(customInput.value);
     }
@@ -1315,54 +1315,54 @@ window.printMonthReport = function(mk) {
          totNaltMins += naltMins;
 
          const dateParts = s.date.split('-');
-         const dFmt = `${dateParts[2]}/${dateParts[1]}/${dateParts[0]}`;
+         const dFmt = dateParts[2] + '/' + dateParts[1] + '/' + dateParts[0];
          
-         tableRows += `
-            <tr>
-                <td>${dFmt}</td>
-                <td>${s.siddur || '-'}</td>
-                <td dir="ltr">${s.startTime || '-'} - ${s.endTime || '-'}</td>
-                <td>${wMins > 0 ? formatMinutesToDisplay(wMins) : '-'}</td>
-                <td>${pMins > 0 ? formatMinutesToDisplay(pMins) : '-'}</td>
-                <td>${naltMins > 0 ? formatMinutesToDisplay(naltMins) : '-'}</td>
-            </tr>
-         `;
+         tableRows += '\
+            <tr>\
+                <td>' + dFmt + '</td>\
+                <td>' + (s.siddur || '-') + '</td>\
+                <td dir="ltr">' + (s.startTime || '-') + ' - ' + (s.endTime || '-') + '</td>\
+                <td>' + (wMins > 0 ? formatMinutesToDisplay(wMins) : '-') + '</td>\
+                <td>' + (pMins > 0 ? formatMinutesToDisplay(pMins) : '-') + '</td>\
+                <td>' + (naltMins > 0 ? formatMinutesToDisplay(naltMins) : '-') + '</td>\
+            </tr>\
+         ';
     });
 
     const monthName = formatMonthName(mk);
     const printDiv = document.getElementById('printArea');
-    printDiv.innerHTML = `
-        <div class="print-header">רכבת ישראל - סיכום משמרות לחודש ${monthName}</div>
-        <div class="print-summary-box">
-            <div class="print-summary-item">
-                <div class="print-summary-title">סה"כ שעות עבודה</div>
-                <div class="print-summary-val">${formatMinutesToHM(totWorkMins)}</div>
-            </div>
-            <div class="print-summary-item">
-                <div class="print-summary-title">סה"כ שעות פרמיה</div>
-                <div class="print-summary-val">${formatMinutesToHM(totPremMins)}</div>
-            </div>
-            <div class="print-summary-item">
-                <div class="print-summary-title">סה"כ זמן נל"ת</div>
-                <div class="print-summary-val">${formatMinutesToHM(totNaltMins)}</div>
-            </div>
-        </div>
-        <table class="print-table">
-            <thead>
-                <tr>
-                    <th>תאריך</th>
-                    <th>סידור/רכבת</th>
-                    <th>שעות משמרת</th>
-                    <th>משך עבודה</th>
-                    <th>שעות פרמיה</th>
-                    <th>זמן נל"ת</th>
-                </tr>
-            </thead>
-            <tbody>
-                ${tableRows}
-            </tbody>
-        </table>
-    `;
+    printDiv.innerHTML = '\
+        <div class="print-header">רכבת ישראל - סיכום משמרות לחודש ' + monthName + '</div>\
+        <div class="print-summary-box">\
+            <div class="print-summary-item">\
+                <div class="print-summary-title">סה"כ שעות עבודה</div>\
+                <div class="print-summary-val">' + formatMinutesToHM(totWorkMins) + '</div>\
+            </div>\
+            <div class="print-summary-item">\
+                <div class="print-summary-title">סה"כ שעות פרמיה</div>\
+                <div class="print-summary-val">' + formatMinutesToHM(totPremMins) + '</div>\
+            </div>\
+            <div class="print-summary-item">\
+                <div class="print-summary-title">סה"כ זמן נל"ת</div>\
+                <div class="print-summary-val">' + formatMinutesToHM(totNaltMins) + '</div>\
+            </div>\
+        </div>\
+        <table class="print-table">\
+            <thead>\
+                <tr>\
+                    <th>תאריך</th>\
+                    <th>סידור/רכבת</th>\
+                    <th>שעות משמרת</th>\
+                    <th>משך עבודה</th>\
+                    <th>שעות פרמיה</th>\
+                    <th>זמן נל"ת</th>\
+                </tr>\
+            </thead>\
+            <tbody>\
+                ' + tableRows + '\
+            </tbody>\
+        </table>\
+    ';
     window.print();
 };
 
@@ -1430,7 +1430,7 @@ window.handleCardClick = function(event, id) {
 
 function updateSelectionUI() {
     const countText = document.getElementById('selectedCountText');
-    countText.textContent = `${selectedShiftIds.size} נבחרו`;
+    countText.textContent = selectedShiftIds.size + ' נבחרו';
 }
 
 window.selectAllShifts = function() {
@@ -1448,7 +1448,7 @@ window.deleteSelectedShifts = function() {
     
     showSmartAlertDialog(
         'מחיקת משמרות',
-        `האם אתה בטוח שברצונך למחוק ${selectedShiftIds.size} משמרות שנבחרו? פעולה זו אינה הפיכה.`,
+        'האם אתה בטוח שברצונך למחוק ' + selectedShiftIds.size + ' משמרות שנבחרו? פעולה זו אינה הפיכה.',
         'מחק הכל',
         'ביטול',
         () => {
@@ -1756,228 +1756,125 @@ function buildShiftCardHTML(shift, overlappingIds) {
         }
     }
 
-    let morningSvg = '<g fill="none" stroke-width="2" stroke-linecap="round"><path d="M3 14h18M7 14a5 5 0 0 1 10 0" stroke="url(#combined-grad-' + shiftIdStr + ')"/><path d="M12 3v4M6.34 5.34l2.12 2.12M17.66 5.34l-2.12 2.12M3.5 10h3M20.5 10h-3" stroke="url(#sun-grad-' + shiftIdStr + ')"/><path d="M5 18h14M8 21h8" stroke="url(#morning-grad-' + shiftIdStr + ')"/></g>';
-    let noonSvg = '<g fill="url(#noon-grad-' + shiftIdStr + ')" stroke="url(#noon-grad-' + shiftIdStr + ')"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.93 4.93l1.41 1.41m11.32 11.32l1.41 1.41M2 12h2m16 0h2M4.93 19.07l1.41-1.41m11.32-11.32l1.41-1.41" fill="none" stroke-width="2" stroke-linecap="round"/></g>';
-    let nightSvg = '<g><circle cx="11.5" cy="12" r="8" fill="url(#night-grad-' + shiftIdStr + ')" mask="url(#moon-mask-' + shiftIdStr + ')"/><path d="M19 4l1 2 2 1-2 1-1 2-1-2-2-1 2-1 1-2zM14 10l.5 1 1 .5-1 .5-.5 1-.5-1-1-.5 1-.5.5-1zM18.5 13l.4.8.8.4-.8.4-.4.8-.4-.8-.8-.4.8-.4.4-.8z" fill="url(#night-grad-' + shiftIdStr + ')" stroke="none"/></g>';
-
-    let cornerIconInner = '';
-    if (shiftTypeClass === 'type-morning') cornerIconInner = morningSvg;
-    else if (shiftTypeClass === 'type-noon') cornerIconInner = noonSvg;
-    else if (shiftTypeClass === 'type-night') cornerIconInner = nightSvg;
-
-    return `
-        <div class="shift-card ${shiftTypeClass} ${isActive ? 'active-shift' : ''} ${isOverlap ? 'has-overlap' : ''} ${isIncomplete && !isActive ? 'incomplete' : ''} ${isSelected ? 'selected-for-delete' : ''}" 
-             data-id="${shiftIdStr}" 
-             draggable="${isSortingMode ? 'true' : 'false'}">
-            
-            <div class="shift-corner-icon">
-                <svg viewBox="0 0 24 24">
-                    <defs>
-                        <linearGradient id="morning-grad-${shiftIdStr}" x1="0%" y1="0%" x2="100%" y2="100%">
-                            <stop offset="0%" stop-color="#38bdf8"/>
-                            <stop offset="50%" stop-color="#0ea5e9"/>
-                            <stop offset="100%" stop-color="#0369a1"/>
-                        </linearGradient>
-                        <linearGradient id="combined-grad-${shiftIdStr}" x1="0%" y1="0%" x2="0%" y2="100%">
-                            <stop offset="0%" stop-color="#fde047"/>
-                            <stop offset="25%" stop-color="#fb923c"/>
-                            <stop offset="50%" stop-color="#ef4444"/>
-                            <stop offset="51%" stop-color="#38bdf8"/>
-                            <stop offset="100%" stop-color="#0369a1"/>
-                        </linearGradient>
-                        <linearGradient id="sun-grad-${shiftIdStr}" x1="0%" y1="0%" x2="100%" y2="100%">
-                            <stop offset="0%" stop-color="#fde047"/>
-                            <stop offset="35%" stop-color="#f97316"/>
-                            <stop offset="100%" stop-color="#e11d48"/>
-                        </linearGradient>
-                        <linearGradient id="noon-grad-${shiftIdStr}" x1="0%" y1="0%" x2="100%" y2="100%">
-                            <stop offset="0%" stop-color="#fed7aa"/>
-                            <stop offset="50%" stop-color="#f97316"/>
-                            <stop offset="100%" stop-color="#c2410c"/>
-                        </linearGradient>
-                        <linearGradient id="night-grad-${shiftIdStr}" x1="0%" y1="0%" x2="100%" y2="100%">
-                            <stop offset="0%" stop-color="#e879f9"/>
-                            <stop offset="50%" stop-color="#a855f7"/>
-                            <stop offset="100%" stop-color="#7e22ce"/>
-                        </linearGradient>
-                        <mask id="moon-mask-${shiftIdStr}">
-                            <rect width="24" height="24" fill="white"/>
-                            <circle cx="15.5" cy="11.5" r="7.5" fill="black"/>
-                        </mask>
-                    </defs>
-                    ${cornerIconInner}
-                </svg>
-            </div>
-            
-            <div class="shift-header" onclick="handleCardClick(event, '${shiftIdStr}')">
-                <div class="drag-handle-container">
-                    <svg class="svg-icon" width="20" height="20" viewBox="0 0 24 24" style="color: var(--text-muted);">
-                        <circle cx="9" cy="6" r="1.5"/><circle cx="15" cy="6" r="1.5"/>
-                        <circle cx="9" cy="12" r="1.5"/><circle cx="15" cy="12" r="1.5"/>
-                        <circle cx="9" cy="18" r="1.5"/><circle cx="15" cy="18" r="1.5"/>
-                    </svg>
-                </div>
-                <div class="select-checkbox-container">
-                    <div class="custom-checkbox">
-                        <svg class="svg-icon" width="14" height="14" viewBox="0 0 24 24">
-                            <path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/>
-                        </svg>
-                    </div>
-                </div>
-                <div class="shift-content-block">
-                    <div class="shift-row-main">
-                        <div class="shift-date-box" style="margin-left: 10px;">
-                            <span class="shift-day-name">${dayName}</span>
-                            <span class="shift-formatted-date">${dateFmt}</span>
-                        </div>
-                        <div class="shift-middle-box">
-                            ${hasSiddur ? `
-                            <span class="shift-siddur-primary" style="${siddurPrimary.length > 10 ? 'font-size: 0.85rem;' : ''}">${siddurPrimary}</span>${siddurSecondary ? `<span class="shift-siddur-secondary" style="font-size: ${secFontSize};">${siddurSecondary}</span>` : ''}
-                            ` : ''}
-                        </div>
-                        <div class="shift-hours-summary">
-                            <div class="shift-time-range">${shift.startTime || '--:--'} - ${shift.endTime || '--:--'}</div>
-                            <div class="shift-total-duration">${calculateDuration(shift.startTime, shift.endTime)}</div>
-                        </div>
-                    </div>
-                    <div class="shift-badges-row">
-                        <div class="badges-group-right">
-                            ${hasNalt ? `
-                            <span class="tag tag-nalt">
-                                <svg class="svg-icon" width="13" height="13" viewBox="0 0 24 24">
-                                    <path d="M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11c-.66 0-1.21.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99zM6.85 7h10.29l1.04 3H5.81l1.04-3zM19 17H5v-4.66l.12-.34h13.77l.11.34V17z"/>
-                                    <circle cx="7.5" cy="14.5" r="1.5"/>
-                                    <circle cx="16.5" cy="14.5" r="1.5"/>
-                                </svg>
-                                נל״ת
-                            </span>` : ''}
-                            ${hasPrem ? `
-                            <span class="tag tag-prem">
-                                <svg class="svg-icon" width="12" height="12" viewBox="0 0 24 24">
-                                    <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/>
-                                </svg>
-                                פרמיה
-                            </span>` : ''}
-                            ${hasInstructor ? `
-                            <span class="tag tag-instructor">
-                                <svg class="svg-icon" width="12" height="12" viewBox="0 0 24 24">
-                                    <path d="M12 3L1 9l11 6 9-4.91V17h2V9L12 3zM5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82z"/>
-                                </svg>
-                                הדרכה
-                            </span>` : ''}
-                            ${hasNotes ? `
-                            <span class="tag tag-notes" title="קיימות הערות למשמרת">
-                                <svg class="svg-icon" width="13" height="13" viewBox="0 0 24 24">
-                                    <path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"/>
-                                </svg>
-                            </span>` : ''}
-                        </div>
-                        <div class="badges-group-left">
-                            ${hasStart && hasEnd ? `
-                            <span class="tag tag-complete">
-                                <svg class="svg-icon" width="13" height="13" viewBox="0 0 24 24">
-                                    <path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/>
-                                </svg>
-                                סגור
-                            </span>` : `
-                            <span class="tag tag-alert">
-                                <svg class="svg-icon" width="13" height="13" viewBox="0 0 24 24">
-                                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 13.59L15.59 17 12 13.41 8.41 17 7 15.59 10.59 12 7 8.41 8.41 7 12 10.59 15.59 7 17 8.41 13.41 12 17 15.59z"/>
-                                </svg>
-                                חסר
-                            </span>`}
-                            ${isOverlap ? `
-                            <span class="tag tag-overlap">
-                                <svg class="svg-icon" width="13" height="13" viewBox="0 0 24 24">
-                                    <path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/>
-                                </svg>
-                                כפילות
-                            </span>` : ''}
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="shift-details" id="details_${shiftIdStr}">
-                <div>
-                    <div class="details-inner">
-                        ${isOverlap ? `
-                        <div class="sub-breakdown" style="border-color: rgba(234, 179, 8, 0.3);">
-                            <div class="breakdown-item" style="color: var(--accent-yellow); border-bottom: none; padding-bottom: 0;">
-                                <span class="breakdown-label" style="color: var(--accent-yellow); display: flex; align-items: center; gap: 4px;">
-                                    <svg class="svg-icon" width="14" height="14" viewBox="0 0 24 24"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/></svg>
-                                    שים לב:
-                                </span>
-                                <span class="breakdown-value" style="color: var(--accent-yellow); font-family: 'Assistant', sans-serif;">קיימת חפיפת שעות עם משמרת נוספת</span>
-                            </div>
-                        </div>` : ''}
-
-                        <div class="sub-breakdown">
-                            ${hasSiddur ? `
-                            <div class="breakdown-item-siddur">
-                                <span class="breakdown-label">סידור:</span>
-                                <span class="breakdown-value-center">${shift.siddur}</span>
-                                <div></div>
-                            </div>` : ''}
-                            <div class="breakdown-item-duo" style="display: flex; justify-content: space-between; align-items: center;">
-                                <div class="duo-col" style="flex: 1;">
-                                    <span class="breakdown-label">כניסה:</span>
-                                    <span class="breakdown-value">${shift.startTime || 'לא הוזן'}</span>
-                                    <span class="breakdown-label" style="margin-right: 8px;">יציאה:</span>
-                                    <span class="breakdown-value">${shift.endTime || 'לא הוזן'}</span>
-                                </div>
-                                <div class="checkbox-label-container" onclick="handleFullPremClick(event, '${shiftIdStr}')" style="margin-right: auto;">
-                                    <input type="checkbox" ${shift.fullPrem ? 'checked' : ''} style="pointer-events: none;" tabindex="-1">
-                                    <span>פרמיה מלאה</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        ${hasNalt ? `
-                        <div class="sub-breakdown">
-                            ${naltStart > 0 ? `
-                            <div class="breakdown-item">
-                                <span class="breakdown-label">נל״ת הלוך (${formatMinutesToHM(naltStart)}):</span>
-                                <span class="breakdown-value">${naltStartRange}</span>
-                            </div>` : ''}
-                            ${naltEnd > 0 ? `
-                            <div class="breakdown-item">
-                                <span class="breakdown-label">נל״ת חזור (${formatMinutesToHM(naltEnd)}):</span>
-                                <span class="breakdown-value">${naltEndRange}</span>
-                            </div>` : ''}
-                        </div>` : ''}
-
-                        ${hasPrem ? `
-                        <div class="sub-breakdown">
-                            <div class="breakdown-item">
-                                <span class="breakdown-label">פרמיה ${premDurationMins > 0 ? '(' + formatMinutesToHM(premDurationMins) + ')' : ''}:</span>
-                                <span class="breakdown-value">${shift.premStartTime \vert{}\vert{} '---'} –${shift.premEndTime || '---'}</span>
-                            </div>
-                        </div>` : ''}
-
-                        ${window.isUserInstructor && hasInstructor ? `
-                        <div class="sub-breakdown" style="border-color: rgba(56, 189, 248, 0.2);">
-                            <div class="breakdown-item">
-                                <span class="breakdown-label" style="color: var(--accent-instructor);">פרמיית הדרכה ${instructorDurationMins > 0 ? '(' + formatMinutesToHM(instructorDurationMins) + ')' : ''}:</span>
-                                <span class="breakdown-value">${shift.instructorStartTime \vert{}\vert{} '---'} –${shift.instructorEndTime || '---'}</span>
-                            </div>
-                        </div>` : ''}
-                        
-                        ${hasNotes ? `
-                        <div class="notes-display-box">
-                            <svg class="svg-icon" width="14" height="14" viewBox="0 0 24 24" style="flex-shrink: 0; margin-top: 2px; color: var(--text-muted);"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"/></svg>
-                            <span style="flex: 1;">${shift.notes}</span>
-                        </div>` : ''}
-
-                        <div class="card-actions-bar">
-                            <button class="btn-secondary" onclick="event.stopPropagation(); openShiftModal('${shiftIdStr}')">עריכה / השלמת חוסר</button>
-                            <button class="btn-secondary btn-danger-outline" onclick="event.stopPropagation(); deleteShift('${shiftIdStr}')">מחיקה</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    `;
+    return '\
+        <div class="shift-card ' + shiftTypeClass + ' ' + (isActive ? 'active-shift' : '') + ' ' + (isOverlap ? 'has-overlap' : '') + ' ' + (isIncomplete && !isActive ? 'incomplete' : '') + ' ' + (isSelected ? 'selected-for-delete' : '') + '" \
+             data-id="' + shiftIdStr + '" \
+             draggable="' + (isSortingMode ? 'true' : 'false') + '">\
+            \
+            <div class="shift-corner-icon">\
+                <svg viewBox="0 0 24 24">\
+                    <defs>\
+                        <linearGradient id="morning-grad-' + shiftIdStr + '" x1="0%" y1="0%" x2="100%" y2="100%">\
+                            <stop offset="0%" stop-color="#38bdf8"/>\
+                            <stop offset="50%" stop-color="#0ea5e9"/>\
+                            <stop offset="100%" stop-color="#0369a1"/>\
+                        </linearGradient>\
+                        <linearGradient id="combined-grad-' + shiftIdStr + '" x1="0%" y1="0%" x2="0%" y2="100%">\
+                            <stop offset="0%" stop-color="#fde047"/>\
+                            <stop offset="25%" stop-color="#fb923c"/>\
+                            <stop offset="50%" stop-color="#ef4444"/>\
+                            <stop offset="51%" stop-color="#38bdf8"/>\
+                            <stop offset="100%" stop-color="#0369a1"/>\
+                        </linearGradient>\
+                        <linearGradient id="sun-grad-' + shiftIdStr + '" x1="0%" y1="0%" x2="100%" y2="100%">\
+                            <stop offset="0%" stop-color="#fde047"/>\
+                            <stop offset="35%" stop-color="#f97316"/>\
+                            <stop offset="100%" stop-color="#e11d48"/>\
+                        </linearGradient>\
+                        <linearGradient id="noon-grad-' + shiftIdStr + '" x1="0%" y1="0%" x2="100%" y2="100%">\
+                            <stop offset="0%" stop-color="#fed7aa"/>\
+                            <stop offset="50%" stop-color="#f97316"/>\
+                            <stop offset="100%" stop-color="#c2410c"/>\
+                        </linearGradient>\
+                        <linearGradient id="night-grad-' + shiftIdStr + '" x1="0%" y1="0%" x2="100%" y2="100%">\
+                            <stop offset="0%" stop-color="#e879f9"/>\
+                            <stop offset="50%" stop-color="#a855f7"/>\
+                            <stop offset="100%" stop-color="#7e22ce"/>\
+                        </linearGradient>\
+                        <mask id="moon-mask-' + shiftIdStr + '">\
+                            <rect width="24" height="24" fill="white"/>\
+                            <circle cx="15.5" cy="11.5" r="7.5" fill="black"/>\
+                        </mask>\
+                    </defs>\
+                    ' + (shiftTypeClass === 'type-morning' ? '<g fill="none" stroke-width="2" stroke-linecap="round"><path d="M3 14h18M7 14a5 5 0 0 1 10 0" stroke="url(#combined-grad-' + shiftIdStr + ')"/><path d="M12 3v4M6.34 5.34l2.12 2.12M17.66 5.34l-2.12 2.12M3.5 10h3M20.5 10h-3" stroke="url(#sun-grad-' + shiftIdStr + ')"/><path d="M5 18h14M8 21h8" stroke="url(#morning-grad-' + shiftIdStr + ')"/></g>' : '') + '\
+                    ' + (shiftTypeClass === 'type-noon' ? '<g fill="url(#noon-grad-' + shiftIdStr + ')" stroke="url(#noon-grad-' + shiftIdStr + ')"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.93 4.93l1.41 1.41m11.32 11.32l1.41 1.41M2 12h2m16 0h2M4.93 19.07l1.41-1.41m11.32-11.32l1.41-1.41" fill="none" stroke-width="2" stroke-linecap="round"/></g>' : '') + '\
+                    ' + (shiftTypeClass === 'type-night' ? '<g><circle cx="11.5" cy="12" r="8" fill="url(#night-grad-' + shiftIdStr + ')" mask="url(#moon-mask-' + shiftIdStr + ')"/><path d="M19 4l1 2 2 1-2 1-1 2-1-2-2-1 2-1 1-2zM14 10l.5 1 1 .5-1 .5-.5 1-.5-1-1-.5 1-.5.5-1zM18.5 13l.4.8.8.4-.8.4-.4.8-.4-.8-.8-.4.8-.4.4-.8z" fill="url(#night-grad-' + shiftIdStr + ')" stroke="none"/></g>' : '') + '\
+                </svg>\
+            </div>\
+            \
+            <div class="shift-header" onclick="handleCardClick(event, \'' + shiftIdStr + '\')">\
+                <div class="drag-handle-container">\
+                    <svg class="svg-icon" width="20" height="20" viewBox="0 0 24 24" style="color: var(--text-muted);">\
+                        <circle cx="9" cy="6" r="1.5"/><circle cx="15" cy="6" r="1.5"/>\
+                        <circle cx="9" cy="12" r="1.5"/><circle cx="15" cy="12" r="1.5"/>\
+                        <circle cx="9" cy="18" r="1.5"/><circle cx="15" cy="18" r="1.5"/>\
+                    </svg>\
+                </div>\
+                <div class="select-checkbox-container">\
+                    <div class="custom-checkbox">\
+                        <svg class="svg-icon" width="14" height="14" viewBox="0 0 24 24">\
+                            <path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/>\
+                        </svg>\
+                    </div>\
+                </div>\
+                <div class="shift-content-block">\
+                    <div class="shift-row-main">\
+                        <div class="shift-date-box" style="margin-left: 10px;">\
+                            <span class="shift-day-name">' + dayName + '</span>\
+                            <span class="shift-formatted-date">' + dateFmt + '</span>\
+                        </div>\
+                        <div class="shift-middle-box">\
+                            ' + (hasSiddur ? '<span class="shift-siddur-primary" style="' + (siddurPrimary.length > 10 ? 'font-size: 0.85rem;' : '') + '">' + siddurPrimary + '</span>' + (siddurSecondary ? '<span class="shift-siddur-secondary" style="font-size: ' + secFontSize + ';">' + siddurSecondary + '</span>' : '') : '') + '\
+                        </div>\
+                        <div class="shift-hours-summary">\
+                            <div class="shift-time-range">' + (shift.startTime || '--:--') + ' - ' + (shift.endTime || '--:--') + '</div>\
+                            <div class="shift-total-duration">' + calculateDuration(shift.startTime, shift.endTime) + '</div>\
+                        </div>\
+                    </div>\
+                    <div class="shift-badges-row">\
+                        <div class="badges-group-right">\
+                            ' + (hasNalt ? '<span class="tag tag-nalt">נל״ת</span>' : '') + '\
+                            ' + (hasPrem ? '<span class="tag tag-prem">פרמיה</span>' : '') + '\
+                            ' + (hasInstructor ? '<span class="tag tag-instructor">הדרכה</span>' : '') + '\
+                            ' + (hasNotes ? '<span class="tag tag-notes">הערות</span>' : '') + '\
+                        </div>\
+                        <div class="badges-group-left">\
+                            ' + (hasStart && hasEnd ? '<span class="tag tag-complete">סגור</span>' : '<span class="tag tag-alert">חסר</span>') + '\
+                            ' + (isOverlap ? '<span class="tag tag-overlap">כפילות</span>' : '') + '\
+                        </div>\
+                    </div>\
+                </div>\
+            </div>\
+            \
+            <div class="shift-details" id="details_' + shiftIdStr + '">\
+                <div>\
+                    <div class="details-inner">\
+                        ' + (isOverlap ? '<div class="sub-breakdown" style="border-color: rgba(234, 179, 8, 0.3);"><div class="breakdown-item" style="color: var(--accent-yellow);">שים לב: קיימת חפיפת שעות</div></div>' : '') + '\
+                        <div class="sub-breakdown">\
+                            ' + (hasSiddur ? '<div class="breakdown-item-siddur"><span class="breakdown-label">סידור:</span><span class="breakdown-value-center">' + shift.siddur + '</span><div></div></div>' : '') + '\
+                            <div class="breakdown-item-duo" style="display: flex; justify-content: space-between; align-items: center;">\
+                                <div class="duo-col" style="flex: 1;">\
+                                    <span class="breakdown-label">כניסה:</span>\
+                                    <span class="breakdown-value">' + (shift.startTime || 'לא הוזן') + '</span>\
+                                    <span class="breakdown-label" style="margin-right: 8px;">יציאה:</span>\
+                                    <span class="breakdown-value">' + (shift.endTime || 'לא הוזן') + '</span>\
+                                </div>\
+                                <div class="checkbox-label-container" onclick="handleFullPremClick(event, \'' + shiftIdStr + '\')" style="margin-right: auto;">\
+                                    <input type="checkbox" ' + (shift.fullPrem ? 'checked' : '') + ' style="pointer-events: none;" tabindex="-1">\
+                                    <span>פרמיה מלאה</span>\
+                                </div>\
+                            </div>\
+                        </div>\
+                        ' + (hasNotes ? '<div class="notes-display-box"><span>' + shift.notes + '</span></div>' : '') + '\
+                        <div class="card-actions-bar">\
+                            <button class="btn-secondary" onclick="event.stopPropagation(); openShiftModal(\'' + shiftIdStr + '\')">עריכה</button>\
+                            <button class="btn-secondary btn-danger-outline" onclick="event.stopPropagation(); deleteShift(\'' + shiftIdStr + '\')">מחיקה</button>\
+                        </div>\
+                    </div>\
+                </div>\
+            </div>\
+        </div>\
+    ';
 }
 
 function renderShifts() {
@@ -1988,11 +1885,11 @@ function renderShifts() {
                             .map(el => el.closest('.shift-card').getAttribute('data-id'));
 
     if (window.shifts.length === 0) {
-        container.innerHTML = `
-            <div class="empty-state">
-                <p>עדיין אין משמרות מתועדות.<br>לחץ על "כניסה למשמרת" כדי להתחיל.</p>
-            </div>
-        `;
+        container.innerHTML = '\
+            <div class="empty-state">\
+                <p>עדיין אין משמרות מתועדות.<br>לחץ על "כניסה למשמרת" כדי להתחיל.</p>\
+            </div>\
+        ';
         return;
     }
 
@@ -2017,34 +1914,34 @@ function renderShifts() {
         const mShifts = grouped[mk];
         const isOpen = (mk === activeMonthKey);
 
-        html += `
-        <div class="month-accordion-wrapper ${isOpen ? 'open' : ''}">
-            <div class="month-accordion-header" onclick="toggleMonthAccordion('${mk}')">
-                <div class="month-header-left-actions" onclick="event.stopPropagation()">
-                    <button class="btn-summary-modal" data-action="summary" data-month="${mk}" title="סיכום חודשי">
-                        <svg viewBox="0 0 24 24">
-                            <line x1="6" y1="20" x2="6" y2="10"></line>
-                            <line x1="12" y1="20" x2="12" y2="4"></line>
-                            <line x1="18" y1="20" x2="18" y2="14"></line>
-                        </svg>
-                        <span class="drawer-tooltip">סיכום חודשי</span>
-                    </button>
-                </div>
-                <span>${formatMonthName(mk)} <span style="font-size: 0.8rem; font-weight: normal; color: var(--text-muted);">(${mShifts.length} משמרות)</span></span>
-                <svg class="chevron-icon" width="20" height="20" viewBox="0 0 24 24"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/></svg>
-            </div>
-            <div class="month-accordion-body">
-                <div class="shifts-list-inner">
-                    ${mShifts.map(shift => buildShiftCardHTML(shift, overlappingIds)).join('')}
-                </div>
-            </div>
-        </div>`;
+        html += '\
+        <div class="month-accordion-wrapper ' + (isOpen ? 'open' : '') + '">\
+            <div class="month-accordion-header" onclick="toggleMonthAccordion(\'' + mk + '\')">\
+                <div class="month-header-left-actions" onclick="event.stopPropagation()">\
+                    <button class="btn-summary-modal" data-action="summary" data-month="' + mk + '" title="סיכום חודשי">\
+                        <svg viewBox="0 0 24 24">\
+                            <line x1="6" y1="20" x2="6" y2="10"></line>\
+                            <line x1="12" y1="20" x2="12" y2="4"></line>\
+                            <line x1="18" y1="20" x2="18" y2="14"></line>\
+                        </svg>\
+                        <span class="drawer-tooltip">סיכום חודשי</span>\
+                    </button>\
+                </div>\
+                <span>' + formatMonthName(mk) + ' <span style="font-size: 0.8rem; font-weight: normal; color: var(--text-muted);">(' + mShifts.length + ' משמרות)</span></span>\
+                <svg class="chevron-icon" width="20" height="20" viewBox="0 0 24 24"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/></svg>\
+            </div>\
+            <div class="month-accordion-body">\
+                <div class="shifts-list-inner">\
+                    ' + mShifts.map(shift => buildShiftCardHTML(shift, overlappingIds)).join('') + '\
+                </div>\
+            </div>\
+        </div>';
     });
 
     container.innerHTML = html;
     
     expandedIds.forEach(id => {
-        const card = container.querySelector(`.shift-card[data-id="${id}"]`);
+        const card = container.querySelector('.shift-card[data-id="' + id + '"]');
         if (card) {
             const details = card.querySelector('.shift-details');
             if (details) details.classList.add('expanded');
@@ -2197,7 +2094,7 @@ window.saveShiftDirect = function() {
         const y = now.getFullYear();
         const m = String(now.getMonth() + 1).padStart(2, '0');
         const d = String(now.getDate()).padStart(2, '0');
-        dateVal = `${y}-${m}-${d}`;
+        dateVal = y + '-' + m + '-' + d;
     }
 
     const startVal = document.getElementById('fieldStartTime').value || null;
@@ -2341,7 +2238,7 @@ window.openShiftModal = function(shiftId) {
         title.textContent = 'הוספת משמרת ידנית';
         document.getElementById('editShiftId').value = '';
         document.getElementById('fieldSiddur').value = '';
-        document.getElementById('fieldDate').value = `${y}-${m}-${d}`;
+        document.getElementById('fieldDate').value = y + '-' + m + '-' + d;
         document.getElementById('fieldStartTime').value = '';
         document.getElementById('fieldEndTime').value = '';
         document.getElementById('fieldFullPremModal').checked = false;
