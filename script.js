@@ -640,7 +640,9 @@ function showStatusBubbleToast(msg) {
     }, 2200);
 }
 
-// פונקציות גלובליות נדרשות
+// ---------------------------------------------------------
+// חשיפת כל פונקציות העזר הגלובליות תחת window באופן מלא
+// ---------------------------------------------------------
 window.closeUserMenu = function(e) {
     if(e) {
         e.stopPropagation();
@@ -800,6 +802,25 @@ window.handleNaltSelectChange = function(type) {
         customInput.value = '';
     }
 };
+
+const PRESET_NALT_MINUTES = [0, 40, 45, 60, 90, 120, 270];
+
+window.setNaltFieldUI = function(type, mins) {
+    const select = document.getElementById('selectNalt' + type);
+    const customInput = document.getElementById('customNalt' + type);
+    
+    mins = Number(mins) || 0;
+    if (PRESET_NALT_MINUTES.includes(mins)) {
+        select.value = String(mins);
+        customInput.style.display = 'none';
+        customInput.value = '';
+    } else {
+        select.value = 'custom';
+        customInput.style.display = 'block';
+        customInput.value = formatMinutesToDisplay(mins);
+    }
+};
+// ---------------------------------------------------------
 
 function setupGlobalInteractions() {
     const drawerItems = document.querySelectorAll('.tools-popup-drawer .btn-drawer-item, .month-accordion-header .btn-summary-modal');
@@ -1970,7 +1991,7 @@ function buildShiftCardHTML(shift, overlappingIds) {
                             ' + (hasNalt ? '<span class="tag tag-nalt">' + naltSvgIcon + ' נל״ת</span>' : '') + '\
                             ' + (hasPrem ? '<span class="tag tag-prem">' + premSvgIcon + ' פרמיה</span>' : '') + '\
                             ' + (hasInstructor ? '<span class="tag tag-instructor">' + instructorSvgIcon + ' הדרכה</span>' : '') + '\
-                            ' + (hasNotes ? '<span class="tag tag-notes">' + notesSvgIcon + ' הערות</span>' : '') + '\
+                            ' + (hasNotes ? '<span class="tag tag-notes" title="הערות">' + notesSvgIcon + '</span>' : '') + '\
                         </div>\
                         <div class="badges-group-left">\
                             ' + (hasStart && hasEnd ? '<span class="tag tag-complete">סגור</span>' : '<span class="tag tag-alert">חסר</span>') + '\
@@ -2006,6 +2027,18 @@ function buildShiftCardHTML(shift, overlappingIds) {
                             </div>\
                             ' + (naltStart > 0 ? '<div class="breakdown-item"><span class="breakdown-label">נל"ת הלוך (' + formatMinutesToHM(naltStart) + '):</span><span class="breakdown-value" dir="ltr">' + naltStartRange + '</span></div>' : '') + '\
                             ' + (naltEnd > 0 ? '<div class="breakdown-item"><span class="breakdown-label">נל"ת חזור (' + formatMinutesToHM(naltEnd) + '):</span><span class="breakdown-value" dir="ltr">' + naltEndRange + '</span></div>' : '') + '\
+                        </div>' : '') + '\
+                        ' + (hasPrem ? '\
+                        <div class="sub-breakdown">\
+                            <div style="font-size: 0.78rem; font-weight: 700; color: #c084fc; margin-bottom: 6px; display: flex; align-items: center; gap: 6px;">\
+                                ' + premSvgIcon + ' פרמיה (' + formatMinutesToHM(premDurationMins) + ')\
+                            </div>\
+                            <div class="breakdown-item">\
+                                <span class="breakdown-label">משעה:</span>\
+                                <span class="breakdown-value">' + shift.premStartTime + '</span>\
+                                <span class="breakdown-label" style="margin-right: 8px;">עד שעה:</span>\
+                                <span class="breakdown-value">' + shift.premEndTime + '</span>\
+                            </div>\
                         </div>' : '') + '\
                         ' + (hasNotes ? '<div class="notes-display-box"><span>' + shift.notes + '</span></div>' : '') + '\
                         <div class="card-actions-bar">\
@@ -2319,8 +2352,8 @@ window.openShiftModal = function(shiftId) {
         const nStartMins = shift.naltStartMinutes ?? (shift.naltStartHours ? shift.naltStartHours * 60 : 0);
         const nEndMins = shift.naltEndMinutes ?? (shift.naltEndHours ? shift.naltEndHours * 60 : 0);
         
-        setNaltFieldUI('Start', nStartMins);
-        setNaltFieldUI('End', nEndMins);
+        window.setNaltFieldUI('Start', nStartMins);
+        window.setNaltFieldUI('End', nEndMins);
         document.getElementById('fieldPremStart').value = shift.premStartTime || '';
         document.getElementById('fieldPremEnd').value = shift.premEndTime || '';
         if (window.isUserInstructor) {
@@ -2341,8 +2374,8 @@ window.openShiftModal = function(shiftId) {
         document.getElementById('fieldEndTime').value = '';
         document.getElementById('fieldFullPremModal').checked = false;
         document.getElementById('fieldNotes').value = '';
-        setNaltFieldUI('Start', 0);
-        setNaltFieldUI('End', 0);
+        window.setNaltFieldUI('Start', 0);
+        window.setNaltFieldUI('End', 0);
         document.getElementById('fieldPremStart').value = '';
         document.getElementById('fieldPremEnd').value = '';
         if (window.isUserInstructor) {
