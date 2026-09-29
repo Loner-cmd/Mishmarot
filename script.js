@@ -640,9 +640,7 @@ function showStatusBubbleToast(msg) {
     }, 2200);
 }
 
-// ---------------------------------------------------------
 // תיקון פונקציות גלובליות חסרות (closeUserMenu ו-handleAuthClick)
-// ---------------------------------------------------------
 window.closeUserMenu = function(e) {
     if(e) {
         e.stopPropagation();
@@ -680,6 +678,38 @@ window.handleAuthClick = async function(event) {
         }
     }
 };
+
+// ---------------------------------------------------------
+// תיקון פונקציות הסיכום החודשי הגלובליות שחסרות כרגע
+// ---------------------------------------------------------
+window.openMonthlySummaryModal = function(mk) {
+    const mShifts = window.shifts.filter(s => s.date && s.date.startsWith(mk));
+    let totWorkMins = 0;
+    let totPremMins = 0;
+    let totNaltMins = 0;
+
+    mShifts.forEach(s => {
+         if(s.startTime && s.endTime) {
+             totWorkMins += calculateDurationMinutes(s.startTime, s.endTime);
+         }
+         if(s.premStartTime && s.premEndTime) {
+             totPremMins += calculateDurationMinutes(s.premStartTime, s.premEndTime);
+         }
+         totNaltMins += (Number(s.naltStartMinutes)||0) + (Number(s.naltEndMinutes)||0);
+    });
+
+    document.getElementById('summaryModalTitle').textContent = 'סיכום חודשי - ' + formatMonthName(mk);
+    document.getElementById('modalWorkVal').textContent = formatMinutesToHM(totWorkMins);
+    document.getElementById('modalPremVal').textContent = formatMinutesToHM(totPremMins);
+    document.getElementById('modalNaltVal').textContent = formatMinutesToHM(totNaltMins);
+    document.getElementById('modalExportBtn').setAttribute('onclick', 'printMonthReport(\'' + mk + '\')');
+
+    document.getElementById('monthlySummaryModal').classList.add('open');
+};
+
+window.closeMonthlySummaryModal = function() {
+    document.getElementById('monthlySummaryModal').classList.remove('open');
+};
 // ---------------------------------------------------------
 
 function setupGlobalInteractions() {
@@ -713,7 +743,7 @@ function setupGlobalInteractions() {
             if (!longPressed) {
                 if (actionType === 'summary') {
                     const mk = btn.getAttribute('data-month');
-                    if (mk) openMonthlySummaryModal(mk);
+                    if (mk) window.openMonthlySummaryModal(mk);
                 } else if (actionType) {
                     window.handleToolAction(actionType);
                 }
@@ -752,7 +782,7 @@ function setupGlobalInteractions() {
             if (!longPressed) {
                 if (actionType === 'summary') {
                     const mk = btn.getAttribute('data-month');
-                    if (mk) openMonthlySummaryModal(mk);
+                    if (mk) window.openMonthlySummaryModal(mk);
                 } else if (actionType) {
                     window.handleToolAction(actionType);
                 }
@@ -1911,7 +1941,6 @@ function buildShiftCardHTML(shift, overlappingIds) {
                                 <div class="checkbox-label-container" onclick="handleFullPremClick(event, \'' + shiftIdStr + '\')" style="margin-right: auto;">\
                                     <input type="checkbox" ' + (shift.fullPrem ? 'checked' : '') + ' style="pointer-events: none;" tabindex="-1">\
                                     <span>פרמיה מלאה</span>\
-                                />\
                                 </div>\
                             </div>\
                         </div>\
@@ -1993,8 +2022,8 @@ function renderShifts() {
     expandedIds.forEach(id => {
         const card = container.querySelector('.shift-card[data-id="' + id + '"]');
         if (card) {
-            constDetails = card.querySelector('.shift-details');
-            if (constDetails) constDetails.classList.add('expanded');
+            const details = card.querySelector('.shift-details');
+            if (details) details.classList.add('expanded');
         }
     });
 
@@ -2128,7 +2157,7 @@ function validateModalRealtime(isSubmit = false) {
     else premEndInput.classList.remove('input-error');
 
     if (state.premStartInvalid || state.premEndInvalid) {
-        premErr.textContent = state.premError || 'הפרמיה מחוץ לזמני המשמרת';
+        premErr.textContent = state.premError || 'הפרמיה מחוץ זמני המשמרת';
         premErr.classList.add('visible');
     } else {
         premErr.classList.remove('visible');
@@ -2291,7 +2320,7 @@ window.openShiftModal = function(shiftId) {
         document.getElementById('fieldDate').value = y + '-' + m + '-' + d;
         document.getElementById('fieldStartTime').value = '';
         document.getElementById('fieldEndTime').value = '';
-        document.getElementById('fieldFullPremModal').checked, false;
+        document.getElementById('fieldFullPremModal').checked = false;
         document.getElementById('fieldNotes').value = '';
         setNaltFieldUI('Start', 0);
         setNaltFieldUI('End', 0);
