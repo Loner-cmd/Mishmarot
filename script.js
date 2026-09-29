@@ -28,38 +28,6 @@ window.currentUser = null;
 window.isUserInstructor = false;
 const OWNER_UID = "ShasTZArs9Uqddy973BmlW4oP7T2";
 
-// תיקון מיידי לכל הפונקציות הגלובליות הקשורות לטופס
-window.getNaltFieldValue = function(type) {
-    const select = document.getElementById('selectNalt' + type);
-    const customInput = document.getElementById('customNalt' + type);
-    if (!select) return 0;
-    if (select.value === 'custom') {
-        return parseInputToMinutes(customInput ? customInput.value : '');
-    }
-    return Number(select.value) || 0;
-};
-
-window.setNaltFieldUI = function(type, mins) {
-    const select = document.getElementById('selectNalt' + type);
-    const customInput = document.getElementById('customNalt' + type);
-    if (!select) return;
-    
-    mins = Number(mins) || 0;
-    if (PRESET_NALT_MINUTES.includes(mins)) {
-        select.value = String(mins);
-        if (customInput) {
-            customInput.style.display = 'none';
-            customInput.value = '';
-        }
-    } else {
-        select.value = 'custom';
-        if (customInput) {
-            customInput.style.display = 'block';
-            customInput.value = formatMinutesToDisplay(mins);
-        }
-    }
-};
-
 window.triggerGoogleSignIn = async function() {
     try {
         await signInWithPopup(auth, googleProvider);
@@ -662,6 +630,19 @@ window.toggleToolsDrawer = function() {
     if (wrap) wrap.classList.toggle('open');
 };
 
+function showStatusBubbleToast(msg) {
+    const toast = document.getElementById('statusBubbleToast');
+    if (!toast) return;
+    toast.textContent = msg;
+    toast.classList.add('show');
+    setTimeout(() => {
+        toast.classList.remove('show');
+    }, 2200);
+}
+
+// ---------------------------------------------------------
+// חשיפת כל הפונקציות הגלובליות תחת window
+// ---------------------------------------------------------
 window.closeUserMenu = function(e) {
     if(e) {
         e.stopPropagation();
@@ -821,6 +802,40 @@ window.handleNaltSelectChange = function(type) {
         customInput.value = '';
     }
 };
+
+const PRESET_NALT_MINUTES = [0, 40, 45, 60, 90, 120, 270];
+
+window.setNaltFieldUI = function(type, mins) {
+    const select = document.getElementById('selectNalt' + type);
+    const customInput = document.getElementById('customNalt' + type);
+    if (!select) return;
+    
+    mins = Number(mins) || 0;
+    if (PRESET_NALT_MINUTES.includes(mins)) {
+        select.value = String(mins);
+        if (customInput) {
+            customInput.style.display = 'none';
+            customInput.value = '';
+        }
+    } else {
+        select.value = 'custom';
+        if (customInput) {
+            customInput.style.display = 'block';
+            customInput.value = formatMinutesToDisplay(mins);
+        }
+    }
+};
+
+window.getNaltFieldValue = function(type) {
+    const select = document.getElementById('selectNalt' + type);
+    const customInput = document.getElementById('customNalt' + type);
+    if (!select) return 0;
+    if (select.value === 'custom') {
+        return parseInputToMinutes(customInput ? customInput.value : '');
+    }
+    return Number(select.value) || 0;
+};
+// ---------------------------------------------------------
 
 function setupGlobalInteractions() {
     const drawerItems = document.querySelectorAll('.tools-popup-drawer .btn-drawer-item, .month-accordion-header .btn-summary-modal');
