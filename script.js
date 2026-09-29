@@ -542,9 +542,9 @@ if (bottomNav) {
             let finalOffset = navCurrentOffsetPercent + movePercent;
 
             if (finalOffset > 55) {
-                navigateTo('history', false); 
+                window.navigateTo('history', false); 
             } else {
-                navigateTo('clock', false); 
+                window.navigateTo('clock', false); 
             }
         }
     });
@@ -556,10 +556,10 @@ if (bottomNav) {
     });
 }
 
-function handleNavClick(target) {
+window.handleNavClick = function(target) {
     if (navHasMoved) return; 
-    navigateTo(target);
-}
+    window.navigateTo(target);
+};
 
 function updateIndicatorPosition(animate = true) {
     if (!navIndicator) return;
@@ -574,7 +574,7 @@ function updateIndicatorPosition(animate = true) {
 
 window.addEventListener('resize', () => updateIndicatorPosition(false));
 
-function navigateTo(viewName, closeMenu = true) {
+window.navigateTo = function(viewName, closeMenu = true) {
     currentView = viewName;
     sessionStorage.setItem('railway_active_view', viewName);
 
@@ -623,12 +623,12 @@ function navigateTo(viewName, closeMenu = true) {
     if (viewName === 'admin') {
         loadAdminUsersList();
     }
-}
+};
 
-function toggleToolsDrawer() {
+window.toggleToolsDrawer = function() {
     const wrap = document.getElementById('toolsDrawerWrap');
     if (wrap) wrap.classList.toggle('open');
-}
+};
 
 function showStatusBubbleToast(msg) {
     const toast = document.getElementById('statusBubbleToast');
@@ -673,7 +673,7 @@ function setupGlobalInteractions() {
                     const mk = btn.getAttribute('data-month');
                     if (mk) openMonthlySummaryModal(mk);
                 } else if (actionType) {
-                    handleToolAction(actionType);
+                    window.handleToolAction(actionType);
                 }
             }
             longPressed = false;
@@ -712,7 +712,7 @@ function setupGlobalInteractions() {
                     const mk = btn.getAttribute('data-month');
                     if (mk) openMonthlySummaryModal(mk);
                 } else if (actionType) {
-                    handleToolAction(actionType);
+                    window.handleToolAction(actionType);
                 }
             }
             longPressed = false;
@@ -760,7 +760,7 @@ function populateProfileMonthSelector() {
     select.innerHTML = optionsHTML;
 }
 
-function updateProfileSummaryData() {
+window.updateProfileSummaryData = function() {
     const select = document.getElementById('profileMonthSelect');
     const val = select ? select.value : 'annual';
 
@@ -786,7 +786,7 @@ function updateProfileSummaryData() {
     document.getElementById('profWorkVal').textContent = formatMinutesToHM(totWorkMins) || '0 שעות';
     document.getElementById('profPremVal').textContent = formatMinutesToHM(totPremMins) || '0 שעות';
     document.getElementById('profNaltVal').textContent = formatMinutesToHM(totNaltMins) || '0 שעות';
-}
+};
 
 function updateLiveClock() {
     const now = new Date();
@@ -862,14 +862,14 @@ function updateActiveShiftUI() {
     }
 }
 
-function handleMainAction() {
+window.handleMainAction = function() {
     const active = getActiveShift();
     if (active) {
         handleLiveEnd();
     } else {
         handleLiveStart();
     }
-}
+};
 
 function autoSortShiftsArray(arr) {
     arr.sort((a, b) => {
@@ -954,9 +954,9 @@ function showSmartAlertDialog(title, message, confirmText, cancelText, onConfirm
     document.getElementById('smartAlertDialog').classList.add('open');
 }
 
-function closeSmartAlert() {
+window.closeSmartAlert = function() {
     document.getElementById('smartAlertDialog').classList.remove('open');
-}
+};
 
 function handleLiveStart() {
     const now = new Date();
@@ -1167,7 +1167,7 @@ function formatMonthName(mk) {
     return `${months[parseInt(m, 10) - 1]} ${y}`;
 }
 
-function handleNaltSelectChange(type) {
+window.handleNaltSelectChange = function(type) {
     const select = document.getElementById(`selectNalt${type}`);
     const customInput = document.getElementById(`customNalt${type}`);
     if (select.value === 'custom') {
@@ -1177,7 +1177,7 @@ function handleNaltSelectChange(type) {
         customInput.style.display = 'none';
         customInput.value = '';
     }
-}
+};
 
 const PRESET_NALT_MINUTES = [0, 40, 45, 60, 90, 120, 270];
 
@@ -1206,17 +1206,17 @@ function getNaltFieldValue(type) {
     return Number(select.value) || 0;
 }
 
-function showErrorDialog(msg, title = 'שגיאה בנתוני המשמרת') {
+window.showErrorDialog = function(msg, title = 'שגיאה בנתוני המשמרת') {
     document.getElementById('errorDialogTitle').textContent = title;
     document.getElementById('errorDialogMessage').textContent = msg;
     document.getElementById('errorDialog').classList.add('open');
-}
+};
 
-function closeErrorDialog() {
+window.closeErrorDialog = function() {
     document.getElementById('errorDialog').classList.remove('open');
-}
+};
 
-function toggleSelectionMode() {
+window.toggleSelectionMode = function() {
     if (isSortingMode) toggleSortingMode();
 
     isSelectionMode = !isSelectionMode;
@@ -1240,9 +1240,9 @@ function toggleSelectionMode() {
     
     updateSelectionUI();
     renderShifts();
-}
+};
 
-function toggleSortingMode() {
+window.toggleSortingMode = function() {
     if (isSelectionMode) toggleSelectionMode();
 
     isSortingMode = !isSortingMode;
@@ -1263,9 +1263,9 @@ function toggleSortingMode() {
     }
 
     renderShifts();
-}
+};
 
-function toggleMultiPanelMode() {
+window.toggleMultiPanelMode = function() {
     isMultiPanelMode = !isMultiPanelMode;
     const btn = document.getElementById('btnToggleMultiPanel');
     if (btn) {
@@ -1280,16 +1280,16 @@ function toggleMultiPanelMode() {
             el.classList.remove('expanded');
         });
     }
-}
+};
 
-function toggleMonthAccordion(mk) {
+window.toggleMonthAccordion = function(mk) {
     if (activeMonthKey === mk) {
         activeMonthKey = 'NONE'; 
     } else {
         activeMonthKey = mk; 
     }
     renderShifts();
-}
+};
 
 window.printMonthReport = function(mk) {
     const mShifts = window.shifts.filter(s => s.date && s.date.startsWith(mk)).reverse(); 
@@ -1366,13 +1366,13 @@ window.printMonthReport = function(mk) {
     window.print();
 };
 
-function sortShiftsByDate() {
+window.sortShiftsByDate = function() {
     autoSortShiftsArray(window.shifts);
     localStorage.setItem('railway_shifts', JSON.stringify(window.shifts));
     renderShifts();
-}
+};
 
-function saveManualSorting() {
+window.saveManualSorting = function() {
     const container = document.getElementById('shiftsContainer');
     const cardElements = Array.from(container.querySelectorAll('.shift-card'));
     const newOrderedShifts = [];
@@ -1388,9 +1388,9 @@ function saveManualSorting() {
         localStorage.setItem('railway_shifts', JSON.stringify(window.shifts));
     }
     toggleSortingMode();
-}
+};
 
-function handleCardClick(event, id) {
+window.handleCardClick = function(event, id) {
     if (isSortingMode) return;
     if (event.target.closest('button') || event.target.closest('input') || event.target.closest('.checkbox-label-container')) return;
 
@@ -1426,14 +1426,14 @@ function handleCardClick(event, id) {
             setTimeout(() => cardEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 300);
         }
     }
-}
+};
 
 function updateSelectionUI() {
     const countText = document.getElementById('selectedCountText');
     countText.textContent = `${selectedShiftIds.size} נבחרו`;
 }
 
-function selectAllShifts() {
+window.selectAllShifts = function() {
     if (selectedShiftIds.size === window.shifts.length) {
         selectedShiftIds.clear();
     } else {
@@ -1441,9 +1441,9 @@ function selectAllShifts() {
     }
     updateSelectionUI();
     renderShifts();
-}
+};
 
-function deleteSelectedShifts() {
+window.deleteSelectedShifts = function() {
     if (selectedShiftIds.size === 0) return;
     
     showSmartAlertDialog(
@@ -1462,7 +1462,7 @@ function deleteSelectedShifts() {
         },
         () => {}
     );
-}
+};
 
 function setupDragAndDrop() {
     const lists = document.querySelectorAll('.shifts-list-inner');
@@ -2304,5 +2304,71 @@ window.deleteShift = function(id) {
     );
 };
 
+window.openShiftModal = function(shiftId) {
+    const modal = document.getElementById('shiftModal');
+    const title = document.getElementById('modalTitle');
+    const instructorSection = document.getElementById('instructorSectionModal');
+
+    if (window.isUserInstructor) {
+        instructorSection.style.display = 'block';
+    } else {
+        instructorSection.style.display = 'none';
+    }
+
+    if (shiftId) {
+        const shift = window.shifts.find(s => String(s.id) === String(shiftId));
+        if (!shift) return;
+        title.textContent = 'עריכת משמרת';
+        document.getElementById('editShiftId').value = String(shift.id);
+        document.getElementById('fieldSiddur').value = shift.siddur || '';
+        document.getElementById('fieldDate').value = shift.date || '';
+        document.getElementById('fieldStartTime').value = shift.startTime || '';
+        document.getElementById('fieldEndTime').value = shift.endTime || '';
+        document.getElementById('fieldFullPremModal').checked = Boolean(shift.fullPrem);
+        document.getElementById('fieldNotes').value = shift.notes || '';
+        
+        const nStartMins = shift.naltStartMinutes ?? (shift.naltStartHours ? shift.naltStartHours * 60 : 0);
+        const nEndMins = shift.naltEndMinutes ?? (shift.naltEndHours ? shift.naltEndHours * 60 : 0);
+        
+        setNaltFieldUI('Start', nStartMins);
+        setNaltFieldUI('End', nEndMins);
+        document.getElementById('fieldPremStart').value = shift.premStartTime || '';
+        document.getElementById('fieldPremEnd').value = shift.premEndTime || '';
+        if (window.isUserInstructor) {
+            document.getElementById('fieldInstructorStart').value = shift.instructorStartTime || '';
+            document.getElementById('fieldInstructorEnd').value = shift.instructorEndTime || '';
+        }
+    } else {
+        const now = new Date();
+        const y = now.getFullYear();
+        const m = String(now.getMonth() + 1).padStart(2, '0');
+        const d = String(now.getDate()).padStart(2, '0');
+
+        title.textContent = 'הוספת משמרת ידנית';
+        document.getElementById('editShiftId').value = '';
+        document.getElementById('fieldSiddur').value = '';
+        document.getElementById('fieldDate').value = `${y}-${m}-${d}`;
+        document.getElementById('fieldStartTime').value = '';
+        document.getElementById('fieldEndTime').value = '';
+        document.getElementById('fieldFullPremModal').checked = false;
+        document.getElementById('fieldNotes').value = '';
+        setNaltFieldUI('Start', 0);
+        setNaltFieldUI('End', 0);
+        document.getElementById('fieldPremStart').value = '';
+        document.getElementById('fieldPremEnd').value = '';
+        if (window.isUserInstructor) {
+            document.getElementById('fieldInstructorStart').value = '';
+            document.getElementById('fieldInstructorEnd').value = '';
+        }
+    }
+
+    modal.classList.add('open');
+    validateModalRealtime(false);
+};
+
+window.closeModal = function() {
+    document.getElementById('shiftModal').classList.remove('open');
+};
+
 setupGlobalInteractions();
-navigateTo(currentView, false);
+window.navigateTo(currentView, false);
