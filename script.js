@@ -722,18 +722,18 @@ window.openMonthlySummaryModal = function(mk) {
 
     mShifts.forEach(s => {
          if(s.startTime && s.endTime) {
-             totWorkMins += calculateDurationMinutes(s.startTime, s.endTime);
+             totWorkMins += window.calculateDurationMinutes(s.startTime, s.endTime);
          }
          if(s.premStartTime && s.premEndTime) {
-             totPremMins += calculateDurationMinutes(s.premStartTime, s.premEndTime);
+             totPremMins += window.calculateDurationMinutes(s.premStartTime, s.premEndTime);
          }
          totNaltMins += (Number(s.naltStartMinutes)||0) + (Number(s.naltEndMinutes)||0);
     });
 
     document.getElementById('summaryModalTitle').textContent = 'סיכום חודשי - ' + formatMonthName(mk);
-    document.getElementById('modalWorkVal').textContent = formatMinutesToHM(totWorkMins);
-    document.getElementById('modalPremVal').textContent = formatMinutesToHM(totPremMins);
-    document.getElementById('modalNaltVal').textContent = formatMinutesToHM(totNaltMins);
+    document.getElementById('modalWorkVal').textContent = window.formatMinutesToHM(totWorkMins);
+    document.getElementById('modalPremVal').textContent = window.formatMinutesToHM(totPremMins);
+    document.getElementById('modalNaltVal').textContent = window.formatMinutesToHM(totNaltMins);
     document.getElementById('modalExportBtn').setAttribute('onclick', 'printMonthReport(\'' + mk + '\')');
 
     document.getElementById('monthlySummaryModal').classList.add('open');
@@ -971,17 +971,17 @@ window.updateProfileSummaryData = function() {
 
     targetShifts.forEach(s => {
         if (s.startTime && s.endTime) {
-            totWorkMins += calculateDurationMinutes(s.startTime, s.endTime);
+            totWorkMins += window.calculateDurationMinutes(s.startTime, s.endTime);
         }
         if (s.premStartTime && s.premEndTime) {
-            totPremMins += calculateDurationMinutes(s.premStartTime, s.premEndTime);
+            totPremMins += window.calculateDurationMinutes(s.premStartTime, s.premEndTime);
         }
         totNaltMins += (Number(s.naltStartMinutes)||0) + (Number(s.naltEndMinutes)||0);
     });
 
-    document.getElementById('profWorkVal').textContent = formatMinutesToHM(totWorkMins) || '0 שעות';
-    document.getElementById('profPremVal').textContent = formatMinutesToHM(totPremMins) || '0 שעות';
-    document.getElementById('profNaltVal').textContent = formatMinutesToHM(totNaltMins) || '0 שעות';
+    document.getElementById('profWorkVal').textContent = window.formatMinutesToHM(totWorkMins) || '0 שעות';
+    document.getElementById('profPremVal').textContent = window.formatMinutesToHM(totPremMins) || '0 שעות';
+    document.getElementById('profNaltVal').textContent = window.formatMinutesToHM(totNaltMins) || '0 שעות';
 };
 
 function updateLiveClock() {
@@ -1287,14 +1287,14 @@ function parseInputToMinutes(val) {
     return num <= 12 ? Math.round(num * 60) : Math.round(num);
 }
 
-function formatMinutesToHM(mins) {
+window.formatMinutesToHM = function(mins) {
     if (!mins || mins <= 0) return '0 שעות';
     const h = Math.floor(mins / 60);
     const m = mins % 60;
     if (h === 0) return m + ' דק׳';
-    if (m === 0) return h + ' שעות';
+    if (m === 0) return h + ' šעות';
     return h + ':' + String(m).padStart(2, '0');
-}
+};
 
 function formatMinutesToDisplay(mins) {
     if (!mins || mins <= 0) return '';
@@ -1333,16 +1333,16 @@ function calculateDuration(start, end) {
     return hours + ' שעות ו-' + mins + ' דק׳';
 }
 
-function calculateDurationMinutes(start, end) {
+window.calculateDurationMinutes = function(start, end) {
     if (!start || !end) return 0;
     const [h1, m1] = start.split(':').map(Number);
     const [h2, m2] = end.split(':').map(Number);
     let diff = (h2 * 60 + m2) - (h1 * 60 + m1);
     if (diff < 0) diff += 1440;
     return diff;
-}
+};
 
-function parseSiddurDisplay(siddur) {
+window.parseSiddurDisplay = function(siddur) {
     if (!siddur || !siddur.trim()) return { primary: '', secondary: '' };
     const text = siddur.trim();
     const numPattern = /(\d+(?:[-/]\d+)*)/;
@@ -1355,7 +1355,7 @@ function parseSiddurDisplay(siddur) {
     } else {
         return { primary: text, secondary: '' };
     }
-}
+};
 
 function formatMonthName(mk) {
     const [y, m] = mk.split('-');
@@ -1460,12 +1460,12 @@ window.printMonthReport = function(mk) {
     mShifts.forEach(s => {
          let wMins = 0;
          if(s.startTime && s.endTime) {
-             wMins = calculateDurationMinutes(s.startTime, s.endTime);
+             wMins = window.calculateDurationMinutes(s.startTime, s.endTime);
              totWorkMins += wMins;
          }
          let pMins = 0;
          if(s.premStartTime && s.premEndTime) {
-             pMins = calculateDurationMinutes(s.premStartTime, s.premEndTime);
+             pMins = window.calculateDurationMinutes(s.premStartTime, s.premEndTime);
              totPremMins += pMins;
          }
          const naltMins = (Number(s.naltStartMinutes)||0) + (Number(s.naltEndMinutes)||0);
@@ -1493,15 +1493,15 @@ window.printMonthReport = function(mk) {
         <div class="print-summary-box">\
             <div class="print-summary-item">\
                 <div class="print-summary-title">סה"כ שעות עבודה</div>\
-                <div class="print-summary-val">' + formatMinutesToHM(totWorkMins) + '</div>\
+                <div class="print-summary-val">' + window.formatMinutesToHM(totWorkMins) + '</div>\
             </div>\
             <div class="print-summary-item">\
                 <div class="print-summary-title">סה"כ שעות פרמיה</div>\
-                <div class="print-summary-val">' + formatMinutesToHM(totPremMins) + '</div>\
+                <div class="print-summary-val">' + window.formatMinutesToHM(totPremMins) + '</div>\
             </div>\
             <div class="print-summary-item">\
                 <div class="print-summary-title">סה"כ זמן נל"ת</div>\
-                <div class="print-summary-val">' + formatMinutesToHM(totNaltMins) + '</div>\
+                <div class="print-summary-val">' + window.formatMinutesToHM(totNaltMins) + '</div>\
             </div>\
         </div>\
         <table class="print-table">\
@@ -1864,7 +1864,7 @@ function buildShiftCardHTML(shift, overlappingIds) {
     const hasSiddur = Boolean(shift.siddur && shift.siddur.trim());
     const hasNotes = Boolean(shift.notes && shift.notes.trim());
 
-    const { primary: siddurPrimary, secondary: siddurSecondary } = parseSiddurDisplay(shift.siddur);
+    const { primary: siddurPrimary, secondary: siddurSecondary } = window.parseSiddurDisplay(shift.siddur);
 
     let secFontSize = '0.78rem';
     if (siddurSecondary.length > 24) {
@@ -1873,8 +1873,8 @@ function buildShiftCardHTML(shift, overlappingIds) {
         secFontSize = '0.70rem';
     }
 
-    const premDurationMins = (shift.premStartTime && shift.premEndTime) ? calculateDurationMinutes(shift.premStartTime, shift.premEndTime) : 0;
-    const instructorDurationMins = (window.isUserInstructor && shift.instructorStartTime && shift.instructorEndTime) ? calculateDurationMinutes(shift.instructorStartTime, shift.instructorEndTime) : 0;
+    const premDurationMins = (shift.premStartTime && shift.premEndTime) ? window.calculateDurationMinutes(shift.premStartTime, shift.premEndTime) : 0;
+    const instructorDurationMins = (window.isUserInstructor && shift.instructorStartTime && shift.instructorEndTime) ? window.calculateDurationMinutes(shift.instructorStartTime, shift.instructorEndTime) : 0;
 
     const parts = (shift.date || '').split('-');
     const daysArr = ['ראשון', 'שני', 'שלישי', 'רביעי', 'חמישי', 'שישי', 'שבת'];
@@ -2054,12 +2054,12 @@ function buildShiftCardHTML(shift, overlappingIds) {
                         <div class="sub-breakdown">\
                             ' + (naltStart > 0 ? '\
                             <div class="breakdown-item">\
-                                <span class="breakdown-label">נל״ת הלוך (' + formatMinutesToHM(naltStart) + '):</span>\
+                                <span class="breakdown-label">נל״ת הלוך (' + window.formatMinutesToHM(naltStart) + '):</span>\
                                 <span class="breakdown-value">' + naltStartRange + '</span>\
                             </div>' : '') + '\
                             ' + (naltEnd > 0 ? '\
                             <div class="breakdown-item">\
-                                <span class="breakdown-label">נל״ת חזור (' + formatMinutesToHM(naltEnd) + '):</span>\
+                                <span class="breakdown-label">נל״ת חזור (' + window.formatMinutesToHM(naltEnd) + '):</span>\
                                 <span class="breakdown-value">' + naltEndRange + '</span>\
                             </div>' : '') + '\
                         </div>' : '') + '\
@@ -2067,7 +2067,7 @@ function buildShiftCardHTML(shift, overlappingIds) {
                         ' + (hasPrem ? '\
                         <div class="sub-breakdown">\
                             <div class="breakdown-item">\
-                                <span class="breakdown-label">פרמיה ' + (premDurationMins > 0 ? '(' + formatMinutesToHM(premDurationMins) + ')' : '') + ':</span>\
+                                <span class="breakdown-label">פרמיה ' + (premDurationMins > 0 ? '(' + window.formatMinutesToHM(premDurationMins) + ')' : '') + ':</span>\
                                 <span class="breakdown-value">' + (shift.premStartTime || '---') + ' – ' + (shift.premEndTime || '---') + '</span>\
                             </div>\
                         </div>' : '') + '\
@@ -2075,7 +2075,7 @@ function buildShiftCardHTML(shift, overlappingIds) {
                         ' + (window.isUserInstructor && hasInstructor ? '\
                         <div class="sub-breakdown" style="border-color: rgba(56, 189, 248, 0.2);">\
                             <div class="breakdown-item">\
-                                <span class="breakdown-label" style="color: var(--accent-instructor);">פרמיית הדרכה ' + (instructorDurationMins > 0 ? '(' + formatMinutesToHM(instructorDurationMins) + ')' : '') + ':</span>\
+                                <span class="breakdown-label" style="color: var(--accent-instructor);">פרמיית הדרכה ' + (instructorDurationMins > 0 ? '(' + window.formatMinutesToHM(instructorDurationMins) + ')' : '') + ':</span>\
                                 <span class="breakdown-value">' + (shift.instructorStartTime || '---') + ' – ' + (shift.instructorEndTime || '---') + '</span>\
                             </div>\
                         </div>' : '') + '\
