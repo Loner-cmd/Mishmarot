@@ -341,76 +341,197 @@ window.deleteShiftFromCloudAndLocal = async function(shiftId) {
 window.loadAdminUsersList = async function() {
     const listContainer = document.getElementById('adminUsersList');
     if (!listContainer) return;
-    
-    listContainer.innerHTML = '<div style="text-align: center; color: var(--text-muted); padding: 20px;">טוען משתמשים...</div>';
+
+    if (!listContainer.querySelector('.admin-user-card')) {
+        listContainer.innerHTML = '<div style="text-align: center; color: var(--text-muted); padding: 20px;">טוען משתמשים...</div>';
+    }
 
     try {
         const usersSnap = await getDocs(collection(db, 'app_users'));
         const instructorsSnap = await getDocs(collection(db, 'instructors'));
-        
+
         let instructorsMap = {};
         instructorsSnap.forEach(docSnap => {
             instructorsMap[docSnap.id] = docSnap.data().active === true;
         });
 
-        let html = '';
-        let count = 0;
-
+        let usersData = [];
         usersSnap.forEach(docSnap => {
             const uId = docSnap.id;
             if (uId === OWNER_UID) return;
-
-            count++;
-            const uData = docSnap.data();
-            const isInst = Boolean(instructorsMap[uId]);
-            const userEmail = uData.email || 'לא ידוע';
-
-            const copySvg = '<svg class="svg-icon" width="13" height="13" viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>';
-
-            html += '\
-                <div style="background: rgba(0,0,0,0.25); border: 1px solid rgba(255,255,255,0.06); border-radius: 12px; padding: 10px 12px; display: flex; flex-direction: column; gap: 8px;">\
-                    <div style="display: flex; justify-content: space-between; align-items: center;">\
-                        <div style="display: flex; align-items: center; gap: 6px; min-width: 0;">\
-                            <span style="font-size: 0.9rem; font-weight: 700; color: #fff; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">' + userEmail + '</span>\
-                            <button class="btn-secondary copy-icon-btn" onclick="navigator.clipboard.writeText(\'' + userEmail + '\')" title="העתק מייל">' + copySvg + '</button>\
-                        </div>\
-                        <span style="font-size: 0.72rem; font-weight: 700; padding: 2px 8px; border-radius: 6px; background: ' + (isInst ? 'rgba(16,185,129,0.15); color: var(--accent-green);' : 'rgba(148,163,184,0.1); color: var(--text-muted);') + '">\
-                            ' + (isInst ? 'מדריך פעיל' : 'משתמש רגיל') + '\
-                        </span>\
-                    </div>\
-                    <div style="display: flex; justify-content: space-between; align-items: center; gap: 6px;">\
-                        <div style="display: flex; align-items: center; gap: 6px; min-width: 0;">\
-                            <span style="font-size: 0.72rem; color: var(--text-muted); font-family: monospace; direction: ltr; overflow: hidden; text-overflow: ellipsis;">' + uId + '</span>\
-                            <button class="btn-secondary copy-icon-btn" onclick="navigator.clipboard.writeText(\'' + uId + '\')" title="העתק UID">' + copySvg + '</button>\
-                        </div>\
-                        <button class="btn-secondary" style="padding: 5px 12px; font-size: 0.78rem; font-weight: 700; white-space: nowrap; width: auto; background: ' + (isInst ? 'rgba(239,68,68,0.2); color:#fca5a5; border-color: rgba(239,68,68,0.4);' : 'rgba(16,185,129,0.2); color:#34d399; border-color: rgba(16,185,129,0.4);') + ';" onclick="toggleInstructorStatus(\'' + uId + '\', ' + (!isInst) + ')">\
-                            ' + (isInst ? 'ביטול הרשאה' : 'מתן הרשאה') + '\
-                        </button>\
-                    </div>\
-                </div>\
-            ';
+            usersData.push({ id: uId, ...docSnap.data(), isInstructor: Boolean(instructorsMap[uId]) });
         });
 
-        if (count === 0) {
+        if (usersData.length === 0) {
             listContainer.innerHTML = '<div style="text-align: center; color: var(--text-muted); padding: 20px;">אין עדיין משתמשים נוספים במערכת</div>';
-        } else {
-            listContainer.innerHTML = html;
+            return;
         }
+
+        listContainer.innerHTML = usersData.map(u => buildAdminUserCard(u)).join('');
+
     } catch (err) {
         console.error("Error loading users:", err);
         listContainer.innerHTML = '<div style="text-align: center; color: var(--accent-red); padding: 20px;">שגיאה בטעינת משתמשים</div>';
     }
 };
 
-window.toggleInstructorStatus = async function(uid, makeActive) {
+function censorEmail(email) {
+    if (!email || !email.includes('@')) return email;
+    const atIdx = email.indexOf('@');
+    const local = email.substring(0, atIdx);
+    const domain = email.substring(atIdx);
+    if (local.length <= 3) {
+        return local[0] + '*'.repeat(Math.max(1, local.length - 1)) + domain;
+    }
+    const keepStart = Math.min(3, Math.ceil(local.length / 3));
+    const keepEnd = local.length > 6 ? 2 : 1;
+    const hiddenLen = local.length - keepStart - keepEnd;
+    if (hiddenLen <= 0) return local.substring(0, keepStart) + '*' + domain;
+    return local.substring(0, keepStart) + '*'.repeat(hiddenLen) + local.substring(local.length - keepEnd) + domain;
+}
+
+function buildAdminUserCard(user) {
+    const censored = censorEmail(user.email || 'לא ידוע');
+    const roleLabel = user.isInstructor ? 'מדריך' : 'משתמש רגיל';
+    const roleBadgeBg = user.isInstructor ? 'rgba(16,185,129,0.15)' : 'rgba(148,163,184,0.1)';
+    const roleColor = user.isInstructor ? 'var(--accent-green)' : 'var(--text-muted)';
+    const emailSafe = (user.email || '').replace(/'/g, "\\'");
+    const uidSafe = user.id.replace(/'/g, "\\'");
+
+    const copySvg = '<svg class="svg-icon" width="13" height="13" viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>';
+    const gearOutlineSvg = '<svg width="18" height="18" viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>';
+    const capSvg = '<svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3L1 9l4 2.18v6L12 21l7-3.82v-6l2-1.09V17h2V9L12 3zm6.82 6L12 12.72 5.18 9 12 5.28 18.82 9zM17 15.99l-5 2.73-5-2.73v-3.72L12 15l5-2.73v3.72z"/></svg>';
+
+    return `
+        <div class="admin-user-card" data-uid="${user.id}">
+            <div class="admin-user-header" onclick="toggleAdminCard('${uidSafe}')">
+                <span class="admin-censored-email">${censored}</span>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <span class="admin-indicator-icon ${user.isInstructor ? 'active-instructor' : 'inactive-user'}" title="${roleLabel}">
+                        ${capSvg}
+                    </span>
+                    <svg class="admin-chevron" width="18" height="18" viewBox="0 0 24 24"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/></svg>
+                </div>
+            </div>
+            <div class="admin-user-body" id="admin-body-${user.id}">
+                <div class="admin-user-details">
+                    <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px;">
+                        <div style="display: flex; align-items: center; gap: 6px; min-width: 0;">
+                            <span style="font-size: 0.9rem; font-weight: 700; color: #fff; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${user.email || 'לא ידוע'}</span>
+                            <button class="btn-secondary copy-icon-btn" onclick="navigator.clipboard.writeText('${emailSafe}'); event.stopPropagation();" title="העתק מייל">${copySvg}</button>
+                        </div>
+                        <span style="font-size: 0.72rem; font-weight: 700; padding: 2px 8px; border-radius: 6px; background: ${roleBadgeBg}; color: ${roleColor};">
+                            ${roleLabel}
+                        </span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px;">
+                        <div style="display: flex; align-items: center; gap: 6px; min-width: 0;">
+                            <span style="font-size: 0.72rem; color: var(--text-muted); font-family: monospace; direction: ltr; overflow: hidden; text-overflow: ellipsis;">${user.id}</span>
+                            <button class="btn-secondary copy-icon-btn" onclick="navigator.clipboard.writeText('${uidSafe}'); event.stopPropagation();" title="העתק UID">${copySvg}</button>
+                        </div>
+                        <button class="admin-perm-btn" onclick="openPermModal('${uidSafe}', '${emailSafe}', ${user.isInstructor}); event.stopPropagation();" title="ניהול הרשאה">
+                            ${gearOutlineSvg}
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+window.toggleAdminCard = function(uid) {
+    const allBodies = document.querySelectorAll('.admin-user-body');
+    const allCards = document.querySelectorAll('.admin-user-card');
+    const targetBody = document.getElementById('admin-body-' + uid);
+    const targetCard = document.querySelector('.admin-user-card[data-uid="' + uid + '"]');
+    if (!targetCard || !targetBody) return;
+
+    const isOpen = targetCard.classList.contains('open');
+
+    allBodies.forEach(b => { b.style.maxHeight = '0'; });
+    allCards.forEach(c => c.classList.remove('open'));
+
+    if (!isOpen) {
+        targetCard.classList.add('open');
+        targetBody.style.maxHeight = targetBody.scrollHeight + 'px';
+    }
+};
+
+window.openPermModal = function(uid, email, isInstructor) {
+    document.getElementById('permModalEmail').textContent = email;
+    const toggle = document.getElementById('permToggle');
+    toggle.checked = isInstructor;
+    document.getElementById('adminPermModal').setAttribute('data-uid', uid);
+    document.getElementById('adminPermModal').classList.add('open');
+    updatePermToggleLabel(isInstructor);
+};
+
+window.closePermModal = function() {
+    document.getElementById('adminPermModal').classList.remove('open');
+};
+
+window.onPermToggleChange = function(isChecked) {
+    updatePermToggleLabel(isChecked);
+};
+
+function updatePermToggleLabel(isInstructor) {
+    const labelInstructor = document.getElementById('permLabelRight');
+    const labelRegular = document.getElementById('permLabelLeft');
+    if (isInstructor) {
+        labelRegular.style.opacity = '0.35';
+        labelRegular.style.fontWeight = '400';
+        labelRegular.style.color = 'var(--text-main)';
+        labelInstructor.style.opacity = '1';
+        labelInstructor.style.fontWeight = '700';
+        labelInstructor.style.color = 'var(--accent-green)';
+    } else {
+        labelRegular.style.opacity = '1';
+        labelRegular.style.fontWeight = '700';
+        labelRegular.style.color = 'var(--text-main)';
+        labelInstructor.style.opacity = '0.35';
+        labelInstructor.style.fontWeight = '400';
+        labelInstructor.style.color = 'var(--text-main)';
+    }
+}
+
+window.savePermChange = async function() {
+    const modal = document.getElementById('adminPermModal');
+    const uid = modal.getAttribute('data-uid');
+    const isChecked = document.getElementById('permToggle').checked;
+    
+    closePermModal();
+
+    // עדכון מיידי של הכרטיס ב-DOM ללא הבהוב או סגירת כרטיסים
+    const card = document.querySelector(`.admin-user-card[data-uid="${uid}"]`);
+    if (card) {
+        const badge = card.querySelector('.admin-user-details span[style*="border-radius: 6px"]');
+        if (badge) {
+            badge.textContent = isChecked ? 'מדריך' : 'משתמש רגיל';
+            badge.style.background = isChecked ? 'rgba(16,185,129,0.15)' : 'rgba(148,163,184,0.1)';
+            badge.style.color = isChecked ? 'var(--accent-green)' : 'var(--text-muted)';
+        }
+        const cap = card.querySelector('.admin-indicator-icon');
+        if (cap) {
+            cap.className = `admin-indicator-icon ${isChecked ? 'active-instructor' : 'inactive-user'}`;
+            cap.title = isChecked ? 'מדריך' : 'משתמש רגיל';
+        }
+        const permBtn = card.querySelector('.admin-perm-btn');
+        if (permBtn) {
+            const currentEmail = card.querySelector('.admin-user-details span[style*="overflow: hidden"]')?.textContent || '';
+            permBtn.setAttribute('onclick', `openPermModal('${uid}', '${currentEmail.replace(/'/g, "\\'")}', ${isChecked}); event.stopPropagation();`);
+        }
+    }
+
     try {
-        await setDoc(doc(db, 'instructors', uid), { active: makeActive }, { merge: true });
-        loadAdminUsersList();
+        await setDoc(doc(db, 'instructors', uid), { active: isChecked }, { merge: true });
     } catch (err) {
         console.error("Error updating instructor:", err);
         showErrorDialog('שגיאה בעדכון ההרשאה');
+        loadAdminUsersList();
     }
 };
+
+
 
 (function generateAppIcon() {
     const canvas = document.createElement('canvas');
@@ -608,6 +729,14 @@ function updateIndicatorPosition(animate = true) {
 window.addEventListener('resize', () => updateIndicatorPosition(false));
 
 window.navigateTo = function(viewName, closeMenu = true) {
+    // בדיקת הרשאה: רק ה-Owner רשאי לגשת לדף הניהול
+    if (viewName === 'admin') {
+        if (!window.currentUser || window.currentUser.uid !== OWNER_UID) {
+            console.warn('גישה נדחתה לפאנל הניהול.');
+            viewName = 'clock';
+        }
+    }
+
     currentView = viewName;
     sessionStorage.setItem('railway_active_view', viewName);
 
@@ -1292,7 +1421,7 @@ window.formatMinutesToHM = function(mins) {
     const h = Math.floor(mins / 60);
     const m = mins % 60;
     if (h === 0) return m + ' דק׳';
-    if (m === 0) return h + ' šעות';
+    if (m === 0) return h + ' שעות';
     return h + ':' + String(m).padStart(2, '0');
 };
 

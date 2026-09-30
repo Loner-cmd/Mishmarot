@@ -579,6 +579,26 @@
     };
 </script>
 
+<!-- Permission Management Modal -->
+<div class="perm-modal-overlay" id="adminPermModal">
+    <div class="perm-modal-card">
+        <div class="perm-modal-title">ניהול הרשאת משתמש</div>
+        <div class="perm-modal-email" id="permModalEmail"></div>
+        <div class="perm-toggle-row">
+            <span class="perm-toggle-label" id="permLabelRight">מדריך</span>
+            <label class="switch">
+                <input type="checkbox" id="permToggle" onchange="onPermToggleChange(this.checked)">
+                <span class="slider"></span>
+            </label>
+            <span class="perm-toggle-label" id="permLabelLeft">משתמש רגיל</span>
+        </div>
+        <div class="perm-modal-actions">
+            <button class="btn-secondary" onclick="closePermModal()">ביטול</button>
+            <button class="btn-secondary" style="background: rgba(0,210,255,0.15); border-color: var(--accent-cyan); color: var(--accent-cyan); font-weight: 700;" onclick="savePermChange()">שמור</button>
+        </div>
+    </div>
+</div>
+
 <!-- External JavaScript File -->
 <script type="module" src="script.js"></script>
 </body>
