@@ -41,5 +41,6 @@ const server = http.createServer((req, res) => {
 });
 
 server.listen(PORT, () => {
-    console.log(`שרת מקומי רץ בכתובת: http://localhost:${PORT}/`);
+    console.log(`Local development server running at: http://localhost:${PORT}/`);
+    console.log(`Close this window to stop the server.`);
 });

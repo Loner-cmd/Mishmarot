@@ -106,15 +106,60 @@ window.toggleOwnerInstructorMode = function(isChecked) {
     }
 };
 
+async function checkIfGoogleDefaultAvatar(url) {
+    if (!url) return true;
+    if (url.includes('default-user')) return true;
+
+    try {
+        // בדיקת גודל קובץ: תמונת אות ברירת מחדל ~3KB, תמונה אמיתית בד"כ 8KB+
+        const response = await fetch(url, { referrerPolicy: 'no-referrer' });
+        if (!response.ok) return true;
+        const blob = await response.blob();
+        // סף 5000 בייטים (5KB) – מתחת: ברירת מחדל, מעל: תמונה אמיתית
+        return blob.size < 5000;
+    } catch (e) {
+        // בשגיאת רשת – נניח שהיא תמונה אמיתית ונציג אותה
+        return false;
+    }
+}
+
+
+
 onAuthStateChanged(auth, async (user) => {
     window.currentUser = user;
     const btnText = document.getElementById('authBtnText');
     const authContainer = document.getElementById('headerAuthContainer');
+    const authCircle = document.getElementById('headerAuthCircle');
 
     if (user) {
         const displayName = user.displayName ? user.displayName.split(' ')[0] : 'מחובר';
         btnText.textContent = displayName;
         authContainer.classList.add('logged-in');
+
+        if (authCircle) {
+            if (user.photoURL) {
+                const cached = localStorage.getItem(`gphoto_${user.uid}`);
+                if (cached === '0') {
+                    // Cached: confirmed real photo → show it
+                    authCircle.innerHTML = `<img src="${user.photoURL}" alt="" class="header-auth-avatar-img" referrerpolicy="no-referrer">`;
+                } else {
+                    // Default icon (either cached as default, or no cache yet)
+                    authCircle.innerHTML = `<svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>`;
+                    // If no cache yet, run canvas check in background for future reloads
+                    if (cached === null) {
+                        checkIfGoogleDefaultAvatar(user.photoURL).then(isDefault => {
+                            localStorage.setItem(`gphoto_${user.uid}`, isDefault ? '1' : '0');
+                            if (!isDefault) {
+                                const circle = document.getElementById('headerAuthCircle');
+                                if (circle) circle.innerHTML = `<img src="${user.photoURL}" alt="" class="header-auth-avatar-img" referrerpolicy="no-referrer">`;
+                            }
+                        });
+                    }
+                }
+            } else {
+                authCircle.innerHTML = `<svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>`;
+            }
+        }
         
         await checkInstructorPermission(user.uid);
         await handleUserAuthenticationSync(user.uid);
@@ -123,6 +168,7 @@ onAuthStateChanged(auth, async (user) => {
             await setDoc(doc(db, 'app_users', user.uid), {
                 email: user.email || 'לא ידוע',
                 name: user.displayName || 'משתמש',
+                photoURL: user.photoURL || '',
                 lastLogin: new Date().toISOString()
             }, { merge: true });
         } catch (err) {
@@ -131,8 +177,11 @@ onAuthStateChanged(auth, async (user) => {
 
     } else {
         window.isUserInstructor = false;
-        btnText.textContent = 'התחברות';
+        btnText.textContent = 'לא מחובר';
         authContainer.classList.remove('logged-in');
+        if (authCircle) {
+            authCircle.innerHTML = `<svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>`;
+        }
         loadLocalShifts();
     }
 });
@@ -257,24 +306,17 @@ window.goToProfileView = function() {
 };
 
 window.openSettingsModal = function() {
-    const dropdown = document.getElementById('userDropdownMenu');
-    if (dropdown) dropdown.classList.remove('open');
+    window.closeUserMenu();
     document.getElementById('settingsModal').classList.add('open');
 };
 
 window.closeSettingsModal = function() {
     document.getElementById('settingsModal').classList.remove('open');
-    const dropdown = document.getElementById('userDropdownMenu');
-    const backdrop = document.getElementById('menuBackdrop');
-    if (dropdown) dropdown.classList.remove('open');
-    if (backdrop) backdrop.classList.remove('open');
+    window.closeUserMenu();
 };
 
 window.confirmSignOut = function() {
-    const dropdown = document.getElementById('userDropdownMenu');
-    const backdrop = document.getElementById('menuBackdrop');
-    if (dropdown) dropdown.classList.remove('open');
-    if (backdrop) backdrop.classList.remove('open');
+    window.closeUserMenu();
 
     showSmartAlertDialog(
         'התנתקות מהמערכת',
@@ -283,9 +325,6 @@ window.confirmSignOut = function() {
         'ביטול',
         async () => {
             try {
-                if (backdrop) backdrop.classList.remove('open');
-                if (dropdown) dropdown.classList.remove('open');
-
                 await signOut(auth);
                 window.shifts = [];
                 window.isUserInstructor = false;
@@ -293,13 +332,10 @@ window.confirmSignOut = function() {
                 localStorage.removeItem('railway_last_user');
                 refreshUIAfterSync();
             } catch (error) {
-                console.error(error);
+                console.error("Sign out error:", error);
             }
         },
-        () => {
-            if (backdrop) backdrop.classList.remove('open');
-            if (dropdown) dropdown.classList.remove('open');
-        }
+        () => {}
     );
 };
 
@@ -375,28 +411,38 @@ window.loadAdminUsersList = async function() {
     }
 };
 
-function censorEmail(email) {
-    if (!email || !email.includes('@')) return email;
+function buildEmailMaskHTML(email) {
+    if (!email || !email.includes('@')) {
+        return `<span class="admin-unified-email">${email || 'לא ידוע'}</span>`;
+    }
     const atIdx = email.indexOf('@');
     const local = email.substring(0, atIdx);
     const domain = email.substring(atIdx);
+    
+    let keepStart, keepEnd;
     if (local.length <= 3) {
-        return local[0] + '*'.repeat(Math.max(1, local.length - 1)) + domain;
+        keepStart = 1;
+        keepEnd = 0;
+    } else {
+        keepStart = Math.min(3, Math.ceil(local.length / 3));
+        keepEnd = local.length > 6 ? 2 : 1;
     }
-    const keepStart = Math.min(3, Math.ceil(local.length / 3));
-    const keepEnd = local.length > 6 ? 2 : 1;
-    const hiddenLen = local.length - keepStart - keepEnd;
-    if (hiddenLen <= 0) return local.substring(0, keepStart) + '*' + domain;
-    return local.substring(0, keepStart) + '*'.repeat(hiddenLen) + local.substring(local.length - keepEnd) + domain;
+    
+    const prefix = local.substring(0, keepStart);
+    const hiddenPart = local.substring(keepStart, local.length - keepEnd);
+    const suffix = local.substring(local.length - keepEnd) + domain;
+    const stars = '*'.repeat(Math.max(1, hiddenPart.length));
+
+    return `<span class="admin-unified-email"><span class="email-prefix">${prefix}</span><span class="censored-mask" data-stars="${stars}">${hiddenPart}</span><span class="email-suffix">${suffix}</span></span>`;
 }
 
 function buildAdminUserCard(user) {
-    const censored = censorEmail(user.email || 'לא ידוע');
     const roleLabel = user.isInstructor ? 'מדריך' : 'משתמש רגיל';
     const roleBadgeBg = user.isInstructor ? 'rgba(16,185,129,0.15)' : 'rgba(148,163,184,0.1)';
     const roleColor = user.isInstructor ? 'var(--accent-green)' : 'var(--text-muted)';
     const emailSafe = (user.email || '').replace(/'/g, "\\'");
     const uidSafe = user.id.replace(/'/g, "\\'");
+    const emailMaskHTML = buildEmailMaskHTML(user.email || 'לא ידוע');
 
     const copySvg = '<svg class="svg-icon" width="13" height="13" viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>';
     const gearOutlineSvg = '<svg width="18" height="18" viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>';
@@ -405,7 +451,10 @@ function buildAdminUserCard(user) {
     return `
         <div class="admin-user-card" data-uid="${user.id}">
             <div class="admin-user-header" onclick="toggleAdminCard('${uidSafe}')">
-                <span class="admin-censored-email">${censored}</span>
+                <div class="admin-email-wrap">
+                    ${emailMaskHTML}
+                    <button class="btn-secondary copy-icon-btn admin-email-copy-btn" onclick="navigator.clipboard.writeText('${emailSafe}'); event.stopPropagation();" title="העתק מייל">${copySvg}</button>
+                </div>
                 <div style="display: flex; align-items: center; gap: 8px;">
                     <span class="admin-indicator-icon ${user.isInstructor ? 'active-instructor' : 'inactive-user'}" title="${roleLabel}">
                         ${capSvg}
@@ -414,21 +463,15 @@ function buildAdminUserCard(user) {
                 </div>
             </div>
             <div class="admin-user-body" id="admin-body-${user.id}">
-                <div class="admin-user-details">
-                    <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px;">
-                        <div style="display: flex; align-items: center; gap: 6px; min-width: 0;">
-                            <span style="font-size: 0.9rem; font-weight: 700; color: #fff; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${user.email || 'לא ידוע'}</span>
-                            <button class="btn-secondary copy-icon-btn" onclick="navigator.clipboard.writeText('${emailSafe}'); event.stopPropagation();" title="העתק מייל">${copySvg}</button>
-                        </div>
-                        <span style="font-size: 0.72rem; font-weight: 700; padding: 2px 8px; border-radius: 6px; background: ${roleBadgeBg}; color: ${roleColor};">
+                <div class="admin-user-row2">
+                    <div style="display: flex; align-items: center; gap: 6px; min-width: 0;">
+                        <span style="font-size: 0.72rem; color: var(--text-muted); font-family: monospace; direction: ltr; overflow: hidden; text-overflow: ellipsis;">${user.id}</span>
+                        <button class="btn-secondary copy-icon-btn" onclick="navigator.clipboard.writeText('${uidSafe}'); event.stopPropagation();" title="העתק UID">${copySvg}</button>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <span class="admin-role-badge" style="font-size: 0.72rem; font-weight: 700; padding: 2px 8px; border-radius: 6px; background: ${roleBadgeBg}; color: ${roleColor}; white-space: nowrap;">
                             ${roleLabel}
                         </span>
-                    </div>
-                    <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px;">
-                        <div style="display: flex; align-items: center; gap: 6px; min-width: 0;">
-                            <span style="font-size: 0.72rem; color: var(--text-muted); font-family: monospace; direction: ltr; overflow: hidden; text-overflow: ellipsis;">${user.id}</span>
-                            <button class="btn-secondary copy-icon-btn" onclick="navigator.clipboard.writeText('${uidSafe}'); event.stopPropagation();" title="העתק UID">${copySvg}</button>
-                        </div>
                         <button class="admin-perm-btn" onclick="openPermModal('${uidSafe}', '${emailSafe}', ${user.isInstructor}); event.stopPropagation();" title="ניהול הרשאה">
                             ${gearOutlineSvg}
                         </button>
@@ -504,7 +547,7 @@ window.savePermChange = async function() {
     // עדכון מיידי של הכרטיס ב-DOM ללא הבהוב או סגירת כרטיסים
     const card = document.querySelector(`.admin-user-card[data-uid="${uid}"]`);
     if (card) {
-        const badge = card.querySelector('.admin-user-details span[style*="border-radius: 6px"]');
+        const badge = card.querySelector('.admin-role-badge');
         if (badge) {
             badge.textContent = isChecked ? 'מדריך' : 'משתמש רגיל';
             badge.style.background = isChecked ? 'rgba(16,185,129,0.15)' : 'rgba(148,163,184,0.1)';
@@ -517,7 +560,7 @@ window.savePermChange = async function() {
         }
         const permBtn = card.querySelector('.admin-perm-btn');
         if (permBtn) {
-            const currentEmail = card.querySelector('.admin-user-details span[style*="overflow: hidden"]')?.textContent || '';
+            const currentEmail = card.querySelector('.admin-unified-email')?.textContent || '';
             permBtn.setAttribute('onclick', `openPermModal('${uid}', '${currentEmail.replace(/'/g, "\\'")}', ${isChecked}); event.stopPropagation();`);
         }
     }
@@ -640,6 +683,15 @@ let navHasMoved = false;
 
 if (bottomNav) {
     bottomNav.addEventListener('touchstart', (e) => {
+        const wrap = document.getElementById('toolsDrawerWrap');
+        if (wrap && wrap.classList.contains('open')) {
+            window.toggleToolsDrawer(false);
+            navTouchActive = false;
+            navHasMoved = true;
+            isNavDragging = false;
+            return;
+        }
+
         navTouchActive = true;
         navHasMoved = false;
         navStartX = e.touches[0].clientX;
@@ -711,6 +763,11 @@ if (bottomNav) {
 }
 
 window.handleNavClick = function(target) {
+    const wrap = document.getElementById('toolsDrawerWrap');
+    if (wrap && wrap.classList.contains('open')) {
+        window.toggleToolsDrawer(false);
+        return;
+    }
     if (navHasMoved) return; 
     window.navigateTo(target);
 };
@@ -787,18 +844,57 @@ window.navigateTo = function(viewName, closeMenu = true) {
     }
 };
 
-window.toggleToolsDrawer = function() {
-    const wrap = document.getElementById('toolsDrawerWrap');
-    if (wrap) wrap.classList.toggle('open');
+window.updateBodyScrollLock = function() {
+    const hasOpenModal = document.querySelector(
+        '.modal-overlay.open, .error-dialog-overlay.open, .perm-modal-overlay.open, .menu-backdrop.open, .tools-drawer-backdrop.open'
+    );
+    if (hasOpenModal) {
+        document.body.classList.add('modal-open');
+    } else {
+        document.body.classList.remove('modal-open');
+    }
 };
+
+window.toggleToolsDrawer = function(forceState) {
+    const wrap = document.getElementById('toolsDrawerWrap');
+    const backdrop = document.getElementById('toolsDrawerBackdrop');
+    const navWrapper = document.querySelector('.bottom-nav-wrapper');
+    if (!wrap) return;
+
+    const isOpen = typeof forceState === 'boolean' ? forceState : !wrap.classList.contains('open');
+    if (isOpen) {
+        wrap.classList.add('open');
+        if (backdrop) backdrop.classList.add('open');
+        if (navWrapper) navWrapper.classList.add('tools-open');
+    } else {
+        wrap.classList.remove('open');
+        if (backdrop) backdrop.classList.remove('open');
+        if (navWrapper) navWrapper.classList.remove('tools-open');
+    }
+    window.updateBodyScrollLock();
+};
+
+window.closeToolsDrawer = function(e) {
+    if (e) {
+        e.stopPropagation();
+        e.preventDefault();
+    }
+    window.toggleToolsDrawer(false);
+};
+
+let statusBubbleTimer = null;
 
 function showStatusBubbleToast(msg) {
     const toast = document.getElementById('statusBubbleToast');
     if (!toast) return;
     toast.textContent = msg;
     toast.classList.add('show');
-    setTimeout(() => {
+    if (statusBubbleTimer) {
+        clearTimeout(statusBubbleTimer);
+    }
+    statusBubbleTimer = setTimeout(() => {
         toast.classList.remove('show');
+        statusBubbleTimer = null;
     }, 2200);
 }
 
@@ -812,35 +908,66 @@ window.closeUserMenu = function(e) {
     }
     const dropdown = document.getElementById('userDropdownMenu');
     const backdrop = document.getElementById('menuBackdrop');
+    const authContainer = document.getElementById('headerAuthContainer');
     if (dropdown) dropdown.classList.remove('open');
     if (backdrop) backdrop.classList.remove('open');
+    if (authContainer) authContainer.classList.remove('menu-open');
+    window.updateBodyScrollLock();
 };
 
 window.handleAuthClick = async function(event) {
     event.stopPropagation();
     if (currentView === 'profile' || currentView === 'admin') return;
 
-    if (window.currentUser) {
-        const dropdown = document.getElementById('userDropdownMenu');
-        const backdrop = document.getElementById('menuBackdrop');
-        const isOpen = dropdown.classList.contains('open');
-        
-        if (isOpen) {
-            dropdown.classList.remove('open');
-            backdrop.classList.remove('open');
-        } else {
-            const authContainer = document.getElementById('headerAuthContainer');
-            const rect = authContainer.getBoundingClientRect();
-            dropdown.style.top = (rect.bottom + 8) + 'px';
-            dropdown.style.left = rect.left + 'px';
-            dropdown.classList.add('open');
-            backdrop.classList.add('open');
-        }
-    } else {
-        if (window.triggerGoogleSignIn) {
-            window.triggerGoogleSignIn();
-        }
+    const dropdown = document.getElementById('userDropdownMenu');
+    const backdrop = document.getElementById('menuBackdrop');
+    const authContainer = document.getElementById('headerAuthContainer');
+    if (!dropdown) return;
+
+    const isOpen = dropdown.classList.contains('open');
+    if (isOpen) {
+        window.closeUserMenu();
+        return;
     }
+
+    if (window.currentUser) {
+        dropdown.innerHTML = `
+            <button class="dropdown-item" onclick="goToProfileView()">
+                <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+                <span>פרופיל אישי</span>
+            </button>
+            <button class="dropdown-item" onclick="openSettingsModal()">
+                <svg viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
+                <span>הגדרות</span>
+            </button>
+            <div class="dropdown-divider"></div>
+            <button class="dropdown-item danger-item" onclick="confirmSignOut()">
+                <svg viewBox="0 0 24 24"><path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"/></svg>
+                <span>התנתקות</span>
+            </button>
+        `;
+    } else {
+        dropdown.innerHTML = `
+            <button class="dropdown-item" onclick="window.closeUserMenu(); if(window.triggerGoogleSignIn) window.triggerGoogleSignIn();">
+                <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/></svg>
+                <span>התחברות</span>
+            </button>
+            <button class="dropdown-item" onclick="openSettingsModal()">
+                <svg viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
+                <span>הגדרות</span>
+            </button>
+        `;
+    }
+
+    if (authContainer) {
+        const rect = authContainer.getBoundingClientRect();
+        dropdown.style.top = (rect.bottom + 8) + 'px';
+        dropdown.style.left = rect.left + 'px';
+        authContainer.classList.add('menu-open');
+    }
+    dropdown.classList.add('open');
+    if (backdrop) backdrop.classList.add('open');
+    window.updateBodyScrollLock();
 };
 
 window.openMonthlySummaryModal = function(mk) {
@@ -862,8 +989,13 @@ window.openMonthlySummaryModal = function(mk) {
     document.getElementById('summaryModalTitle').textContent = 'סיכום חודשי - ' + formatMonthName(mk);
     document.getElementById('modalWorkVal').textContent = window.formatMinutesToHM(totWorkMins);
     document.getElementById('modalPremVal').textContent = window.formatMinutesToHM(totPremMins);
-    document.getElementById('modalNaltVal').textContent = window.formatMinutesToHM(totNaltMins);
-    document.getElementById('modalExportBtn').setAttribute('onclick', 'printMonthReport(\'' + mk + '\')');
+    const exportBtn = document.getElementById('modalExportBtn');
+    if (exportBtn) {
+        exportBtn.setAttribute('data-month', mk);
+        exportBtn.onclick = function() {
+            printMonthReport(mk);
+        };
+    }
 
     document.getElementById('monthlySummaryModal').classList.add('open');
 };
@@ -969,51 +1101,23 @@ function setupGlobalInteractions() {
     const drawerItems = document.querySelectorAll('.tools-popup-drawer .btn-drawer-item, .month-accordion-header .btn-summary-modal');
     
     drawerItems.forEach(btn => {
-        let pressTimer = null;
-        let longPressed = false;
-        const tooltip = btn.querySelector('.drawer-tooltip');
-        const actionType = btn.getAttribute('data-action');
-
-        const startPress = (e) => {
-            longPressed = false;
-            if (pressTimer) clearTimeout(pressTimer);
-            pressTimer = setTimeout(() => {
-                longPressed = true;
-                if (tooltip) tooltip.classList.add('show');
-            }, 500); 
-        };
-
-        const endPress = (e) => {
-            if (pressTimer) {
-                clearTimeout(pressTimer);
-                pressTimer = null;
-            }
-
-            if (tooltip && tooltip.classList.contains('show')) {
-                setTimeout(() => tooltip.classList.remove('show'), 1500);
-            }
-
-            if (!longPressed) {
-                if (actionType === 'summary') {
-                    const mk = btn.getAttribute('data-month');
-                    if (mk) window.openMonthlySummaryModal(mk);
-                } else if (actionType) {
-                    window.handleToolAction(actionType);
-                }
-            }
-            longPressed = false;
-        };
-
-        btn.replaceWith(btn.cloneNode(true));
+        const freshBtn = btn.cloneNode(true);
+        btn.replaceWith(freshBtn);
     });
 
     document.querySelectorAll('.tools-popup-drawer .btn-drawer-item, .month-accordion-header .btn-summary-modal').forEach(btn => {
         let pressTimer = null;
         let longPressed = false;
+        let isTouchInteraction = false;
         const tooltip = btn.querySelector('.drawer-tooltip');
         const actionType = btn.getAttribute('data-action');
 
         const startPress = (e) => {
+            if (e.type === 'touchstart') {
+                isTouchInteraction = true;
+            } else if (e.type === 'mousedown') {
+                if (isTouchInteraction) return;
+            }
             longPressed = false;
             if (pressTimer) clearTimeout(pressTimer);
             pressTimer = setTimeout(() => {
@@ -1023,6 +1127,11 @@ function setupGlobalInteractions() {
         };
 
         const endPress = (e) => {
+            if (e.type === 'mouseup' && isTouchInteraction) {
+                setTimeout(() => { isTouchInteraction = false; }, 300);
+                return;
+            }
+
             if (pressTimer) {
                 clearTimeout(pressTimer);
                 pressTimer = null;
@@ -1039,15 +1148,24 @@ function setupGlobalInteractions() {
                 } else if (actionType) {
                     window.handleToolAction(actionType);
                 }
+            } else {
+                if (e.cancelable) {
+                    e.preventDefault();
+                }
             }
             longPressed = false;
+
+            if (e.type === 'touchend' || e.type === 'touchcancel') {
+                setTimeout(() => { isTouchInteraction = false; }, 400);
+            }
         };
 
         btn.addEventListener('touchstart', startPress, {passive: true});
         btn.addEventListener('touchend', endPress);
-        btn.addEventListener('touchcancel', () => {
+        btn.addEventListener('touchcancel', (e) => {
             if (pressTimer) clearTimeout(pressTimer);
             if (tooltip) tooltip.classList.remove('show');
+            setTimeout(() => { isTouchInteraction = false; }, 400);
         });
         btn.addEventListener('mousedown', startPress);
         btn.addEventListener('mouseup', endPress);
@@ -1056,6 +1174,14 @@ function setupGlobalInteractions() {
             if (tooltip) tooltip.classList.remove('show');
         });
     });
+
+    const exportBtn = document.getElementById('modalExportBtn');
+    if (exportBtn && !exportBtn.dataset.touchInit) {
+        exportBtn.dataset.touchInit = 'true';
+        exportBtn.addEventListener('touchstart', () => exportBtn.classList.add('active-touch'), {passive: true});
+        exportBtn.addEventListener('touchend', () => exportBtn.classList.remove('active-touch'));
+        exportBtn.addEventListener('touchcancel', () => exportBtn.classList.remove('active-touch'));
+    }
 }
 
 window.handleToolAction = function(type) {
@@ -1063,8 +1189,7 @@ window.handleToolAction = function(type) {
     else if (type === 'sorting') toggleSortingMode();
     else if (type === 'selection') toggleSelectionMode();
     
-    const toolsWrap = document.getElementById('toolsDrawerWrap');
-    if (toolsWrap) toolsWrap.classList.remove('open');
+    window.toggleToolsDrawer(false);
 };
 
 function populateProfileMonthSelector() {
@@ -1140,6 +1265,7 @@ function updateActiveShiftUI() {
     const statusIndicator = document.getElementById('statusIndicator');
     const statusText = document.getElementById('statusText');
     const headerTimer = document.getElementById('headerShiftDuration');
+    const floatingBar = document.getElementById('activeShiftFloatingBar');
     
     const headerPWrap = document.getElementById('headerProgressWrap');
     const headerPFill = document.getElementById('headerProgressFill');
@@ -1149,8 +1275,9 @@ function updateActiveShiftUI() {
     const mainActionLine2 = document.getElementById('mainActionTextLine2');
 
     if (active) {
-        statusIndicator.className = 'status-badge active';
-        statusText.textContent = 'במשמרת';
+        if (floatingBar) floatingBar.classList.add('visible');
+        if (statusIndicator) statusIndicator.className = 'status-badge active';
+        if (statusText) statusText.textContent = 'במשמרת';
 
         const [sh, sm] = active.startTime.split(':').map(Number);
         const now = new Date();
@@ -1161,29 +1288,31 @@ function updateActiveShiftUI() {
         const m = String(Math.floor((totalSec % 3600) / 60)).padStart(2, '0');
         const s = String(totalSec % 60).padStart(2, '0');
 
-        headerTimer.style.display = 'block';
-        headerTimer.textContent = h + ':' + m + ':' + s;
+        if (headerTimer) headerTimer.textContent = h + ':' + m + ':' + s;
         
         let durMins = Math.floor(totalSec / 60);
         let pct = Math.min((durMins / 720), 1); 
 
-        headerPWrap.style.display = 'block';
-        headerPFill.style.width = (pct * 100) + '%';
-        headerPFill.className = 'header-progress-fill fill-green';
+        if (headerPWrap) headerPWrap.style.display = 'block';
+        if (headerPFill) {
+            headerPFill.style.width = (pct * 100) + '%';
+            headerPFill.className = 'header-progress-fill fill-green';
+        }
 
-        btnMainAction.className = 'btn-main-circle state-active';
-        mainActionLine1.textContent = 'יציאה';
-        mainActionLine2.textContent = 'ממשמרת';
+        if (btnMainAction) btnMainAction.className = 'btn-main-circle state-active';
+        if (mainActionLine1) mainActionLine1.textContent = 'יציאה';
+        if (mainActionLine2) mainActionLine2.textContent = 'ממשמרת';
 
     } else {
-        statusIndicator.className = 'status-badge idle';
-        statusText.textContent = 'במנוחה';
-        headerTimer.style.display = 'none';
-        headerPWrap.style.display = 'none';
+        if (floatingBar) floatingBar.classList.remove('visible');
+        if (statusIndicator) statusIndicator.className = 'status-badge idle';
+        if (statusText) statusText.textContent = '';
+        if (headerTimer) headerTimer.textContent = '00:00:00';
+        if (headerPWrap) headerPWrap.style.display = 'none';
 
-        btnMainAction.className = 'btn-main-circle state-idle';
-        mainActionLine1.textContent = 'כניסה';
-        mainActionLine2.textContent = 'למשמרת';
+        if (btnMainAction) btnMainAction.className = 'btn-main-circle state-idle';
+        if (mainActionLine1) mainActionLine1.textContent = 'כניסה';
+        if (mainActionLine2) mainActionLine2.textContent = 'למשמרת';
     }
 }
 
@@ -1649,6 +1778,26 @@ window.printMonthReport = function(mk) {
             </tbody>\
         </table>\
     ';
+
+    const btn = document.getElementById('modalExportBtn');
+    let originalHTML = '';
+    if (btn) {
+        originalHTML = btn.innerHTML;
+        btn.classList.add('is-loading');
+        btn.innerHTML = '<svg class="svg-icon rotating" width="18" height="18" viewBox="0 0 24 24"><path d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46A7.93 7.93 0 0 0 20 12c0-4.42-3.58-8-8-8zm0 14c-3.31 0-6-2.69-6-6 0-1.01.25-1.97.7-2.8L5.24 7.74A7.93 7.93 0 0 0 4 12c0 4.42 3.58 8 8 8v3l4-4-4-4v3z"/></svg> <span>מייצר דוח...</span>';
+    }
+
+    const restoreBtn = () => {
+        if (btn && originalHTML) {
+            btn.classList.remove('is-loading');
+            btn.innerHTML = originalHTML;
+        }
+        window.removeEventListener('afterprint', restoreBtn);
+    };
+
+    window.addEventListener('afterprint', restoreBtn, { once: true });
+    setTimeout(restoreBtn, 4000);
+
     window.print();
 };
 
@@ -2055,6 +2204,8 @@ function buildShiftCardHTML(shift, overlappingIds) {
     const premSvgIcon = '<svg class="svg-icon" width="13" height="13" viewBox="0 0 24 24"><path fill="currentColor" d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>';
     const instructorSvgIcon = '<svg class="svg-icon" width="13" height="13" viewBox="0 0 24 24"><path fill="currentColor" d="M12 3L1 9l4 2.18v6L12 21l7-3.82v-6l2-1.09V17h2V9L12 3zm6.82 6L12 12.72 5.18 9 12 5.28 18.82 9zM17 15.99l-5 2.73-5-2.73v-3.72L12 15l5-2.73v3.72z"/></svg>';
     const notesSvgIcon = '<svg class="svg-icon" width="13" height="13" viewBox="0 0 24 24"><path fill="currentColor" d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 9h12v2H6V9zm8 5H6v-2h8v2zm4-6H6V6h12v2z"/></svg>';
+    const clockCheckSvg = '<svg class="svg-icon tag-clock-icon" width="14" height="14" viewBox="0 0 24 24"><path d="M5.7 14.2A8 8 0 1 1 13 19"/><path d="M13 6v5h4.5"/><path d="M4.5 17.2l2.3 2.3 4.3-4.3"/></svg>';
+    const clockAlertSvg = '<svg class="svg-icon tag-clock-icon" width="14" height="14" viewBox="0 0 24 24"><path d="M5.3 12.8A8 8 0 1 1 14.2 18.9"/><path d="M13 6v5h4.5"/><path class="triangle-fill" fill-rule="evenodd" d="M7.8 13.5L12 21H3.6ZM7.2 15.8H8.4V18.4H7.2ZM7.2 19.4H8.4V20.6H7.2Z"/></svg>';
 
     return '\
         <div class="shift-card ' + shiftTypeClass + ' ' + (isActive ? 'active-shift' : '') + ' ' + (isOverlap ? 'has-overlap' : '') + ' ' + (isIncomplete && !isActive ? 'incomplete' : '') + ' ' + (isSelected ? 'selected-for-delete' : '') + '" \
@@ -2137,7 +2288,7 @@ function buildShiftCardHTML(shift, overlappingIds) {
                             ' + (hasNotes ? '<span class="tag tag-notes" title="הערות">' + notesSvgIcon + '</span>' : '') + '\
                         </div>\
                         <div class="badges-group-left">\
-                            ' + (hasStart && hasEnd ? '<span class="tag tag-complete">סגור</span>' : '<span class="tag tag-alert">חסר</span>') + '\
+                            ' + (hasStart && hasEnd ? '<span class="tag tag-complete" title="משמרת סגורה">' + clockCheckSvg + '</span>' : '<span class="tag tag-alert" title="נתונים חסרים">' + clockAlertSvg + '</span>') + '\
                             ' + (isOverlap ? '<span class="tag tag-overlap">כפילות</span>' : '') + '\
                         </div>\
                     </div>\
@@ -2566,5 +2717,46 @@ window.closeModal = function() {
     document.getElementById('shiftModal').classList.remove('open');
 };
 
+function initBackdropScrollPrevention() {
+    const overlays = document.querySelectorAll(
+        '.modal-overlay, .error-dialog-overlay, .perm-modal-overlay, .menu-backdrop, .tools-drawer-backdrop'
+    );
+    overlays.forEach(overlay => {
+        overlay.addEventListener('touchmove', (e) => {
+            if (e.target === overlay) {
+                e.preventDefault();
+            }
+        }, { passive: false });
+    });
+
+    const nonScrollableCards = document.querySelectorAll(
+        '.error-dialog-card, .perm-modal-card, .user-dropdown-menu, .tools-popup-drawer'
+    );
+    nonScrollableCards.forEach(card => {
+        card.addEventListener('touchmove', (e) => {
+            e.preventDefault();
+        }, { passive: false });
+    });
+
+    const observer = new MutationObserver(() => {
+        if (window.updateBodyScrollLock) window.updateBodyScrollLock();
+    });
+    overlays.forEach(overlay => {
+        observer.observe(overlay, { attributes: true, attributeFilter: ['class'] });
+    });
+
+    document.addEventListener('click', (e) => {
+        const wrap = document.getElementById('toolsDrawerWrap');
+        if (wrap && wrap.classList.contains('open')) {
+            if (!wrap.contains(e.target)) {
+                window.toggleToolsDrawer(false);
+                e.stopPropagation();
+                e.preventDefault();
+            }
+        }
+    }, true);
+}
+
+initBackdropScrollPrevention();
 setupGlobalInteractions();
 window.navigateTo(currentView, false);
