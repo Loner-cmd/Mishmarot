@@ -1,10 +1,10 @@
-const CACHE_NAME = 'mishmarot-v5';
+const CACHE_NAME = 'mishmarot-v6';
 const urlsToCache = [
-  '/Mishmarot/',
-  '/Mishmarot/index.html',
-  '/Mishmarot/style.css',
-  '/Mishmarot/script.js',
-  '/Mishmarot/manifest.json'
+  '/',
+  '/index.html',
+  '/style.css',
+  '/script.js',
+  '/manifest.json'
 ];
 
 self.addEventListener('install', (event) => {

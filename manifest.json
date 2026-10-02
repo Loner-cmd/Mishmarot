@@ -1,8 +1,8 @@
 {
   "name": "יומן משמרות",
   "short_name": "יומן משמרות",
-  "start_url": "/Mishmarot/index.html",
-  "scope": "/Mishmarot/",
+  "start_url": "/index.html",
+  "scope": "/",
   "display": "standalone",
   "background_color": "#0b1329",
   "theme_color": "#0b1329",
