@@ -1,8 +1,7 @@
-const CACHE_NAME = 'mishmarot-v4';
+const CACHE_NAME = 'mishmarot-v5';
 const urlsToCache = [
   '/Mishmarot/',
   '/Mishmarot/index.html',
-  '/Mishmarot/Index.html',
   '/Mishmarot/style.css',
   '/Mishmarot/script.js',
   '/Mishmarot/manifest.json'
