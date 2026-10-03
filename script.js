@@ -289,14 +289,17 @@ window.goToProfileView = function() {
         
         const ownerBtn = document.getElementById('ownerAdminBtnContainer');
         const ownerToggleContainer = document.getElementById('ownerInstructorToggleContainer');
+        const ownerGitBtn = document.getElementById('ownerGitCommandsContainer');
 
         if (window.currentUser.uid === OWNER_UID) {
             ownerBtn.style.display = 'block';
             ownerToggleContainer.style.display = 'block';
+            if (ownerGitBtn) ownerGitBtn.style.display = 'block';
             document.getElementById('ownerInstructorToggle').checked = window.isUserInstructor;
         } else {
             ownerBtn.style.display = 'none';
             ownerToggleContainer.style.display = 'none';
+            if (ownerGitBtn) ownerGitBtn.style.display = 'none';
         }
 
         populateProfileMonthSelector();
@@ -786,10 +789,10 @@ function updateIndicatorPosition(animate = true) {
 window.addEventListener('resize', () => updateIndicatorPosition(false));
 
 window.navigateTo = function(viewName, closeMenu = true) {
-    // בדיקת הרשאה: רק ה-Owner רשאי לגשת לדף הניהול
-    if (viewName === 'admin') {
+    // בדיקת הרשאה: רק ה-Owner רשאי לגשת לדף הניהול ולמדריך פקודות Git
+    if (viewName === 'admin' || viewName === 'gitCommands') {
         if (!window.currentUser || window.currentUser.uid !== OWNER_UID) {
-            console.warn('גישה נדחתה לפאנל הניהול.');
+            console.warn('גישה נדחתה.');
             viewName = 'clock';
         }
     }
@@ -803,7 +806,7 @@ window.navigateTo = function(viewName, closeMenu = true) {
 
     const authContainer = document.getElementById('headerAuthContainer');
     if (authContainer) {
-        if (viewName === 'profile' || viewName === 'admin') {
+        if (viewName === 'profile' || viewName === 'admin' || viewName === 'gitCommands') {
             authContainer.classList.add('disabled-profile');
         } else {
             authContainer.classList.remove('disabled-profile');
@@ -814,9 +817,11 @@ window.navigateTo = function(viewName, closeMenu = true) {
     document.getElementById('viewHistory').style.display = (viewName === 'history') ? 'flex' : 'none';
     document.getElementById('viewProfile').style.display = (viewName === 'profile') ? 'flex' : 'none';
     document.getElementById('viewAdmin').style.display = (viewName === 'admin') ? 'flex' : 'none';
+    const viewGitCmds = document.getElementById('viewGitCommands');
+    if (viewGitCmds) viewGitCmds.style.display = (viewName === 'gitCommands') ? 'flex' : 'none';
 
     const bottomNavEl = document.getElementById('bottomNav').closest('.bottom-nav-wrapper');
-    if (viewName === 'profile' || viewName === 'admin') {
+    if (viewName === 'profile' || viewName === 'admin' || viewName === 'gitCommands') {
         bottomNavEl.style.display = 'none'; 
     } else {
         bottomNavEl.style.display = 'flex';
@@ -842,6 +847,53 @@ window.navigateTo = function(viewName, closeMenu = true) {
     if (viewName === 'admin') {
         loadAdminUsersList();
     }
+};
+
+window.copyInAppCmd = function(text, btn) {
+    navigator.clipboard.writeText(text).then(() => {
+        const orig = btn.textContent;
+        btn.textContent = 'הועתק! ✓';
+        btn.style.background = '#1f6feb';
+        setTimeout(() => {
+            btn.textContent = orig;
+            btn.style.background = '#2ea043';
+        }, 1400);
+    }).catch(err => {
+        alert('העתקה נכשלה: ' + err);
+    });
+};
+
+window.filterInAppGitCommands = function() {
+    const q = (document.getElementById('gitCmdSearch').value || '').trim().toLowerCase();
+    const rows = document.querySelectorAll('.git-row-item');
+    const hdrs = document.querySelectorAll('.git-cat-hdr');
+    let count = 0;
+
+    rows.forEach(r => {
+        const text = (r.getAttribute('data-search') + ' ' + r.innerText).toLowerCase();
+        if (!q || text.includes(q)) {
+            r.style.display = 'flex';
+            count++;
+        } else {
+            r.style.display = 'none';
+        }
+    });
+
+    hdrs.forEach(h => {
+        let next = h.nextElementSibling;
+        let has = false;
+        while (next && next.classList.contains('git-row-item')) {
+            if (next.style.display !== 'none') {
+                has = true;
+                break;
+            }
+            next = next.nextElementSibling;
+        }
+        h.style.display = (has || !q) ? 'block' : 'none';
+    });
+
+    const noRes = document.getElementById('inAppGitNoResults');
+    if (noRes) noRes.style.display = count === 0 ? 'block' : 'none';
 };
 
 window.updateBodyScrollLock = function() {

@@ -248,6 +248,15 @@
                     </label>
                 </div>
             </div>
+
+            <div id="ownerGitCommandsContainer" style="display: none; margin-top: 14px;">
+                <button class="btn-secondary" style="width: 100%; background: rgba(0, 229, 255, 0.1); border-color: rgba(0, 229, 255, 0.35); color: var(--accent-cyan); font-weight: 700; padding: 12px; display: flex; align-items: center; justify-content: center; gap: 8px; border-radius: 10px; cursor: pointer;" onclick="navigateTo('gitCommands')">
+                    <svg class="svg-icon" width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M9.4 16.6L4.8 12l4.6-4.6L8 6l-6 6 6 6 1.4-1.4zm5.2 0l4.6-4.6-4.6-4.6L16 6l6 6-6 6-1.4-1.4z"/>
+                    </svg>
+                    מדריך פקודות Git
+                </button>
+            </div>
         </div>
     </div>
 
@@ -273,6 +282,229 @@
                     <div style="text-align: center; color: var(--text-muted); padding: 20px;">טוען משתמשים...</div>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <!-- View Git Commands (Owner Only) -->
+    <div id="viewGitCommands" class="app-view" style="display: none;">
+        <div class="clock-screen-card" style="align-items: stretch; gap: 14px; max-width: 820px; margin: 0 auto; width: 100%;">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 10px;">
+                <h2 style="font-size: 1.2rem; color: var(--accent-cyan); display: flex; align-items: center; gap: 8px; margin: 0;">
+                    <svg class="svg-icon" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M9.4 16.6L4.8 12l4.6-4.6L8 6l-6 6 6 6 1.4-1.4zm5.2 0l4.6-4.6-4.6-4.6L16 6l6 6-6 6-1.4-1.4z"/>
+                    </svg>
+                    מדריך פקודות Git
+                </h2>
+                <button class="btn-icon-action" style="background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border-color); color: var(--text-main); width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer;" onclick="navigateTo('profile')" title="חזרה">
+                    <svg class="svg-icon" width="18" height="18" viewBox="0 0 24 24">
+                        <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- In-App Git Commands Search -->
+            <div style="position: relative;">
+                <input type="text" id="gitCmdSearch" placeholder="חיפוש פקודה או תיאור..." oninput="filterInAppGitCommands()" style="width: 100%; background: rgba(255, 255, 255, 0.06); border: 1px solid var(--border-color); border-radius: 8px; padding: 10px 14px; color: #fff; font-family: inherit; font-size: 0.95rem; outline: none; box-sizing: border-box;">
+            </div>
+
+            <!-- In-App Git Commands List -->
+            <div id="inAppGitCommandsList" style="display: flex; flex-direction: column; gap: 8px; max-height: 60vh; overflow-y: auto; padding-right: 2px;">
+                <div class="git-cat-hdr" style="color: var(--accent-cyan); font-weight: 700; font-size: 0.95rem; margin-top: 6px; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 4px;">1. שגרת עבודה יומיומית</div>
+                
+                <div class="git-row-item" data-search="סטאטוס בדיקת מצב ענף שינויים git status" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 8px; padding: 10px 12px; display: flex; flex-direction: column; gap: 6px;">
+                    <span style="font-size: 0.9rem; font-weight: 600; color: #e6edf3;">בדיקת מצב (אילו קבצים שונו, מה מוכן לשמירה ובאיזה ענף אתה)</span>
+                    <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px; direction: ltr;">
+                        <code style="background: #101726; color: #79c0ff; padding: 6px 10px; border-radius: 6px; font-family: monospace; font-size: 0.85rem; border: 1px solid rgba(88,166,255,0.2); overflow-x: auto; flex: 1;">git status</code>
+                        <button class="btn-git-copy" onclick="copyInAppCmd('git status', this)" style="background: #2ea043; color: #fff; border: none; padding: 6px 12px; border-radius: 6px; font-weight: 700; font-size: 0.8rem; cursor: pointer; flex-shrink: 0;">העתק</button>
+                    </div>
+                </div>
+
+                <div class="git-row-item" data-search="הכנת קבצים שמירה שלב ראשון git add ." style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 8px; padding: 10px 12px; display: flex; flex-direction: column; gap: 6px;">
+                    <span style="font-size: 0.9rem; font-weight: 600; color: #e6edf3;">מכין את כל הקבצים ששונו בתיקייה לקראת שמירה</span>
+                    <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px; direction: ltr;">
+                        <code style="background: #101726; color: #79c0ff; padding: 6px 10px; border-radius: 6px; font-family: monospace; font-size: 0.85rem; border: 1px solid rgba(88,166,255,0.2); overflow-x: auto; flex: 1;">git add .</code>
+                        <button class="btn-git-copy" onclick="copyInAppCmd('git add .', this)" style="background: #2ea043; color: #fff; border: none; padding: 6px 12px; border-radius: 6px; font-weight: 700; font-size: 0.8rem; cursor: pointer; flex-shrink: 0;">העתק</button>
+                    </div>
+                </div>
+
+                <div class="git-row-item" data-search="קומיט שמירה מקומית הסבר git commit" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 8px; padding: 10px 12px; display: flex; flex-direction: column; gap: 6px;">
+                    <span style="font-size: 0.9rem; font-weight: 600; color: #e6edf3;">שומר נקודת ציון מקומית עם הסבר על מה ששינית</span>
+                    <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px; direction: ltr;">
+                        <code style="background: #101726; color: #79c0ff; padding: 6px 10px; border-radius: 6px; font-family: monospace; font-size: 0.85rem; border: 1px solid rgba(88,166,255,0.2); overflow-x: auto; flex: 1;">git commit -m "הסבר כאן"</code>
+                        <button class="btn-git-copy" onclick="copyInAppCmd('git commit -m &quot;&quot;', this)" style="background: #2ea043; color: #fff; border: none; padding: 6px 12px; border-radius: 6px; font-weight: 700; font-size: 0.8rem; cursor: pointer; flex-shrink: 0;">העתק</button>
+                    </div>
+                </div>
+
+                <div class="git-row-item" data-search="פוש העלאה לגיטהאב ענן git push" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 8px; padding: 10px 12px; display: flex; flex-direction: column; gap: 6px;">
+                    <span style="font-size: 0.9rem; font-weight: 600; color: #e6edf3;">מעלה את כל השמירות מהמחשב ל-GitHub</span>
+                    <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px; direction: ltr;">
+                        <code style="background: #101726; color: #79c0ff; padding: 6px 10px; border-radius: 6px; font-family: monospace; font-size: 0.85rem; border: 1px solid rgba(88,166,255,0.2); overflow-x: auto; flex: 1;">git push</code>
+                        <button class="btn-git-copy" onclick="copyInAppCmd('git push', this)" style="background: #2ea043; color: #fff; border: none; padding: 6px 12px; border-radius: 6px; font-weight: 700; font-size: 0.8rem; cursor: pointer; flex-shrink: 0;">העתק</button>
+                    </div>
+                </div>
+
+                <div class="git-row-item" data-search="משיכה הורדת עדכונים מגיטהאב git pull" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 8px; padding: 10px 12px; display: flex; flex-direction: column; gap: 6px;">
+                    <span style="font-size: 0.9rem; font-weight: 600; color: #e6edf3;">מוריד שינויים מ-GitHub ומעדכן את המחשב</span>
+                    <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px; direction: ltr;">
+                        <code style="background: #101726; color: #79c0ff; padding: 6px 10px; border-radius: 6px; font-family: monospace; font-size: 0.85rem; border: 1px solid rgba(88,166,255,0.2); overflow-x: auto; flex: 1;">git pull</code>
+                        <button class="btn-git-copy" onclick="copyInAppCmd('git pull', this)" style="background: #2ea043; color: #fff; border: none; padding: 6px 12px; border-radius: 6px; font-weight: 700; font-size: 0.8rem; cursor: pointer; flex-shrink: 0;">העתק</button>
+                    </div>
+                </div>
+
+                <div class="git-cat-hdr" style="color: var(--accent-cyan); font-weight: 700; font-size: 0.95rem; margin-top: 10px; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 4px;">2. ענפים ומיזוגים (Branches & Merges)</div>
+
+                <div class="git-row-item" data-search="רשימת ענפים בראנצ'ים git branch" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 8px; padding: 10px 12px; display: flex; flex-direction: column; gap: 6px;">
+                    <span style="font-size: 0.9rem; font-weight: 600; color: #e6edf3;">מציג את רשימת הענפים ובאיזה מהם אתה עובד כרגע</span>
+                    <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px; direction: ltr;">
+                        <code style="background: #101726; color: #79c0ff; padding: 6px 10px; border-radius: 6px; font-family: monospace; font-size: 0.85rem; border: 1px solid rgba(88,166,255,0.2); overflow-x: auto; flex: 1;">git branch</code>
+                        <button class="btn-git-copy" onclick="copyInAppCmd('git branch', this)" style="background: #2ea043; color: #fff; border: none; padding: 6px 12px; border-radius: 6px; font-weight: 700; font-size: 0.8rem; cursor: pointer; flex-shrink: 0;">העתק</button>
+                    </div>
+                </div>
+
+                <div class="git-row-item" data-search="מעבר ענף החלפה git checkout" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 8px; padding: 10px 12px; display: flex; flex-direction: column; gap: 6px;">
+                    <span style="font-size: 0.9rem; font-weight: 600; color: #e6edf3;">עובר לענף קיים אחר (למשל Test)</span>
+                    <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px; direction: ltr;">
+                        <code style="background: #101726; color: #79c0ff; padding: 6px 10px; border-radius: 6px; font-family: monospace; font-size: 0.85rem; border: 1px solid rgba(88,166,255,0.2); overflow-x: auto; flex: 1;">git checkout Test</code>
+                        <button class="btn-git-copy" onclick="copyInAppCmd('git checkout Test', this)" style="background: #2ea043; color: #fff; border: none; padding: 6px 12px; border-radius: 6px; font-weight: 700; font-size: 0.8rem; cursor: pointer; flex-shrink: 0;">העתק</button>
+                    </div>
+                </div>
+
+                <div class="git-row-item" data-search="יצירת ענף חדש שכפול ומעבר git checkout -b" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 8px; padding: 10px 12px; display: flex; flex-direction: column; gap: 6px;">
+                    <span style="font-size: 0.9rem; font-weight: 600; color: #e6edf3;">יוצר ענף חדש מתוך המצב הנוכחי ועובר אליו מיד</span>
+                    <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px; direction: ltr;">
+                        <code style="background: #101726; color: #79c0ff; padding: 6px 10px; border-radius: 6px; font-family: monospace; font-size: 0.85rem; border: 1px solid rgba(88,166,255,0.2); overflow-x: auto; flex: 1;">git checkout -b new-branch</code>
+                        <button class="btn-git-copy" onclick="copyInAppCmd('git checkout -b new-branch', this)" style="background: #2ea043; color: #fff; border: none; padding: 6px 12px; border-radius: 6px; font-weight: 700; font-size: 0.8rem; cursor: pointer; flex-shrink: 0;">העתק</button>
+                    </div>
+                </div>
+
+                <div class="git-row-item" data-search="מיזוג איחוד ענפים שילוב שינויים git merge" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 8px; padding: 10px 12px; display: flex; flex-direction: column; gap: 6px;">
+                    <span style="font-size: 0.9rem; font-weight: 600; color: #e6edf3;">ממזג לתוך הענף הנוכחי שלך שינויים מענף אחר</span>
+                    <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px; direction: ltr;">
+                        <code style="background: #101726; color: #79c0ff; padding: 6px 10px; border-radius: 6px; font-family: monospace; font-size: 0.85rem; border: 1px solid rgba(88,166,255,0.2); overflow-x: auto; flex: 1;">git merge branch-name</code>
+                        <button class="btn-git-copy" onclick="copyInAppCmd('git merge branch-name', this)" style="background: #2ea043; color: #fff; border: none; padding: 6px 12px; border-radius: 6px; font-weight: 700; font-size: 0.8rem; cursor: pointer; flex-shrink: 0;">העתק</button>
+                    </div>
+                </div>
+
+                <div class="git-row-item" data-search="מחיקת ענף מקומי במחשב git branch -d" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 8px; padding: 10px 12px; display: flex; flex-direction: column; gap: 6px;">
+                    <span style="font-size: 0.9rem; font-weight: 600; color: #e6edf3;">מוחק ענף מקומי במחשב (שרק אם כבר מוזג בהצלחה)</span>
+                    <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px; direction: ltr;">
+                        <code style="background: #101726; color: #79c0ff; padding: 6px 10px; border-radius: 6px; font-family: monospace; font-size: 0.85rem; border: 1px solid rgba(88,166,255,0.2); overflow-x: auto; flex: 1;">git branch -d branch-name</code>
+                        <button class="btn-git-copy" onclick="copyInAppCmd('git branch -d branch-name', this)" style="background: #2ea043; color: #fff; border: none; padding: 6px 12px; border-radius: 6px; font-weight: 700; font-size: 0.8rem; cursor: pointer; flex-shrink: 0;">העתק</button>
+                    </div>
+                </div>
+
+                <div class="git-row-item" data-search="מחיקת ענף מגיטהאב בענן git push origin --delete" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 8px; padding: 10px 12px; display: flex; flex-direction: column; gap: 6px;">
+                    <span style="font-size: 0.9rem; font-weight: 600; color: #e6edf3;">מוחק ענף מרוחק מהאתר של GitHub</span>
+                    <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px; direction: ltr;">
+                        <code style="background: #101726; color: #79c0ff; padding: 6px 10px; border-radius: 6px; font-family: monospace; font-size: 0.85rem; border: 1px solid rgba(88,166,255,0.2); overflow-x: auto; flex: 1;">git push origin --delete branch-name</code>
+                        <button class="btn-git-copy" onclick="copyInAppCmd('git push origin --delete branch-name', this)" style="background: #2ea043; color: #fff; border: none; padding: 6px 12px; border-radius: 6px; font-weight: 700; font-size: 0.8rem; cursor: pointer; flex-shrink: 0;">העתק</button>
+                    </div>
+                </div>
+
+                <div class="git-row-item" data-search="דריסה בכוח force push החלפה" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 8px; padding: 10px 12px; display: flex; flex-direction: column; gap: 6px;">
+                    <span style="font-size: 0.9rem; font-weight: 600; color: #e6edf3;">דריסה בכוח של ענף מרוחק ב-GitHub (שימוש זהיר)</span>
+                    <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px; direction: ltr;">
+                        <code style="background: #101726; color: #79c0ff; padding: 6px 10px; border-radius: 6px; font-family: monospace; font-size: 0.85rem; border: 1px solid rgba(88,166,255,0.2); overflow-x: auto; flex: 1;">git push origin main --force</code>
+                        <button class="btn-git-copy" onclick="copyInAppCmd('git push origin main --force', this)" style="background: #2ea043; color: #fff; border: none; padding: 6px 12px; border-radius: 6px; font-weight: 700; font-size: 0.8rem; cursor: pointer; flex-shrink: 0;">העתק</button>
+                    </div>
+                </div>
+
+                <div class="git-cat-hdr" style="color: var(--accent-cyan); font-weight: 700; font-size: 0.95rem; margin-top: 10px; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 4px;">3. בדיקות, השוואות והיסטוריה</div>
+
+                <div class="git-row-item" data-search="בדיקת עדכונים שקטה ללא משיכה git fetch" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 8px; padding: 10px 12px; display: flex; flex-direction: column; gap: 6px;">
+                    <span style="font-size: 0.9rem; font-weight: 600; color: #e6edf3;">בודק אם יש חדש ב-GitHub בלי לשנות שום קובץ במחשב</span>
+                    <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px; direction: ltr;">
+                        <code style="background: #101726; color: #79c0ff; padding: 6px 10px; border-radius: 6px; font-family: monospace; font-size: 0.85rem; border: 1px solid rgba(88,166,255,0.2); overflow-x: auto; flex: 1;">git fetch</code>
+                        <button class="btn-git-copy" onclick="copyInAppCmd('git fetch', this)" style="background: #2ea043; color: #fff; border: none; padding: 6px 12px; border-radius: 6px; font-weight: 700; font-size: 0.8rem; cursor: pointer; flex-shrink: 0;">העתק</button>
+                    </div>
+                </div>
+
+                <div class="git-row-item" data-search="הבדלים מה השתנה שורה אחר שורה git diff" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 8px; padding: 10px 12px; display: flex; flex-direction: column; gap: 6px;">
+                    <span style="font-size: 0.9rem; font-weight: 600; color: #e6edf3;">מציג שורה-אחר-שורה את השינויים שטרם נשמרו</span>
+                    <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px; direction: ltr;">
+                        <code style="background: #101726; color: #79c0ff; padding: 6px 10px; border-radius: 6px; font-family: monospace; font-size: 0.85rem; border: 1px solid rgba(88,166,255,0.2); overflow-x: auto; flex: 1;">git diff</code>
+                        <button class="btn-git-copy" onclick="copyInAppCmd('git diff', this)" style="background: #2ea043; color: #fff; border: none; padding: 6px 12px; border-radius: 6px; font-weight: 700; font-size: 0.8rem; cursor: pointer; flex-shrink: 0;">העתק</button>
+                    </div>
+                </div>
+
+                <div class="git-row-item" data-search="היסטוריית שמירות קודמות לוג git log" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 8px; padding: 10px 12px; display: flex; flex-direction: column; gap: 6px;">
+                    <span style="font-size: 0.9rem; font-weight: 600; color: #e6edf3;">מציג רשימה מקוצרת של 5 השמירות האחרונות</span>
+                    <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px; direction: ltr;">
+                        <code style="background: #101726; color: #79c0ff; padding: 6px 10px; border-radius: 6px; font-family: monospace; font-size: 0.85rem; border: 1px solid rgba(88,166,255,0.2); overflow-x: auto; flex: 1;">git log --oneline -5</code>
+                        <button class="btn-git-copy" onclick="copyInAppCmd('git log --oneline -5', this)" style="background: #2ea043; color: #fff; border: none; padding: 6px 12px; border-radius: 6px; font-weight: 700; font-size: 0.8rem; cursor: pointer; flex-shrink: 0;">העתק</button>
+                    </div>
+                </div>
+
+                <div class="git-row-item" data-search="מי כתב שורה מי אשם תאריך git blame" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 8px; padding: 10px 12px; display: flex; flex-direction: column; gap: 6px;">
+                    <span style="font-size: 0.9rem; font-weight: 600; color: #e6edf3;">מציג מי כתב כל שורה בקובץ ובאיזה תאריך וקומיט</span>
+                    <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px; direction: ltr;">
+                        <code style="background: #101726; color: #79c0ff; padding: 6px 10px; border-radius: 6px; font-family: monospace; font-size: 0.85rem; border: 1px solid rgba(88,166,255,0.2); overflow-x: auto; flex: 1;">git blame index.html</code>
+                        <button class="btn-git-copy" onclick="copyInAppCmd('git blame index.html', this)" style="background: #2ea043; color: #fff; border: none; padding: 6px 12px; border-radius: 6px; font-weight: 700; font-size: 0.8rem; cursor: pointer; flex-shrink: 0;">העתק</button>
+                    </div>
+                </div>
+
+                <div class="git-cat-hdr" style="color: var(--accent-cyan); font-weight: 700; font-size: 0.95rem; margin-top: 10px; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 4px;">4. ביטולים, שחזורים ומכונת זמן</div>
+
+                <div class="git-row-item" data-search="ביטול שינוי בקובץ שחזור לקודם git restore" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 8px; padding: 10px 12px; display: flex; flex-direction: column; gap: 6px;">
+                    <span style="font-size: 0.9rem; font-weight: 600; color: #e6edf3;">מבטל שינויים בקובץ ומחזיר לשמירה האחרונה</span>
+                    <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px; direction: ltr;">
+                        <code style="background: #101726; color: #79c0ff; padding: 6px 10px; border-radius: 6px; font-family: monospace; font-size: 0.85rem; border: 1px solid rgba(88,166,255,0.2); overflow-x: auto; flex: 1;">git restore index.html</code>
+                        <button class="btn-git-copy" onclick="copyInAppCmd('git restore index.html', this)" style="background: #2ea043; color: #fff; border: none; padding: 6px 12px; border-radius: 6px; font-weight: 700; font-size: 0.8rem; cursor: pointer; flex-shrink: 0;">העתק</button>
+                    </div>
+                </div>
+
+                <div class="git-row-item" data-search="הוצאה מהכנה ביטול add git restore --staged" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 8px; padding: 10px 12px; display: flex; flex-direction: column; gap: 6px;">
+                    <span style="font-size: 0.9rem; font-weight: 600; color: #e6edf3;">מבטל git add (מוציא את הקובץ מההכנה לשמירה)</span>
+                    <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px; direction: ltr;">
+                        <code style="background: #101726; color: #79c0ff; padding: 6px 10px; border-radius: 6px; font-family: monospace; font-size: 0.85rem; border: 1px solid rgba(88,166,255,0.2); overflow-x: auto; flex: 1;">git restore --staged index.html</code>
+                        <button class="btn-git-copy" onclick="copyInAppCmd('git restore --staged index.html', this)" style="background: #2ea043; color: #fff; border: none; padding: 6px 12px; border-radius: 6px; font-weight: 700; font-size: 0.8rem; cursor: pointer; flex-shrink: 0;">העתק</button>
+                    </div>
+                </div>
+
+                <div class="git-row-item" data-search="חזרה קומיט אחד אחורה ביטול שמירה git reset --hard HEAD~1" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 8px; padding: 10px 12px; display: flex; flex-direction: column; gap: 6px;">
+                    <span style="font-size: 0.9rem; font-weight: 600; color: #e6edf3;">מחזיר את הבראנץ' הנוכחי קומיט אחד שלם אחורה</span>
+                    <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px; direction: ltr;">
+                        <code style="background: #101726; color: #79c0ff; padding: 6px 10px; border-radius: 6px; font-family: monospace; font-size: 0.85rem; border: 1px solid rgba(88,166,255,0.2); overflow-x: auto; flex: 1;">git reset --hard HEAD~1</code>
+                        <button class="btn-git-copy" onclick="copyInAppCmd('git reset --hard HEAD~1', this)" style="background: #2ea043; color: #fff; border: none; padding: 6px 12px; border-radius: 6px; font-weight: 700; font-size: 0.8rem; cursor: pointer; flex-shrink: 0;">העתק</button>
+                    </div>
+                </div>
+
+                <div class="git-row-item" data-search="מכונת זמן יומן פעולות שחזור מוחלט git reflog" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 8px; padding: 10px 12px; display: flex; flex-direction: column; gap: 6px;">
+                    <span style="font-size: 0.9rem; font-weight: 600; color: #e6edf3;">יומן כל הפעולות שבוצעו במחשב (מכונת זמן)</span>
+                    <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px; direction: ltr;">
+                        <code style="background: #101726; color: #79c0ff; padding: 6px 10px; border-radius: 6px; font-family: monospace; font-size: 0.85rem; border: 1px solid rgba(88,166,255,0.2); overflow-x: auto; flex: 1;">git reflog</code>
+                        <button class="btn-git-copy" onclick="copyInAppCmd('git reflog', this)" style="background: #2ea043; color: #fff; border: none; padding: 6px 12px; border-radius: 6px; font-weight: 700; font-size: 0.8rem; cursor: pointer; flex-shrink: 0;">העתק</button>
+                    </div>
+                </div>
+
+                <div class="git-cat-hdr" style="color: var(--accent-cyan); font-weight: 700; font-size: 0.95rem; margin-top: 10px; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 4px;">5. הגדרות משתמש וזהות ב-Git</div>
+
+                <div class="git-row-item" data-search="בדיקת שם משתמש הגדרה git config user.name" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 8px; padding: 10px 12px; display: flex; flex-direction: column; gap: 6px;">
+                    <span style="font-size: 0.9rem; font-weight: 600; color: #e6edf3;">בדיקת שם המשתמש שמוגדר כרגע במחשב שלך</span>
+                    <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px; direction: ltr;">
+                        <code style="background: #101726; color: #79c0ff; padding: 6px 10px; border-radius: 6px; font-family: monospace; font-size: 0.85rem; border: 1px solid rgba(88,166,255,0.2); overflow-x: auto; flex: 1;">git config user.name</code>
+                        <button class="btn-git-copy" onclick="copyInAppCmd('git config user.name', this)" style="background: #2ea043; color: #fff; border: none; padding: 6px 12px; border-radius: 6px; font-weight: 700; font-size: 0.8rem; cursor: pointer; flex-shrink: 0;">העתק</button>
+                    </div>
+                </div>
+
+                <div class="git-row-item" data-search="שינוי שם משתמש הגדרה גלובלית git config --global user.name" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 8px; padding: 10px 12px; display: flex; flex-direction: column; gap: 6px;">
+                    <span style="font-size: 0.9rem; font-weight: 600; color: #e6edf3;">הגדרת שם המשתמש שייחתם על כל קומיט עתידי</span>
+                    <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px; direction: ltr;">
+                        <code style="background: #101726; color: #79c0ff; padding: 6px 10px; border-radius: 6px; font-family: monospace; font-size: 0.85rem; border: 1px solid rgba(88,166,255,0.2); overflow-x: auto; flex: 1;">git config --global user.name "rail-shifts"</code>
+                        <button class="btn-git-copy" onclick="copyInAppCmd('git config --global user.name &quot;rail-shifts&quot;', this)" style="background: #2ea043; color: #fff; border: none; padding: 6px 12px; border-radius: 6px; font-weight: 700; font-size: 0.8rem; cursor: pointer; flex-shrink: 0;">העתק</button>
+                    </div>
+                </div>
+
+                <div class="git-row-item" data-search="שינוי אימייל הגדרה גלובלית git config --global user.email" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 8px; padding: 10px 12px; display: flex; flex-direction: column; gap: 6px;">
+                    <span style="font-size: 0.9rem; font-weight: 600; color: #e6edf3;">הגדרת האימייל שיקושר לחשבון ה-GitHub שלך</span>
+                    <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px; direction: ltr;">
+                        <code style="background: #101726; color: #79c0ff; padding: 6px 10px; border-radius: 6px; font-family: monospace; font-size: 0.85rem; border: 1px solid rgba(88,166,255,0.2); overflow-x: auto; flex: 1;">git config --global user.email "..."</code>
+                        <button class="btn-git-copy" onclick="copyInAppCmd('git config --global user.email &quot;&quot;', this)" style="background: #2ea043; color: #fff; border: none; padding: 6px 12px; border-radius: 6px; font-weight: 700; font-size: 0.8rem; cursor: pointer; flex-shrink: 0;">העתק</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="inAppGitNoResults" style="display: none; text-align: center; color: var(--text-muted); padding: 16px;">לא נמצאו פקודות תואמות</div>
         </div>
     </div>
 </div>
