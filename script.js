@@ -1257,7 +1257,18 @@ updateLiveClock();
 
 function getActiveShift() {
     if (!window.shifts || window.shifts.length === 0) return null;
-    return window.shifts.find(s => s.startTime && !s.endTime) || null;
+    const MAX_SHIFT_MS = 12.5 * 60 * 60 * 1000;
+    const now = Date.now();
+
+    return window.shifts.find(s => {
+        if (!s.startTime || s.endTime) return false;
+        if (!s.date) return false;
+        const [y, m, d] = s.date.split('-').map(Number);
+        const [sh, sm] = s.startTime.split(':').map(Number);
+        const startEpoch = new Date(y, m - 1, d, sh, sm, 0).getTime();
+        const elapsed = now - startEpoch;
+        return elapsed >= -60000 && elapsed <= MAX_SHIFT_MS;
+    }) || null;
 }
 
 function updateActiveShiftUI() {
@@ -1279,10 +1290,17 @@ function updateActiveShiftUI() {
         if (statusIndicator) statusIndicator.className = 'status-badge active';
         if (statusText) statusText.textContent = 'במשמרת';
 
+        const [year, month, day] = (active.date || '').split('-').map(Number);
         const [sh, sm] = active.startTime.split(':').map(Number);
-        const now = new Date();
-        let totalSec = (now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds()) - (sh * 3600 + sm * 60);
-        if (totalSec < 0) totalSec += 86400;
+        let totalSec = 0;
+        if (year && month && day) {
+            const startEpoch = new Date(year, month - 1, day, sh, sm, 0).getTime();
+            totalSec = Math.max(0, Math.floor((Date.now() - startEpoch) / 1000));
+        } else {
+            const now = new Date();
+            totalSec = (now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds()) - (sh * 3600 + sm * 60);
+            if (totalSec < 0) totalSec += 86400;
+        }
 
         const h = String(Math.floor(totalSec / 3600)).padStart(2, '0');
         const m = String(Math.floor((totalSec % 3600) / 60)).padStart(2, '0');
@@ -1358,7 +1376,7 @@ function calculateOverlaps() {
             }
             endEpoch = endDate.getTime();
         } else {
-            endEpoch = startEpoch + (13 * 60 * 60 * 1000);
+            endEpoch = startEpoch + (12.5 * 60 * 60 * 1000);
         }
 
         intervals.push({ id: String(shift.id), start: startEpoch, end: endEpoch });
@@ -1413,6 +1431,8 @@ window.closeSmartAlert = function() {
 };
 
 function handleLiveStart() {
+    const unclosedPriorShift = (window.shifts || []).find(s => s.startTime && !s.endTime);
+
     const now = new Date();
     const y = now.getFullYear();
     const m = String(now.getMonth() + 1).padStart(2, '0');
@@ -1440,6 +1460,20 @@ function handleLiveStart() {
     activeMonthKey = dateStr.substring(0, 7); 
     autoSortShiftsArray(window.shifts);
     saveShifts(newShift);
+
+    if (unclosedPriorShift) {
+        let dateFormatted = '';
+        if (unclosedPriorShift.date) {
+            const parts = unclosedPriorShift.date.split('-');
+            if (parts.length === 3) {
+                dateFormatted = `${parts[2]}/${parts[1]}`;
+            }
+        }
+        const msg = dateFormatted
+            ? `המשמרת הקודמת (מתאריך ${dateFormatted}) נותרה ללא שעת סיום – תוכל להשלים אותה ידנית ביומן המשמרות.`
+            : `המשמרת הקודמת נותרה ללא שעת סיום – תוכל להשלים אותה ידנית ביומן המשמרות.`;
+        showSmartAlertDialog('שים לב', msg, 'הבנתי', '', () => {}, () => {});
+    }
 }
 
 function handleLiveEnd() {

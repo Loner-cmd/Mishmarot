@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>יומן משמרות - מערך בדיקות אוטומטי</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #070c18;
+            --card-bg: #0f192d;
+            --card-border: rgba(0, 229, 255, 0.15);
+            --card-hover: rgba(0, 229, 255, 0.25);
+            --accent-cyan: #00e5ff;
+            --accent-blue: #0077ff;
+            --text-main: #f0f4fc;
+            --text-muted: #8fa0bd;
+            --green-pass: #00e676;
+            --green-bg: rgba(0, 230, 118, 0.12);
+            --red-fail: #ff5252;
+            --red-bg: rgba(255, 82, 82, 0.12);
+            --font-main: 'Assistant', sans-serif;
+            --font-code: 'Inter', monospace;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            font-family: var(--font-main);
+            min-height: 100vh;
+            padding: 24px 16px 60px;
+            direction: rtl;
+        }
+
+        .container {
+            max-width: 860px;
+            margin: 0 auto;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 16px;
+            padding-bottom: 24px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            margin-bottom: 24px;
+        }
+
+        .header-title-wrap {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .logo-icon {
+            width: 44px;
+            height: 44px;
+            background: linear-gradient(135deg, #132247, #00e5ff);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 20px rgba(0, 229, 255, 0.3);
+        }
+
+        .logo-icon svg {
+            width: 24px;
+            height: 24px;
+            fill: #fff;
+        }
+
+        .header-title {
+            font-size: 1.5rem;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+        }
+
+        .header-subtitle {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        .btn-rerun {
+            background: linear-gradient(135deg, #0077ff, #00e5ff);
+            color: #050b14;
+            font-weight: 700;
+            font-size: 0.95rem;
+            border: none;
+            border-radius: 10px;
+            padding: 10px 20px;
+            cursor: pointer;
+            font-family: inherit;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: transform 0.15s, box-shadow 0.15s;
+        }
+
+        .btn-rerun:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(0, 229, 255, 0.4);
+        }
+
+        .btn-rerun:active {
+            transform: translateY(0);
+        }
+
+        /* Summary Banner */
+        .summary-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 20px 24px;
+            margin-bottom: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 16px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+        }
+
+        .summary-status {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .status-badge {
+            width: 46px;
+            height: 46px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: 900;
+        }
+
+        .status-badge.pass {
+            background: var(--green-bg);
+            color: var(--green-pass);
+            border: 2px solid var(--green-pass);
+            box-shadow: 0 0 16px rgba(0, 230, 118, 0.3);
+        }
+
+        .status-badge.fail {
+            background: var(--red-bg);
+            color: var(--red-fail);
+            border: 2px solid var(--red-fail);
+            box-shadow: 0 0 16px rgba(255, 82, 82, 0.3);
+        }
+
+        .summary-text-title {
+            font-size: 1.25rem;
+            font-weight: 800;
+        }
+
+        .summary-text-desc {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        .stats-pills {
+            display: flex;
+            gap: 10px;
+        }
+
+        .pill {
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .pill.pill-pass {
+            background: var(--green-bg);
+            color: var(--green-pass);
+            border: 1px solid rgba(0, 230, 118, 0.3);
+        }
+
+        .pill.pill-fail {
+            background: var(--red-bg);
+            color: var(--red-fail);
+            border: 1px solid rgba(255, 82, 82, 0.3);
+        }
+
+        /* Section Groups */
+        .group-card {
+            background: var(--card-bg);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 14px;
+            margin-bottom: 20px;
+            overflow: hidden;
+            box-shadow: 0 4px 18px rgba(0, 0, 0, 0.25);
+        }
+
+        .group-header {
+            padding: 14px 20px;
+            background: rgba(255, 255, 255, 0.02);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .group-title {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: var(--accent-cyan);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .group-count {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            background: rgba(255, 255, 255, 0.06);
+            padding: 2px 10px;
+            border-radius: 12px;
+        }
+
+        /* Test Items */
+        .test-list {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .test-item {
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 14px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            transition: background 0.15s;
+        }
+
+        .test-item:last-child {
+            border-bottom: none;
+        }
+
+        .test-item:hover {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .test-main {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex: 1;
+        }
+
+        .icon-check {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--green-bg);
+            color: var(--green-pass);
+            border: 1px solid var(--green-pass);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: 900;
+            flex-shrink: 0;
+        }
+
+        .icon-fail {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--red-bg);
+            color: var(--red-fail);
+            border: 1px solid var(--red-fail);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: 900;
+            flex-shrink: 0;
+        }
+
+        .test-desc {
+            font-size: 0.92rem;
+            font-weight: 600;
+            color: var(--text-main);
+        }
+
+        .test-val {
+            font-family: var(--font-code);
+            font-size: 0.82rem;
+            color: var(--text-muted);
+            direction: ltr;
+            text-align: right;
+            background: rgba(0, 0, 0, 0.25);
+            padding: 4px 10px;
+            border-radius: 6px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 32px;
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.8rem;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header class="header">
+        <div class="header-title-wrap">
+            <div class="logo-icon">
+                <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+            </div>
+            <div>
+                <h1 class="header-title">יומן משמרות - מערך בדיקות</h1>
+                <div class="header-subtitle">דוח בדיקות אוטומטיות ללוגיקה וחישובי שכר</div>
+            </div>
+        </div>
+        <button class="btn-rerun" onclick="runAllTests()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>
+            <span>הרץ בדיקות מחדש</span>
+        </button>
+    </header>
+
+    <div class="summary-card" id="summaryCard">
+        <div class="summary-status">
+            <div class="status-badge pass" id="statusBadge">✓</div>
+            <div>
+                <div class="summary-text-title" id="summaryTitle">טוען בדיקות...</div>
+                <div class="summary-text-desc" id="summaryDesc">מבצע בדיקה של כל מנגנוני הזמן והמשמרות</div>
+            </div>
+        </div>
+        <div class="stats-pills">
+            <div class="pill pill-pass" id="pillPass">עברו: 0</div>
+            <div class="pill pill-fail" id="pillFail" style="display: none;">נכשלו: 0</div>
+        </div>
+    </div>
+
+    <div id="resultsContainer"></div>
+
+    <div class="footer">
+        יומן משמרות (rail-shifts) • כל הבדיקות רצות מקומית בדפדפן
+    </div>
+</div>
+
+<script>
+// -------------------------------------------------------------
+// Core Business Logic (Identical to script.js)
+// -------------------------------------------------------------
+
+function parseInputToMinutes(val) {
+    if (!val) return 0;
+    const str = String(val).trim();
+    if (str.includes(':')) {
+        const [h, m] = str.split(':').map(Number);
+        return (h || 0) * 60 + (m || 0);
+    }
+    if (str.includes('.') || str.includes(',')) {
+        const cleaned = str.replace(',', '.');
+        return Math.round(parseFloat(cleaned) * 60) || 0;
+    }
+    const num = parseFloat(str);
+    if (isNaN(num)) return 0;
+    return num <= 12 ? Math.round(num * 60) : Math.round(num);
+}
+
+function formatMinutesToDisplay(mins) {
+    if (!mins || mins <= 0) return '';
+    const h = Math.floor(mins / 60);
+    const m = mins % 60;
+    return String(h).padStart(2, '0') + ':' + String(m).padStart(2, '0');
+}
+
+function formatMinutesToHM(mins) {
+    if (!mins || mins <= 0) return '0 שעות';
+    const h = Math.floor(mins / 60);
+    const m = mins % 60;
+    if (h === 0) return m + ' דק׳';
+    if (m === 0) return h + ' שעות';
+    return h + ':' + String(m).padStart(2, '0');
+}
+
+function addMinutesToTime(timeStr, minsToAdd) {
+    if (!timeStr) return '--:--';
+    const [h, m] = timeStr.split(':').map(Number);
+    let total = h * 60 + m + minsToAdd;
+    total = (total + 1440) % 1440;
+    return String(Math.floor(total / 60)).padStart(2, '0') + ':' + String(total % 60).padStart(2, '0');
+}
+
+function subtractMinutesFromTime(timeStr, minsToSub) {
+    if (!timeStr) return '--:--';
+    const [h, m] = timeStr.split(':').map(Number);
+    let total = h * 60 + m - minsToSub;
+    total = (total + 1440) % 1440;
+    return String(Math.floor(total / 60)).padStart(2, '0') + ':' + String(total % 60).padStart(2, '0');
+}
+
+function calculateDuration(start, end) {
+    if (!start || !end) return '--';
+    const [h1, m1] = start.split(':').map(Number);
+    const [h2, m2] = end.split(':').map(Number);
+    let diff = (h2 * 60 + m2) - (h1 * 60 + m1);
+    if (diff < 0) diff += 1440;
+    const hours = Math.floor(diff / 60);
+    const mins = diff % 60;
+    if (hours === 0 && mins === 0) return '0 דק׳';
+    if (mins === 0) return hours + ' שעות';
+    if (hours === 0) return mins + ' דק׳';
+    return hours + ' שעות ו-' + mins + ' דק׳';
+}
+
+function calculateDurationMinutes(start, end) {
+    if (!start || !end) return 0;
+    const [h1, m1] = start.split(':').map(Number);
+    const [h2, m2] = end.split(':').map(Number);
+    let diff = (h2 * 60 + m2) - (h1 * 60 + m1);
+    if (diff < 0) diff += 1440;
+    return diff;
+}
+
+function checkIsShiftActive(shift, currentTimeMs) {
+    if (!shift || !shift.startTime || shift.endTime || !shift.date) return false;
+    const MAX_SHIFT_MS = 12.5 * 60 * 60 * 1000;
+    const [y, m, d] = shift.date.split('-').map(Number);
+    const [sh, sm] = shift.startTime.split(':').map(Number);
+    const startEpoch = new Date(y, m - 1, d, sh, sm, 0).getTime();
+    const elapsed = currentTimeMs - startEpoch;
+    return elapsed >= -60000 && elapsed <= MAX_SHIFT_MS;
+}
+
+function calculateOverlapsForShifts(shiftsList) {
+    const overlappingIds = new Set();
+    const intervals = [];
+
+    shiftsList.forEach(shift => {
+        if (!shift.date || !shift.startTime) return;
+        const [y, m, d] = shift.date.split('-').map(Number);
+        const [sh, sm] = shift.startTime.split(':').map(Number);
+        
+        const startEpoch = new Date(y, m - 1, d, sh, sm, 0).getTime();
+        let endEpoch;
+
+        if (shift.endTime) {
+            const [eh, em] = shift.endTime.split(':').map(Number);
+            let endDate = new Date(y, m - 1, d, eh, em, 0);
+            if (endDate.getTime() <= startEpoch) {
+                endDate.setDate(endDate.getDate() + 1);
+            }
+            endEpoch = endDate.getTime();
+        } else {
+            endEpoch = startEpoch + (12.5 * 60 * 60 * 1000);
+        }
+
+        intervals.push({ id: String(shift.id), start: startEpoch, end: endEpoch });
+    });
+
+    for (let i = 0; i < intervals.length; i++) {
+        for (let j = i + 1; j < intervals.length; j++) {
+            const a = intervals[i];
+            const b = intervals[j];
+            if (Math.max(a.start, b.start) < Math.min(a.end, b.end)) {
+                overlappingIds.add(String(a.id));
+                overlappingIds.add(String(b.id));
+            }
+        }
+    }
+
+    return overlappingIds;
+}
+
+// -------------------------------------------------------------
+// Test Suite Runner
+// -------------------------------------------------------------
+
+function runAllTests() {
+    const groups = [
+        {
+            title: '1. פירסור זמנים והמרת דקות (parseInputToMinutes)',
+            tests: [
+                { desc: 'מחרוזת "1:30" מומרת ל-90 דקות', actual: parseInputToMinutes("1:30"), expected: 90 },
+                { desc: 'מספר עשרוני "2.5" מומר ל-150 דקות', actual: parseInputToMinutes("2.5"), expected: 150 },
+                { desc: 'מספר עשרוני עם פסיק "1,5" מומר ל-90 דקות', actual: parseInputToMinutes("1,5"), expected: 90 },
+                { desc: 'דקות בודדות "45" מומרות ל-45 דקות', actual: parseInputToMinutes("45"), expected: 45 },
+                { desc: 'ערך ריק או 0 מומר ל-0', actual: parseInputToMinutes(""), expected: 0 }
+            ]
+        },
+        {
+            title: '2. עיצוב תצוגת זמנים (formatMinutes)',
+            tests: [
+                { desc: '90 דקות מעוצב ל "01:30"', actual: formatMinutesToDisplay(90), expected: "01:30" },
+                { desc: '45 דקות מעוצב ל "00:45"', actual: formatMinutesToDisplay(45), expected: "00:45" },
+                { desc: '120 דקות ב-HM מעוצב ל "2 שעות"', actual: formatMinutesToHM(120), expected: "2 שעות" },
+                { desc: '45 דקות ב-HM מעוצב ל "45 דק׳"', actual: formatMinutesToHM(45), expected: "45 דק׳" },
+                { desc: '75 דקות ב-HM מעוצב ל "1:15"', actual: formatMinutesToHM(75), expected: "1:15" }
+            ]
+        },
+        {
+            title: '3. חישוב משך משמרת (calculateDuration)',
+            tests: [
+                { desc: 'משמרת יום 08:00 עד 16:30 בדקות (510 דקות)', actual: calculateDurationMinutes("08:00", "16:30"), expected: 510 },
+                { desc: 'משמרת יום מילולית: "8 שעות ו-30 דק׳"', actual: calculateDuration("08:00", "16:30"), expected: "8 שעות ו-30 דק׳" },
+                { desc: 'משמרת לילה שחוצה חצות 22:00 עד 06:00 (480 דקות)', actual: calculateDurationMinutes("22:00", "06:00"), expected: 480 },
+                { desc: 'משמרת לילה מילולית: "8 שעות"', actual: calculateDuration("22:00", "06:00"), expected: "8 שעות" },
+                { desc: 'משמרת לילה 23:30 עד 08:15 (525 דקות)', actual: calculateDurationMinutes("23:30", "08:15"), expected: 525 }
+            ]
+        },
+        {
+            title: '4. הוספה והחסרת דקות שחוצות חצות',
+            tests: [
+                { desc: '23:30 ועוד 45 דק -> 00:15', actual: addMinutesToTime("23:30", 45), expected: "00:15" },
+                { desc: '00:15 פחות 30 דק -> 23:45', actual: subtractMinutesFromTime("00:15", 30), expected: "23:45" },
+                { desc: '10:00 ועוד 120 דק -> 12:00', actual: addMinutesToTime("10:00", 120), expected: "12:00" }
+            ]
+        },
+        {
+            title: '5. מנגנון סף 12.5 שעות למשמרת פעילה (getActiveShift)',
+            tests: (() => {
+                const baseDate = "2026-10-03";
+                const [by, bm, bd] = baseDate.split('-').map(Number);
+                const shiftStartTime = "08:00";
+                const shiftStartMs = new Date(by, bm - 1, bd, 8, 0, 0).getTime();
+
+                const openShift = { date: baseDate, startTime: shiftStartTime, endTime: null };
+                const closedShift = { date: baseDate, startTime: shiftStartTime, endTime: "16:00" };
+
+                return [
+                    { desc: 'משמרת סגורה אינה פעילה', actual: checkIsShiftActive(closedShift, shiftStartMs + 1000), expected: false },
+                    { desc: 'משמרת שהחלה לפני שעה -> פעילה', actual: checkIsShiftActive(openShift, shiftStartMs + (1 * 3600 * 1000)), expected: true },
+                    { desc: 'משמרת שהחלה לפני 12 שעות בדיוק -> פעילה', actual: checkIsShiftActive(openShift, shiftStartMs + (12 * 3600 * 1000)), expected: true },
+                    { desc: 'משמרת שהחלה לפני 12 שעות ו-25 דקות -> פעילה', actual: checkIsShiftActive(openShift, shiftStartMs + (12.41 * 3600 * 1000)), expected: true },
+                    { desc: 'משמרת שעברו 12.5 שעות (12:35) -> אינה פעילה עוד (מתנתקת)', actual: checkIsShiftActive(openShift, shiftStartMs + (12.58 * 3600 * 1000)), expected: false },
+                    { desc: 'משמרת מאתמול (24 שעות ללא סגירה) -> אינה פעילה עוד', actual: checkIsShiftActive(openShift, shiftStartMs + (24 * 3600 * 1000)), expected: false }
+                ];
+            })()
+        },
+        {
+            title: '6. זיהוי חפיפות משמרות (calculateOverlaps)',
+            tests: (() => {
+                const nonOverlapping = [
+                    { id: '1', date: '2026-10-03', startTime: '06:00', endTime: '14:00' },
+                    { id: '2', date: '2026-10-03', startTime: '15:00', endTime: '23:00' }
+                ];
+                const overlapping = [
+                    { id: 'shift_a', date: '2026-10-03', startTime: '08:00', endTime: '16:00' },
+                    { id: 'shift_b', date: '2026-10-03', startTime: '14:00', endTime: '20:00' }
+                ];
+                const resOverlap = calculateOverlapsForShifts(overlapping);
+
+                const midnightOver = [
+                    { id: 'night', date: '2026-10-03', startTime: '22:00', endTime: '06:00' },
+                    { id: 'morning_next_day', date: '2026-10-04', startTime: '05:00', endTime: '13:00' }
+                ];
+                const resMidnight = calculateOverlapsForShifts(midnightOver);
+
+                return [
+                    { desc: 'משמרות נפרדות ללא חפיפה מחזירות רשימה ריקה', actual: calculateOverlapsForShifts(nonOverlapping).size, expected: 0 },
+                    { desc: 'חפיפת צהריים (14:00-16:00) מזוהה בשתי המשמרות', actual: resOverlap.has('shift_a') && resOverlap.has('shift_b'), expected: true },
+                    { desc: 'חפיפת לילה במעבר חצות מזוהה בשתי המשמרות', actual: resMidnight.has('night') && resMidnight.has('morning_next_day'), expected: true }
+                ];
+            })()
+        }
+    ];
+
+    let totalPassed = 0;
+    let totalFailed = 0;
+    let html = '';
+
+    groups.forEach(group => {
+        let groupHtml = `<div class="group-card">
+            <div class="group-header">
+                <div class="group-title">${group.title}</div>
+                <div class="group-count">${group.tests.length} בדיקות</div>
+            </div>
+            <div class="test-list">`;
+
+        group.tests.forEach(test => {
+            const isPass = JSON.stringify(test.actual) === JSON.stringify(test.expected);
+            if (isPass) totalPassed++; else totalFailed++;
+
+            groupHtml += `
+                <div class="test-item">
+                    <div class="test-main">
+                        <div class="${isPass ? 'icon-check' : 'icon-fail'}">${isPass ? '✓' : '✗'}</div>
+                        <div class="test-desc">${test.desc}</div>
+                    </div>
+                    <div class="test-val">${test.actual}</div>
+                </div>
+            `;
+        });
+
+        groupHtml += `</div></div>`;
+        html += groupHtml;
+    });
+
+    document.getElementById('resultsContainer').innerHTML = html;
+
+    const statusBadge = document.getElementById('statusBadge');
+    const summaryTitle = document.getElementById('summaryTitle');
+    const summaryDesc = document.getElementById('summaryDesc');
+    const pillPass = document.getElementById('pillPass');
+    const pillFail = document.getElementById('pillFail');
+
+    pillPass.textContent = `עברו: ${totalPassed}`;
+    if (totalFailed > 0) {
+        pillFail.style.display = 'flex';
+        pillFail.textContent = `נכשלו: ${totalFailed}`;
+        statusBadge.className = 'status-badge fail';
+        statusBadge.textContent = '✗';
+        summaryTitle.textContent = `נמצאו ${totalFailed} שגיאות בבדיקות!`;
+        summaryDesc.textContent = 'ישנם חישובים שאינם תואמים את התוצאה הצפויה';
+    } else {
+        pillFail.style.display = 'none';
+        statusBadge.className = 'status-badge pass';
+        statusBadge.textContent = '✓';
+        summaryTitle.textContent = `כל ${totalPassed} הבדיקות עברו בהצלחה מושלמת! (100%)`;
+        summaryDesc.textContent = 'מערך החישובים, הזמנים, והגבלות ה-12.5 שעות תקינים לחלוטין';
+    }
+}
+
+// Auto run on load
+window.addEventListener('DOMContentLoaded', runAllTests);
+</script>
+
+</body>
+</html>
